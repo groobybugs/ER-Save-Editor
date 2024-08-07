@@ -13,8 +13,8 @@ impl Default for UserData11 {
     fn default() -> Self {
         Self { 
             unk: Default::default(), 
-            regulation: vec![0; 0x1e9fb0],
-            rest: vec![0;0x56050]
+            regulation: vec![0; 0x1ee6c0],
+            rest: vec![0;0x51940]
         }
     }
 }
@@ -22,9 +22,10 @@ impl Default for UserData11 {
 impl Read for UserData11 {
     fn read(br: &mut BinaryReader) -> Result<UserData11, Error> {
         let mut user_data_11 = UserData11::default();
+        //br.jump(0x1960080);
         user_data_11.unk.copy_from_slice(br.read_bytes(0x10)?);
-        user_data_11.regulation.copy_from_slice(br.read_bytes(0x1e9fb0)?);
-        user_data_11.rest.copy_from_slice(br.read_bytes(0x56050)?);
+        user_data_11.regulation.copy_from_slice(br.read_bytes(0x1ee6c0)?);
+        user_data_11.rest.copy_from_slice(br.read_bytes(0x51940)?);
         assert_eq!(user_data_11.rest[0], 0);
         Ok(user_data_11)
     }

@@ -858,7 +858,7 @@ pub mod save {
         // Check if it's a PS Save Wizard save file
         pub fn is_ps_save_wizard(br: &mut BinaryReader) -> bool {
             br.jmp(0x1960080);
-            let regulation = br.read_bytes(0x1e9fb0).expect("");
+            let regulation = br.read_bytes(0x1ee6c0).expect("");
             let is_ps_save_wizard = match Regulation::get_decrypted_decompressed(&regulation) {
                 Ok(_v) => true,
                 Err(_e) => false,
@@ -866,7 +866,59 @@ pub mod save {
             br.jmp(0);
             is_ps_save_wizard
         }
-    }
+/*           pub fn is_psF_save_wizard(br: &mut BinaryReader) -> bool {
+            br.jmp(0x1960080);
+            let start_offset = 0x1ee6c0; // 0x1ee7b0
+            //let start_offset = 0;
+            let mut current_offset = start_offset;
+            let step = 0x1; // Increment by 16 bytes each time
+
+            while current_offset + 0x1960080 <= 0x1BA007F  {
+                /*match br.read_bytes(current_offset) {
+                    Ok(regulation) => {
+                        // Wrap the potentially panicking code in catch_unwind
+                        let result = catch_unwind(AssertUnwindSafe(|| {
+                            Regulation::get_decrypted_decompressed(&regulation)
+                        }));
+                        println!("Regulation string at offset: 0x{:x} is {:?}", current_offset, result.is_ok());
+                        continue
+                        // match result {
+                        //     Ok(Ok(_v)) => {
+                        //         println!("Successfully decrypted at offset: 0x{:x}", current_offset);
+                        //         return true;
+                        //     }
+                        //     Ok(Err(_)) | Err(_) => {
+                        //         // Decryption failed or panicked, continue to next offset
+                        //         println!("Failed to decrypt at offset: 0x{:x}, trying next", current_offset);
+                        //     }
+                        // }
+                    }
+                    Err(_) => {
+                        // Reading bytes failed, likely reached end of file
+                        //println!("Failed to read bytes, reached offset: 0x{:x}", current_offset);
+                    }
+                }
+*/
+                br.jmp(0x1960080);
+                let regulation = br.read_bytes(current_offset).expect("");
+                //let result = catch_unwind(AssertUnwindSafe(|| {
+                //    Regulation::get_decrypted_decompressed(&regulation)
+                //}));
+                let is_ps_save_wizard = match Regulation::get_decrypted_decompressed(&regulation) {
+                    Ok(_v) => true,
+                    Err(_e) => false,
+                };
+
+                current_offset += step;
+                if is_ps_save_wizard {
+                    println!("Regulation string at offset: 0x{:x} is {:?}", current_offset, is_ps_save_wizard);
+                }
+            }
+            br.jmp(0);
+            return false
+        }*/
+
+     }
     
 }
 
