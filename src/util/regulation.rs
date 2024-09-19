@@ -94,7 +94,7 @@ impl Regulation {
 
         Ok(res)
     }
-   
+
     pub fn params_from_regulation(bytes: &[u8]) -> Result<HashMap<Param, Vec<u8>>, Error>{
         let decrypted = Self::decrypt(&bytes)?;
         let decompressed = Self::decompress(&decrypted)?;
