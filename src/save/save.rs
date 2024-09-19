@@ -826,7 +826,7 @@ pub mod save {
         // Check if it's a PS Save Wizard save file
         pub fn is_ps_save_wizard(br: &mut BinaryReader) -> bool {
             br.jmp(0x1960080);
-            let regulation = br.read_bytes(0x1ee6c0).expect("");
+            let regulation = br.read_bytes(0x1F0DE0 ).expect("");
             let is_ps_save_wizard = match Regulation::get_decrypted_decompressed(&regulation) {
                 Ok(_v) => true,
                 Err(_e) => false,
