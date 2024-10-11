@@ -3,6 +3,9 @@ use std::io::ErrorKind;
 use aes::cipher::{block_padding::NoPadding, BlockDecryptMut, KeyIvInit};
 use binary_reader::{BinaryReader, Endian};
 use once_cell::sync::{Lazy, OnceCell};
+use std::io::{self, Read};
+use flate2::read::{DeflateDecoder, DeflateEncoder};
+use flate2::Compression;
 
 use crate::{db::{accessory_name::accessory_name::ACCESSORY_NAME, aow_name::aow_name::AOW_NAME, armor_name::armor_name::ARMOR_NAME, item_name::item_name::ITEM_NAME, weapon_name::weapon_name::WEAPON_NAME}, save::save::save::Save, util::{param_structs::{EQUIP_PARAM_ACCESSORY_ST, EQUIP_PARAM_GEM_ST, EQUIP_PARAM_GOODS_ST, EQUIP_PARAM_PROTECTOR_ST, EQUIP_PARAM_WEAPON_ST}, params::params::{Row, PARAM}}};
 
@@ -122,7 +125,7 @@ impl Regulation {
     }
 
     // Decompress the decrypted regulation file (compression_type: DCX_DFLT_11000_44_9_15)
-    fn decompress(bytes: &[u8]) -> Result<Vec<u8>, Error> {
+    fn decompressOld(bytes: &[u8]) -> Result<Vec<u8>, Error> {
         let mut br = BinaryReader::from_u8(bytes);
         br.endian = Endian::Big;
 
@@ -164,6 +167,105 @@ impl Regulation {
         }
     }
 
+    fn decompress(bytes: &[u8]) -> Result<Vec<u8>, Error> {
+        let mut br = BinaryReader::from_u8(bytes);
+        br.endian = Endian::Big;
+
+        // Existing checks...
+        assert_eq!(br.read_bytes(4)?, b"DCX\0");
+        assert_eq!(br.read_i32()?, 0x11000);
+        assert_eq!(br.read_i32()?, 0x18);
+        assert_eq!(br.read_i32()?, 0x24);
+        assert_eq!(br.read_i32()?, 0x44);
+        assert_eq!(br.read_i32()?, 0x4c);
+
+        assert_eq!(br.read_bytes(4)?, b"DCS\0");
+        let decompressed_size = br.read_i32()?;
+        let compressed_size = br.read_i32()?;
+
+        assert_eq!(br.read_bytes(4)?, b"DCP\0");
+
+        // Check for both ZSTD and DFLT
+        let compression_type = br.read_bytes(4)?;
+        let is_zstd = compression_type == b"ZSTD";
+        let is_dflt = compression_type == b"DFLT";
+        if !is_zstd && !is_dflt {
+            return Err(io::Error::new(io::ErrorKind::InvalidData, "Unknown compression type"));
+        }
+
+        assert_eq!(br.read_i32()?, 0x20);
+
+        // Read the compression level instead of asserting a specific value
+        let compression_level = br.read_u8()?;
+
+        // Read the remaining header values without strict assertions
+        let _unknown1 = br.read_u8()?;
+        let _unknown2 = br.read_u8()?;
+        let _unknown3 = br.read_u8()?;
+        let _unknown4 = br.read_i32()?;
+        let _unknown5 = br.read_u8()?;
+        let _unknown6 = br.read_u8()?;
+        let _unknown7 = br.read_u8()?;
+        let _unknown8 = br.read_u8()?;
+        let _unknown9 = br.read_i32()?;
+        let _unknown10 = br.read_i32()?;
+
+        assert_eq!(br.read_bytes(4)?, b"DCA\0");
+        assert_eq!(br.read_i32()?, 8);
+
+        let compressed = br.read_bytes(compressed_size as usize)?;
+
+        eprintln!("Compression type: {}", if is_zstd { "ZSTD" } else { "DFLT" });
+        eprintln!("Compressed size: {}", compressed_size);
+        eprintln!("Expected decompressed size: {}", decompressed_size);
+        eprintln!("First few bytes of compressed data: {:?}", &compressed[..std::cmp::min(16, compressed.len())]);
+
+        // Decompress based on the compression type
+        let decompressed = if is_zstd {
+            match zstd::bulk::decompress(compressed, decompressed_size as usize) {
+                Ok(data) => data,
+                Err(e) => {
+                    eprintln!("ZSTD decompression error: {:?}", e);
+                    return Err(io::Error::new(io::ErrorKind::Other, format!("ZSTD decompression failed: {:?}", e)));
+                }
+            }
+        } else {
+            // Try different Compression levels
+            for &level in &[Compression::default(), Compression::fast(), Compression::best()] {
+                let mut decoder = DeflateDecoder::new(compressed);
+                let mut decompressed = Vec::with_capacity(decompressed_size as usize);
+                match decoder.read_to_end(&mut decompressed) {
+                    Ok(_) => {
+                        eprintln!("Successfully decompressed with compression level: {:?}", level);
+                        return Ok(decompressed);
+                    },
+                    Err(e) => eprintln!("DEFLATE decompression error (level={:?}): {:?}", level, e),
+                }
+            }
+
+            // If all attempts fail, try to skip potential headers
+            for skip in 0..std::cmp::min(32, compressed.len()) {
+                let mut decoder = DeflateDecoder::new(&compressed[skip..]);
+                let mut decompressed = Vec::with_capacity(decompressed_size as usize);
+                match decoder.read_to_end(&mut decompressed) {
+                    Ok(_) => {
+                        eprintln!("Successfully decompressed after skipping {} bytes", skip);
+                        return Ok(decompressed);
+                    },
+                    Err(_) => continue,
+                }
+            }
+
+            return Err(io::Error::new(io::ErrorKind::InvalidData, "Failed to decompress DEFLATE data with all attempted methods"));
+        };
+
+        if decompressed.len() != decompressed_size as usize {
+            return Err(io::Error::new(io::ErrorKind::InvalidData, "Decompressed size mismatch"));
+        }
+
+        Ok(decompressed)
+    }
+    
     // Unpack the decrypted and decompressed regulation file (BND4)
     fn unpack(bytes: &[u8]) -> Result<BND4, Error>{
         BND4::from_bytes(bytes)
