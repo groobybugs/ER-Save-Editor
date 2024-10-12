@@ -3,9 +3,10 @@ use std::io::ErrorKind;
 use aes::cipher::{block_padding::NoPadding, BlockDecryptMut, KeyIvInit};
 use binary_reader::{BinaryReader, Endian};
 use once_cell::sync::{Lazy, OnceCell};
-use std::io::{self, Read};
-use flate2::read::{DeflateDecoder, DeflateEncoder};
-use flate2::Compression;
+use std::io::{self, Read, Write};
+//use flate2::read::{DeflateDecoder, DeflateEncoder};
+//use flate2::Compression;
+use zune_inflate::{DeflateDecoder, DeflateOptions};
 
 use crate::{db::{accessory_name::accessory_name::ACCESSORY_NAME, aow_name::aow_name::AOW_NAME, armor_name::armor_name::ARMOR_NAME, item_name::item_name::ITEM_NAME, weapon_name::weapon_name::WEAPON_NAME}, save::save::save::Save, util::{param_structs::{EQUIP_PARAM_ACCESSORY_ST, EQUIP_PARAM_GEM_ST, EQUIP_PARAM_GOODS_ST, EQUIP_PARAM_PROTECTOR_ST, EQUIP_PARAM_WEAPON_ST}, params::params::{Row, PARAM}}};
 
@@ -125,7 +126,7 @@ impl Regulation {
     }
 
     // Decompress the decrypted regulation file (compression_type: DCX_DFLT_11000_44_9_15)
-    fn decompressOld(bytes: &[u8]) -> Result<Vec<u8>, Error> {
+    fn decompress_old(bytes: &[u8]) -> Result<Vec<u8>, Error> {
         let mut br = BinaryReader::from_u8(bytes);
         br.endian = Endian::Big;
 
@@ -166,7 +167,18 @@ impl Regulation {
             Err(msg) => { Err(std::io::Error::new(std::io::ErrorKind::Other, format!("{msg}"))) },
         }
     }
+    
+    fn check_bnd4_signature(data: &[u8]) -> bool {
+        data.starts_with(b"BND4")
+    }
 
+    fn dump_decompressed_data(data: &[u8], filename: &str) -> io::Result<()> {
+        let mut file = std::fs::File::create(filename)?;
+        file.write_all(data)?;
+        eprintln!("Dumped decompressed data to {}", filename);
+        Ok(())
+    }
+    
     fn decompress(bytes: &[u8]) -> Result<Vec<u8>, Error> {
         let mut br = BinaryReader::from_u8(bytes);
         br.endian = Endian::Big;
@@ -230,42 +242,65 @@ impl Regulation {
                 }
             }
         } else {
-            // Try different Compression levels
-            for &level in &[Compression::default(), Compression::fast(), Compression::best()] {
-                let mut decoder = DeflateDecoder::new(compressed);
-                let mut decompressed = Vec::with_capacity(decompressed_size as usize);
-                match decoder.read_to_end(&mut decompressed) {
-                    Ok(_) => {
-                        eprintln!("Successfully decompressed with compression level: {:?}", level);
-                        return Ok(decompressed);
-                    },
-                    Err(e) => eprintln!("DEFLATE decompression error (level={:?}): {:?}", level, e),
-                }
+            // let mut decoder = DeflateDecoder::new(compressed);
+            // let mut decompressed = Vec::with_capacity(decompressed_size as usize);
+            // match decoder.read_to_end(&mut decompressed) {
+            //     Ok(_) => {
+            //         let contains = b"BND4".iter()
+            //             .map(|&b| decompressed.iter().position(|&w| w == b))
+            //             .collect::<Vec<Option<usize>>>();
+            // 
+            //         for (i, pos) in contains.iter().enumerate() {
+            //             match pos {
+            //                 Some(position) => println!("Byte '{}' found at position: {}", b"BND4"[i] as char, position),
+            //                 None => println!("Byte '{}' not found", b"BND4"[i] as char),
+            //             }
+            //         }
+            //         if Self::check_bnd4_signature(&decompressed) {
+            //             return Ok(decompressed);
+            //         } else {
+            //             eprintln!("Decompressed data does not start with BND4 signature");
+            //             Self::dump_decompressed_data(&decompressed, "failed_decompression.bin")?;
+            //         }
+            //     },
+            //     Err(e) => eprintln!("DEFLATE decompression error: {:?}", e),
+            // }
+            // let options = DeflateOptions::default()
+            //     .set_size_hint(15)
+            //     .set_size_hint(decompressed_size as usize);
+            // let mut decoder = DeflateDecoder::new_with_options(compressed, options);
+            let mut decoder = DeflateDecoder::new(compressed);
+            match decoder.decode_zlib() {
+                Ok(data) => {
+                    if Self::check_bnd4_signature(&data) {
+                        return Ok(data);
+                    } else {
+                        eprintln!("Decompressed data does not start with BND4 signature");
+                        Self::dump_decompressed_data(&data, "failed_decompression.bin")?;
+                    }
+                },
+                Err(e) => eprintln!("DEFLATE decompression error: {:?}", e),
             }
-
-            // If all attempts fail, try to skip potential headers
-            for skip in 0..std::cmp::min(32, compressed.len()) {
-                let mut decoder = DeflateDecoder::new(&compressed[skip..]);
-                let mut decompressed = Vec::with_capacity(decompressed_size as usize);
-                match decoder.read_to_end(&mut decompressed) {
-                    Ok(_) => {
-                        eprintln!("Successfully decompressed after skipping {} bytes", skip);
-                        return Ok(decompressed);
-                    },
-                    Err(_) => continue,
-                }
-            }
-
+       
             return Err(io::Error::new(io::ErrorKind::InvalidData, "Failed to decompress DEFLATE data with all attempted methods"));
         };
 
+        if !Self::check_bnd4_signature(&decompressed) {
+            let error_msg = "Decompressed data does not start with BND4 signature";
+            eprintln!("{}", error_msg);
+            Self::dump_decompressed_data(&decompressed, "failed_decompression.bin")?;
+            return Err(io::Error::new(io::ErrorKind::InvalidData, error_msg));
+        }
+
         if decompressed.len() != decompressed_size as usize {
-            return Err(io::Error::new(io::ErrorKind::InvalidData, "Decompressed size mismatch"));
+            let error_msg = format!("Decompressed size mismatch: expected {}, got {}", decompressed_size, decompressed.len());
+            eprintln!("{}", error_msg);
+            return Err(io::Error::new(io::ErrorKind::InvalidData, error_msg));
         }
 
         Ok(decompressed)
     }
-    
+
     // Unpack the decrypted and decompressed regulation file (BND4)
     fn unpack(bytes: &[u8]) -> Result<BND4, Error>{
         BND4::from_bytes(bytes)
