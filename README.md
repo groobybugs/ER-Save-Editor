@@ -36,3 +36,9 @@ If you encounter any bugs or issues while using the save editor, please report t
 
 ## Credits
 <a href="https://github.com/nordgaren/"><img src="https://github.com/ClayAmore/ER-Save-Editor/assets/131625063/710c9ee6-c3df-4665-be6b-d96bce1ebf46"/></a>
+
+## Disclaimer
+
+This project is not affiliated with FromSoftware or Bandai Namco Entertainment. Elden Ring is a trademark of FromSoftware and Bandai Namco Entertainment. All rights reserved.
+This code is a fork of the original project by [ClayAmore](https://github.com/ClayAmore/ER-Save-Editor) and is intended for add DLC support to the original project. Meanwhile, 
+the original project is updated, so I will try to keep this project updated with the latest DLC features.

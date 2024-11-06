@@ -78,6 +78,77 @@ pub mod books {
         // Frenzied's Cookbook
         FrenziedsCookbook1,
         FrenziedsCookbook2,
+
+        // Forager Brood Cookbook
+        ForagerBroodCookbook1,
+        ForagerBroodCookbook2,
+        ForagerBroodCookbook3,
+        ForagerBroodCookbook4,
+        ForagerBroodCookbook5,
+        ForagerBroodCookbook6,
+        ForagerBroodCookbook7,
+
+        // Igon's Cookbook
+        IgonsCookbook1,
+        IgonsCookbook2,
+
+        // Finger-Weaver's Cookbook
+        FingerWeaversCookbook1,
+        FingerWeaversCookbook2,
+
+        // Greater Potentate's Cookbook
+        GreaterPotentatesCookbook1,
+        GreaterPotentatesCookbook2,
+        GreaterPotentatesCookbook3,
+        GreaterPotentatesCookbook4,
+        GreaterPotentatesCookbook5,
+        GreaterPotentatesCookbook6,
+        GreaterPotentatesCookbook7,
+        GreaterPotentatesCookbook8,
+        GreaterPotentatesCookbook9,
+        GreaterPotentatesCookbook10,
+        GreaterPotentatesCookbook11,
+        GreaterPotentatesCookbook12,
+        GreaterPotentatesCookbook13,
+        GreaterPotentatesCookbook14,
+
+        // Mad Craftsman's Cookbook
+        MadCraftsmansCookbook1,
+        MadCraftsmansCookbook2,
+        MadCraftsmansCookbook3,
+
+        // Ancient Dragon Knight's Cookbook
+        AncientDragonKnightsCookbook1,
+        AncientDragonKnightsCookbook2,
+
+        // St Trina Disciple's Cookbook
+        StTrinaDisciplesCookbook1,
+        StTrinaDisciplesCookbook2,
+        StTrinaDisciplesCookbook3,
+
+        // Fire Knight's Cookbook
+        FireKnightsCookbook1,
+        FireKnightsCookbook2,
+
+        // Loyal Knight's Cookbook
+        LoyalKnightsCookbook,
+
+        // Battlefield Priest's Cookbook
+        BattlefieldPriestsCookbook1,
+        BattlefieldPriestsCookbook2,
+        BattlefieldPriestsCookbook3,
+        BattlefieldPriestsCookbook4,
+
+        // Grave Keeper's Cookbook
+        GraveKeepersCookbook1,
+        GraveKeepersCookbook2,
+
+        // Antiquity Scholar's Cookbook
+        AntiquityScholarsCookbook1,
+        AntiquityScholarsCookbook2,
+
+        // Tibia's Cookbook
+        TibiasCookbook,
     }
 
     pub static COOKBOKS: Lazy<Mutex<HashMap<Cookbook,(u32,&str)>>> = Lazy::new(|| {
@@ -156,6 +227,77 @@ pub mod books {
             // Frenzied's Cookbook
             (Cookbook::FrenziedsCookbook1,(68400,"Frenzied's Cookbook[1]")),
             (Cookbook::FrenziedsCookbook2,(68410,"Frenzied's Cookbook[2]")),
+
+            // Greater Potentate's Cookbook
+            (Cookbook::GreaterPotentatesCookbook1, (68590, "Greater Potentate's Cookbook[1]")),
+            (Cookbook::GreaterPotentatesCookbook2, (68730, "Greater Potentate's Cookbook[2]")),
+            (Cookbook::GreaterPotentatesCookbook3, (68690, "Greater Potentate's Cookbook[3]")),
+            (Cookbook::GreaterPotentatesCookbook4, (68600, "Greater Potentate's Cookbook[4]")),
+            (Cookbook::GreaterPotentatesCookbook5, (68610, "Greater Potentate's Cookbook[5]")),
+            (Cookbook::GreaterPotentatesCookbook6, (68720, "Greater Potentate's Cookbook[6]")),
+            (Cookbook::GreaterPotentatesCookbook7, (68630, "Greater Potentate's Cookbook[7]")),
+            (Cookbook::GreaterPotentatesCookbook8, (68680, "Greater Potentate's Cookbook[8]")),
+            (Cookbook::GreaterPotentatesCookbook9, (68640, "Greater Potentate's Cookbook[9]")),
+            (Cookbook::GreaterPotentatesCookbook10, (68650, "Greater Potentate's Cookbook[10]")),
+            (Cookbook::GreaterPotentatesCookbook11, (68660, "Greater Potentate's Cookbook[11]")),
+            (Cookbook::GreaterPotentatesCookbook12, (68620, "Greater Potentate's Cookbook[12]")),
+            (Cookbook::GreaterPotentatesCookbook13, (68700, "Greater Potentate's Cookbook[13]")),
+            (Cookbook::GreaterPotentatesCookbook14, (68710, "Greater Potentate's Cookbook[14]")),
+
+            // Mad Craftsman's Cookbook
+            (Cookbook::MadCraftsmansCookbook1, (68750, "Mad Craftsman's Cookbook[1]")),
+            (Cookbook::MadCraftsmansCookbook2, (68670, "Mad Craftsman's Cookbook[2]")),
+            (Cookbook::MadCraftsmansCookbook3, (68880, "Mad Craftsman's Cookbook[3]")),
+
+            // Ancient Dragon Knight's Cookbook
+            (Cookbook::AncientDragonKnightsCookbook1, (68740, "Ancient Dragon Knight's Cookbook[1]")),
+            (Cookbook::AncientDragonKnightsCookbook2, (68780, "Ancient Dragon Knight's Cookbook[2]")),
+
+            // St Trina Disciple's Cookbook
+            (Cookbook::StTrinaDisciplesCookbook1, (68760, "St Trina Disciple's Cookbook[1]")),
+            (Cookbook::StTrinaDisciplesCookbook2, (68950, "St Trina Disciple's Cookbook[2]")),
+            (Cookbook::StTrinaDisciplesCookbook3, (68840, "St Trina Disciple's Cookbook[3]")),
+
+            // Forager Brood Cookbook
+            (Cookbook::ForagerBroodCookbook1, (68520, "Forager Brood Cookbook[1]")),
+            (Cookbook::ForagerBroodCookbook2, (68530, "Forager Brood Cookbook[2]")),
+            (Cookbook::ForagerBroodCookbook3, (68540, "Forager Brood Cookbook[3]")),
+            (Cookbook::ForagerBroodCookbook4, (68550, "Forager Brood Cookbook[4]")),
+            (Cookbook::ForagerBroodCookbook5, (68560, "Forager Brood Cookbook[5]")),
+            (Cookbook::ForagerBroodCookbook6, (68510, "Forager Brood Cookbook[6]")),
+            (Cookbook::ForagerBroodCookbook7, (68830, "Forager Brood Cookbook[7]")),
+
+            // Igon's Cookbook
+            (Cookbook::IgonsCookbook1, (68810, "Igon's Cookbook[1]")),
+            (Cookbook::IgonsCookbook2, (68570, "Igon's Cookbook[2]")),
+
+            // Finger-Weaver's Cookbook
+            (Cookbook::FingerWeaversCookbook1, (68920, "Finger-Weaver's Cookbook[1]")),
+            (Cookbook::FingerWeaversCookbook2, (68580, "Finger-Weaver's Cookbook[2]")),
+
+            // Fire Knight's Cookbook
+            (Cookbook::FireKnightsCookbook1, (68770, "Fire Knight's Cookbook[1]")),
+            (Cookbook::FireKnightsCookbook2, (68900, "Fire Knight's Cookbook[2]")),
+
+            // Battlefield Priest's Cookbook
+            (Cookbook::BattlefieldPriestsCookbook1, (68800, "Battlefield Priest's Cookbook[1]")),
+            (Cookbook::BattlefieldPriestsCookbook2, (68820, "Battlefield Priest's Cookbook[2]")),
+            (Cookbook::BattlefieldPriestsCookbook3, (68890, "Battlefield Priest's Cookbook[3]")),
+            (Cookbook::BattlefieldPriestsCookbook4, (68930, "Battlefield Priest's Cookbook[4]")),
+
+            // Grave Keeper's Cookbook
+            (Cookbook::GraveKeepersCookbook1, (68940, "Grave Keeper's Cookbook[1]")),
+            (Cookbook::GraveKeepersCookbook2, (68850, "Grave Keeper's Cookbook[2]")),
+
+            // Antiquity Scholar's Cookbook
+            (Cookbook::AntiquityScholarsCookbook1, (68910, "Antiquity Scholar's Cookbook[1]")),
+            (Cookbook::AntiquityScholarsCookbook2, (68860, "Antiquity Scholar's Cookbook[2]")),
+
+            // Tibia's Cookbook
+            (Cookbook::TibiasCookbook, (68870, "Tibia's Cookbook")),
+
+            // Loyal Knight's Cookbook
+            (Cookbook::LoyalKnightsCookbook, (68790, "Loyal Knight's Cookbook")),
         ]))
     });
 }

@@ -41,7 +41,7 @@ impl InventoryViewModel {
                 let wep_type = WepType::from(weapon_param.unwrap().data.wepType);
                 if wep_type == WepType::Arrow || wep_type == WepType::Greatarrow || wep_type == WepType::Bolt || wep_type == WepType::BallistaBolt  {
                     if item.quantity.is_none() {
-                        self.log.insert(0, format!("Failed! Quantity is 'None'."));
+                        self.log.insert(0, "Failed! Quantity is 'None'.".to_string());
                         return;
                     }
 
@@ -64,20 +64,21 @@ impl InventoryViewModel {
                 match item.quantity {
                     Some(quantity) => {
                         if item.is_key_item {
+                            //self.add_normal_item(item.id, quantity as u32);
                             self.add_key_item(item.id, quantity as u32);
                         }
                         else {
                             self.add_normal_item(item.id, quantity as u32);
                         }
                     },
-                    None => self.log.insert(0, format!("Failed to add item. No quantity provided.")),
+                    None => self.log.insert(0, "Failed to add item. No quantity provided.".to_string()),
                 };
             },
             InventoryItemType::AOW => {
                 self.add_aow(item.id);
             },
             InventoryItemType::None => {
-                self.log.insert(0, format!("Failed! Item type is 'None'."))
+                self.log.insert(0, "Failed! Item type is 'None'.".to_string())
             },
         }
     }
@@ -433,13 +434,10 @@ impl InventoryViewModel {
         // rest of the quantity is transferred over to storage quantity
             quantity - ( if is_already_held {
                 // Calculate allowed remaining quantity in held inventory
-                let free_space = match self.get_free_space_for_item_quantity_in_storage(id, 0, false, true) {
-                    Ok(val) => val,
-                    Err(err) => {
-                        println!("{err}");
-                        0
-                    },
-                };
+                let free_space = self.get_free_space_for_item_quantity_in_storage(id, 0, false, true).unwrap_or_else(|err| {
+                    println!("{err}");
+                    0
+                });
 
                 // If quantity exceedes the free space amount then use max_held instead 
                 let amount = min(quantity, free_space);
@@ -476,13 +474,10 @@ impl InventoryViewModel {
             // If quantity exceedes the maximum storage amount then use max_in_storage instead 
             if is_already_in_box {
                 // Calculate allowed remaining quantity in held inventory
-                let free_space = match self.get_free_space_for_item_quantity_in_storage(id, 1, false, true) {
-                    Ok(val) => val,
-                    Err(err) => {
-                        println!("{err}");
-                        0
-                    },
-                };
+                let free_space = self.get_free_space_for_item_quantity_in_storage(id, 1, false, true).unwrap_or_else(|err| {
+                    println!("{err}");
+                    0
+                });
 
                 // To ensure not to exceed storage item quantity limit
                 let amount = min(free_space, storage_quantity);
