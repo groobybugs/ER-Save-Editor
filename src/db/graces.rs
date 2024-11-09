@@ -390,6 +390,106 @@ pub mod maps {
         PrinceofDeathsThrone,
         RootFacingCliffs,
         TheNamelessEternalCity,
+        
+        // Realm Of Shadow DLC
+        
+        // Belahur Region
+        BelahurTheatreoftheDivineBeast,
+        BelahurTowerSettlement,
+        BelahurStagefront,
+
+        // Enir-Ilim Region
+        EnirIlimGateofDivinity,
+        EnirIlimOuterWall,
+        EnirIlimSpiralRise,
+        EnirIlimCleansingChamberAnteroom,
+        EnirIlimDivineGateFrontStaircase,
+
+        // Shadow Keep Region
+        ShadowKeepMainGate,
+        ShadowKeepMainGatePlaza,
+        ShadowKeepChurchDistrictEntrance,
+        ShadowKeepSunkenChapel,
+        ShadowKeepTreeWorshipSanctum,
+
+        // Storehouse Region
+        StorehouseMessmersDarkChamber,
+        StorehouseFirstFloor,
+        StorehouseFourthFloor,
+        StorehouseSeventhFloor,
+        StorehouseDarkChamberEntrance,
+        StorehouseBackSection,
+        StorehouseLoft,
+        StorehouseWestRampart,
+
+        // Stone Coffin Fissure Region
+        StoneCoffinFissureGardenofDeepPurple,
+        StoneCoffinFissure,
+        StoneCoffinFissureCross,
+        StoneCoffinFissureWaypoint,
+
+        // Midra's Manse Region
+        MidraManseDiscussionChamber,
+        MidraManseManseHall,
+        MidraManseLibrary,
+
+        // Gravesite Plain Region
+        FogRiftCatacombs,
+        RuinedForgeLavaIntake,
+        RivermouthCave,
+        DragonsPit,
+        DragonsPitTerminus,
+        GravesitePlain,
+        EllacRiverCave,
+        PillarPath,
+        BeluratGaol,
+        EllacRiverDownstream,
+
+        // Charo's Hidden Grave Region
+        CharosHiddenGrave,
+        LamentersGaol,
+
+        // Castle Ensis Region
+        CastleEnsis,
+        EnsisMoongazingGrounds,
+
+        // Cerulean Coast Region
+        CeruleanCoast,
+        TheFissure,
+
+        // Abyssal Woods Region
+        AbyssalWoods,
+        ForsakenGraveyard,
+
+        // Jagged Peak Region
+        FootoftheJaggedPeak,
+        JaggedPeakMountainside,
+        JaggedPeakSummit,
+        JaggedPeakRestoftheDreadDragon,
+
+        // Ancient Ruins of Rauh Region
+        AncientRuinsofRauhWest,
+        AncientRuinsofRauhChurchoftheBud,
+        AncientRuinsofRauhEast,
+        RauhBaseAncientRuins,
+        ScorpionRiverCatacombs,
+        TaylewsRuinedForge,
+
+        // Scadu Altus Region
+        ScaduAltusFingerBirthingGrounds,
+        ScaduAltus,
+        BonnyVillage,
+        CastleWateringHole,
+        ReclusesRiverDownstream,
+        DarklightCatacombs,
+        BonnyGaol,
+        RuinedForgeofStarfallPast,
+
+        // Scaduview Region
+        ScaduviewScadutreeBase,
+        Scaduview,
+        ShadowKeepBackGate,
+        ScaduviewHinterland
     }
     
     pub static GRACES: Lazy<Mutex<HashMap<Grace, (MapName, u32, &str)>>> = Lazy::new(|| {
@@ -779,6 +879,106 @@ pub mod maps {
             (Grace::PrinceofDeathsThrone, (MapName::DeeprootDepths, 71230, "Prince of Death's Throne")),
             (Grace::RootFacingCliffs, (MapName::DeeprootDepths, 71231, "Root-Facing Cliffs")),
             (Grace::TheNamelessEternalCity, (MapName::DeeprootDepths, 71234, "The Nameless Eternal City")),
+            
+            // Realm of shadow DLC
+
+            // Belahur Region
+            (Grace::BelahurTheatreoftheDivineBeast, (MapName::RealmOfShadow, 72000, "Belurat: Theatre of the Divine Beast")),
+            (Grace::BelahurTowerSettlement, (MapName::RealmOfShadow, 72001, "Belurat: Belurat, Tower Settlement")),
+            (Grace::BelahurStagefront, (MapName::RealmOfShadow, 72003, "Belurat: Stagefront")),
+
+            // Enir-Ilim Region
+            (Grace::EnirIlimGateofDivinity, (MapName::RealmOfShadow, 72010, "Enir-Ilim: Gate of Divinity")),
+            (Grace::EnirIlimOuterWall, (MapName::RealmOfShadow, 72012, "Enir-Ilim: Outer Wall")),
+            (Grace::EnirIlimSpiralRise, (MapName::RealmOfShadow, 72014, "Enir-Ilim: Spiral Rise")),
+            (Grace::EnirIlimCleansingChamberAnteroom, (MapName::RealmOfShadow, 72015, "Enir-Ilim: Cleansing Chamber Anteroom")),
+            (Grace::EnirIlimDivineGateFrontStaircase, (MapName::RealmOfShadow, 72016, "Enir-Ilim: Divine Gate Front Staircase")),
+            
+            // Shadow Keep Region
+            (Grace::ShadowKeepMainGate, (MapName::RealmOfShadow, 72102, "Shadow Keep: Main Gate")),
+            (Grace::ShadowKeepMainGatePlaza, (MapName::RealmOfShadow, 72101, "Shadow Keep: Main Gate Plaza")),
+            (Grace::ShadowKeepChurchDistrictEntrance, (MapName::RealmOfShadow, 72106, "Shadow Keep: Church District Entrance")),
+            (Grace::ShadowKeepSunkenChapel, (MapName::RealmOfShadow, 72107, "Shadow Keep: Sunken Chapel")),
+            (Grace::ShadowKeepTreeWorshipSanctum, (MapName::RealmOfShadow, 72108, "Shadow Keep: Tree-Worship Sanctum")),
+            
+            // Storehouse Region
+            (Grace::StorehouseMessmersDarkChamber, (MapName::RealmOfShadow, 72110, "Storehouse: Messmer's Dark Chamber")),
+            (Grace::StorehouseFirstFloor, (MapName::RealmOfShadow, 72111, "Storehouse: First Floor")),
+            (Grace::StorehouseFourthFloor, (MapName::RealmOfShadow, 72112, "Storehouse: Fourth Floor")),
+            (Grace::StorehouseSeventhFloor, (MapName::RealmOfShadow, 72113, "Storehouse: Seventh Floor")),
+            (Grace::StorehouseDarkChamberEntrance, (MapName::RealmOfShadow, 72114, "Storehouse: Dark Chamber Entrance")),
+            (Grace::StorehouseBackSection, (MapName::RealmOfShadow, 72116, "Storehouse: Back Section")),
+            (Grace::StorehouseLoft, (MapName::RealmOfShadow, 72117, "Storehouse: Loft")),
+            (Grace::StorehouseWestRampart, (MapName::RealmOfShadow, 72120, "Storehouse: West Rampart")),
+            
+            // Stone Coffin Fissure Region
+            (Grace::StoneCoffinFissureGardenofDeepPurple, (MapName::RealmOfShadow, 72200, "Stone Coffin Fissure: Garden of Deep Purple")),
+            (Grace::StoneCoffinFissure, (MapName::RealmOfShadow, 72201, "Stone Coffin Fissure: Stone Coffin Fissure")),
+            (Grace::StoneCoffinFissureCross, (MapName::RealmOfShadow, 72202, "Stone Coffin Fissure: Fissure Cross")),
+            (Grace::StoneCoffinFissureWaypoint, (MapName::RealmOfShadow, 72203, "Stone Coffin Fissure: Fissure Waypoint")),
+            
+            // Midra's Manse Region
+            (Grace::MidraManseDiscussionChamber, (MapName::RealmOfShadow, 72800, "Midra's Manse: Discussion Chamber")),
+            (Grace::MidraManseManseHall, (MapName::RealmOfShadow, 72801, "Midra's Manse: Manse Hall")),
+            (Grace::MidraManseLibrary, (MapName::RealmOfShadow, 72802, "Midra's Manse: Midra's Library")),
+            
+            // Gravesite Plain Region
+            (Grace::FogRiftCatacombs, (MapName::RealmOfShadow, 74000, "Gravesite Plain: Fog Rift Catacombs")),
+            (Grace::RuinedForgeLavaIntake, (MapName::RealmOfShadow, 74200, "Gravesite Plain: Ruined Forge Lava Intake")),
+            (Grace::RivermouthCave, (MapName::RealmOfShadow, 74300, "Gravesite Plain: Rivermouth Cave")),
+            (Grace::DragonsPit, (MapName::RealmOfShadow, 74301, "Gravesite Plain: Dragon's Pit")),
+            (Grace::DragonsPitTerminus, (MapName::RealmOfShadow, 74351, "Gravesite Plain: Dragon's Pit Terminus")),
+            (Grace::GravesitePlain, (MapName::RealmOfShadow, 76800, "Gravesite Plain: Gravesite Plain")),
+            (Grace::EllacRiverCave, (MapName::RealmOfShadow, 76812, "Gravesite Plain: Ellac River Cave")),
+            (Grace::PillarPath, (MapName::RealmOfShadow, 76810, "Gravesite Plain: Pillar Path")),
+            (Grace::BeluratGaol, (MapName::RealmOfShadow, 74100, "Gravesite Plain: Belurat Gaol")),
+            (Grace::EllacRiverDownstream, (MapName::RealmOfShadow, 76830, "Gravesite Plain: Ellac River Downstream")),
+            
+            // Charo's Hidden Grave Region
+            (Grace::CharosHiddenGrave, (MapName::RealmOfShadow, 76841, "Charo's Hidden Grave: Charo's Hidden Grave")),
+            (Grace::LamentersGaol, (MapName::RealmOfShadow, 74102, "Charo's Hidden Grave: Lamenter's Gaol")),
+            
+            // Castle Ensis Region
+            (Grace::CastleEnsis, (MapName::RealmOfShadow, 76821, "Castle Ensis: Castle Ensis")),
+            (Grace::EnsisMoongazingGrounds, (MapName::RealmOfShadow, 76823, "Castle Ensis: Ensis Moongazing Grounds")),
+            
+            // Cerulean Coast Region
+            (Grace::CeruleanCoast, (MapName::RealmOfShadow, 76831, "Cerulean Coast: Cerulean Coast")),
+            (Grace::TheFissure, (MapName::RealmOfShadow, 76833, "Cerulean Coast: The Fissure")),
+            
+            // Abyssal Woods Region
+            (Grace::AbyssalWoods, (MapName::RealmOfShadow, 76860, "Abyssal Woods: Abyssal Woods")),
+            (Grace::ForsakenGraveyard, (MapName::RealmOfShadow, 76862, "Abyssal Woods: Forsaken Graveyard")),
+            
+            // Jagged Peak Region
+            (Grace::FootoftheJaggedPeak, (MapName::RealmOfShadow, 76840, "Foot of the Jagged Peak")),
+            (Grace::JaggedPeakMountainside, (MapName::RealmOfShadow, 76850, "Jagged Peak: Mountainside")),
+            (Grace::JaggedPeakSummit, (MapName::RealmOfShadow, 76852, "Jagged Peak: Summit")),
+            (Grace::JaggedPeakRestoftheDreadDragon, (MapName::RealmOfShadow, 76853, "Jagged Peak: Rest of the Dread Dragon")),
+            
+            // Ancient Ruins of Rauh Region
+            (Grace::AncientRuinsofRauhWest, (MapName::RealmOfShadow, 76942, "Ancient Ruins of Rauh: West")),
+            (Grace::AncientRuinsofRauhChurchoftheBud, (MapName::RealmOfShadow, 76945, "Ancient Ruins of Rauh: Church of the Bud")),
+            (Grace::AncientRuinsofRauhEast, (MapName::RealmOfShadow, 76940, "Ancient Ruins of Rauh: East")),
+            (Grace::RauhBaseAncientRuins, (MapName::RealmOfShadow, 76912, "Rauh Base: Ancient Ruins")),
+            (Grace::ScorpionRiverCatacombs, (MapName::RealmOfShadow, 74001, "Rauh Base: Scorpion River Catacombs")),
+            (Grace::TaylewsRuinedForge, (MapName::RealmOfShadow, 74203, "Rauh Base: Taylew's Ruined Forge")),
+            
+            // Scadu Altus Region
+            (Grace::ScaduAltusFingerBirthingGrounds, (MapName::RealmOfShadow, 72500, "Scadu Altus: Finger Birthing Grounds")),
+            (Grace::ScaduAltus, (MapName::RealmOfShadow, 76900, "Scadu Altus: Scadu Altus")),
+            (Grace::BonnyVillage, (MapName::RealmOfShadow, 76903, "Scadu Altus: Bonny Village")),
+            (Grace::CastleWateringHole, (MapName::RealmOfShadow, 76916, "Scadu Altus: Castle Watering Hole")),
+            (Grace::ReclusesRiverDownstream, (MapName::RealmOfShadow, 76918, "Scadu Altus: Recluses' River Downstream")),
+            (Grace::DarklightCatacombs, (MapName::RealmOfShadow, 74002, "Scadu Altus: Darklight Catacombs")),
+            (Grace::BonnyGaol, (MapName::RealmOfShadow, 74101, "Scadu Altus: Bonny Gaol")),
+            (Grace::RuinedForgeofStarfallPast, (MapName::RealmOfShadow, 74202, "Scadu Altus: Ruined Forge of Starfall Past")),
+            
+            // Scaduview Region
+            (Grace::ScaduviewScadutreeBase, (MapName::RealmOfShadow, 76960, "Scaduview: Scadutree Base")),
+            (Grace::Scaduview, (MapName::RealmOfShadow, 76930, "Scaduview: Scaduview")),
+            (Grace::ShadowKeepBackGate, (MapName::RealmOfShadow, 76931, "Scaduview: Shadow Keep, Back Gate")),
+            (Grace::ScaduviewHinterland, (MapName::RealmOfShadow, 76935, "Scaduview: Hinterland")),
         ]))
     });
 }

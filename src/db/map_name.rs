@@ -29,6 +29,7 @@ pub mod map_name {
         MountaintopsOfTheGiants,
         MtGelmir,
         NokronEternalCity,
+        RealmOfShadow, // Realm of shadow DLC
         RoundtableHold,
         RuinStrewnPrecipice,
         SiofraRiver,
@@ -80,6 +81,7 @@ pub mod map_name {
             (MapName::SiofraRiver, "Siofra River"),
             (MapName::DeeprootDepths, "Deeproot Depths"),
             (MapName::CrumblingFarumAzula, "Crumbling Farum Azula"),
+            (MapName::RealmOfShadow, "Realm of Shadow"),
         ]))
     });
 }

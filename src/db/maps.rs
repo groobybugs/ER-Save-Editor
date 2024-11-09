@@ -32,6 +32,12 @@ pub mod maps {
         StormfootCatacombs,
         FringefolkHeroCave,
         ShowUnderground,
+        GravesitePlain,
+        ScaduAltus,
+        SouthernShore,
+        RauhRuins,
+        Abyss,
+        ShowDLCMap,
     }
 
     pub static MAPS: Lazy<Mutex<HashMap<Map,(u32, &str)>>> = Lazy::new(|| {
@@ -64,6 +70,12 @@ pub mod maps {
             (Map::StormfootCatacombs,(62103,"Stormfoot Catacombs")),
             (Map::FringefolkHeroCave,(62102,"Fringefolk Hero's Cave")),
             (Map::ShowUnderground,(82001,"Show underground")),
+            (Map::GravesitePlain,(62080,"Gravesite Plain")),
+            (Map::ScaduAltus,(62081,"Scadu Altus")),
+            (Map::SouthernShore,(62082,"Southern Shore")),
+            (Map::RauhRuins,(62083,"Rauh Ruins")),
+            (Map::Abyss,(62084,"Abyss")),
+            (Map::ShowDLCMap,(82002,"Show DLC map")),
         ]))
     });
 }

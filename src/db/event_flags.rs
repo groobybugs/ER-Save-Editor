@@ -36,6 +36,11 @@ pub mod event_flags {
             (62063,(0x5e3,0)),
             (62064,(0x5e4,7)),
             (62065,(0x5e4,6)),
+            (62080,(0x5e6,7)),
+            (62081,(0x5e6,6)),
+            (62082,(0x5e6,5)),
+            (62083,(0x5e6,4)),
+            (62084,(0x5e6,3)),
             (2000,(0xfa,7)),
             (2100,(0x106,3)),
             (200,(0x19,7)),
@@ -129,6 +134,40 @@ pub mod event_flags {
             (71800,(0xaa5,7)),
             (71801,(0xaa5,6)),
             (71900,(0xab1,3)),
+            (72000,(0xabe,7)), // Belurat - Theatre
+            (72001,(0xabe,6)), // Belurat - Tower Settlement
+            (72002,(0xabe,5)), // Belurat - Private Altar
+            (72003,(0xabe,4)), // Belurat - Stagefront
+            (72010,(0xabf,5)), // Enir-Ilim - Gate of Divinity
+            (72012,(0xabf,3)), // Enir-Ilim - Outer Wall
+            (72013,(0xabf,2)), // Enir-Ilim - First Rise
+            (72014,(0xabf,1)), // Enir-Ilim - Spiral Rise                                                                                    f
+            (72015,(0xabf,0)), // Enir-Ilim - Cleansing Chamber
+            (72016,(0xac0,7)), // Enir-Ilim - Gate Front
+            (72101,(0xaca,2)), // Shadow Keep - Plaza
+            (72102,(0xaca,1)), // Shadow Keep - Main Gate
+            (72106,(0xacb,5)), // Shadow Keep - Church District
+            (72107,(0xacb,4)), // Shadow Keep - Sunken Chapel
+            (72108,(0xacb,3)), // Shadow Keep - Tree Passage
+            (72109,(0xacb,2)), // Shadow Keep - Tree Sanctum
+            (72110,(0xacb,1)), // Storehouse - Dark Chamber
+            (72111,(0xacb,0)), // Storehouse - First Floor
+            (72112,(0xacc,7)), // Storehouse - Fourth Floor
+            (72113,(0xacc,6)), // Storehouse - Seventh Floor
+            (72114,(0xacc,5)), // Storehouse - Chamber Entrance
+            (72116,(0xacc,4)), // Storehouse - Back Section
+            (72117,(0xacc,3)), // Storehouse - Loft
+            (72120,(0xacd,7)), // Storehouse - West Rampart
+            (72200,(0xad7,7)), // Stone Coffin - Garden
+            (72201,(0xad7,6)), // Stone Coffin - Fissure
+            (72202,(0xad7,5)), // Stone Coffin - Cross
+            (72203,(0xad7,4)), // Stone Coffin - Waypoint
+            (72204,(0xad7,3)), // Stone Coffin - Depths
+            (72500,(0xafc,3)), // Scadu Altus - Finger Grounds
+            (72800,(0xb22,7)), // Midra's Manse - Discussion
+            (72801,(0xb22,6)), // Midra's Manse - Hall
+            (72802,(0xb22,5)), // Midra's Manse - Library
+            (72803,(0xb22,4)), // Midra's Manse - Second Floor
             (73000,(0xb3b,7)),
             (73001,(0xb3b,6)),
             (73002,(0xb3b,5)),
@@ -199,6 +238,19 @@ pub mod event_flags {
             (73900,(0xbab,3)),
             (73901,(0xbab,2)),
             (73902,(0xbab,1)),
+            (74000,(0xb21,4)), // Fog Rift Catacombs
+            (74001,(0xb21,3)), // Scorpion River Catacombs
+            (74002,(0xb21,2)), // Darklight Catacombs
+            (74100,(0xb2d,0)), // Belurat Gaol
+            (74101,(0xb2e,7)), // Bonny Gaol
+            (74102,(0xb2e,6)), // Lamenter's Gaol
+            (74200,(0xb3a,4)), // Ruined Forge Lava
+            (74201,(0xb3a,3)), // Dragon's Pit
+            (74202,(0xb3a,2)), // Ruined Forge Starfall
+            (74203,(0xb3a,1)), // Taylew's Forge
+            (74300,(0xb46,0)), // Rivermouth Cave
+            (74301,(0xb47,7)), // Dragon's Pit
+            (74351,(0xb4d,5)), // Dragon's Pit Terminus
             (76100,(0xcbe,3)),
             (76101,(0xcbe,2)),
             (76102,(0xcbe,1)),
@@ -353,6 +405,66 @@ pub mod event_flags {
             (76551,(0xcf6,0)),
             (76652,(0xd03,3)),
             (76653,(0xd03,2)),
+            (76800,(0xc7f,4)), // Gravesite Plain
+            (76801,(0xc7f,3)), // Scorched Ruins
+            (76802,(0xc7f,2)), // Three-Path Cross
+            (76803,(0xc7f,1)), // Main Gate Cross
+            (76804,(0xc7f,0)), // Cliffroad Terminus
+            (76805,(0xc80,7)), // Greatbridge North
+            (76810,(0xc80,2)), // Pillar Path Cross
+            (76811,(0xc80,1)), // Pillar Path Waypoint
+            (76812,(0xc80,0)), // Ellac River Cave
+            (76813,(0xc81,7)), // Castle Front
+            (76821,(0xc82,7)), // Castle Ensis
+            (76822,(0xc82,6)),
+            (76823,(0xc82,5)), // Ensis Moongazing Grounds
+            (76830,(0xc83,6)), // Ellac River Downstream
+            (76831,(0xc83,5)), // Cerulean Coast
+            (76832,(0xc83,4)), // Cerulean Coast West
+            (76833,(0xc83,3)), // The Fissure
+            (76834,(0xc83,2)), // Finger Ruins
+            (76835,(0xc83,1)), // Cerulean Coast Cross
+            (76840,(0xc84,4)), // Dragon Communion
+            (76841,(0xc84,3)), // Charo's Hidden Grave
+            (76850,(0xc85,2)), // Foot of Jagged Peak
+            (76851,(0xc85,1)), // Peak Mountainside
+            (76852,(0xc85,0)), // Peak Summit
+            (76853,(0xc86,7)), // Rest of Dread Dragon
+            (76860,(0xc86,0)), // Abyssal Woods
+            (76861,(0xc87,7)), // Divided Falls
+            (76862,(0xc87,6)), // Forsaken Graveyard
+            (76863,(0xc87,5)), // Woodland Trail
+            (76864,(0xc87,4)), // Church Ruins
+            (76900,(0xc8b,0)), // Highroad Cross
+            (76902,(0xc8c,6)), // Moorth Ruins
+            (76903,(0xc8c,5)), // Bonny Village
+            (76904,(0xc8c,4)), // Bridge to Village
+            (76905,(0xc8c,3)), // Church District Highroad
+            (76906,(0xc8c,2)), // Cathedral Manus
+            (76907,(0xc8c,1)), // Scadu Altus West
+            (76908,(0xc8c,0)), // Moorth Highway South
+            (76909,(0xc8d,7)), // Fort of Reprimand
+            (76910,(0xc8d,6)), // Behind Fort
+            (76911,(0xc8d,5)), // Scaduview Cross
+            (76912,(0xc8d,4)), // Ancient Ruins Base
+            (76913,(0xc8d,3)), // Temple Town Ruins
+            (76914,(0xc8d,2)), // Ravine North
+            (76915,(0xc8d,1)), // Castle Watering Hole
+            (76916,(0xc8d,0)), // Recluses River Up
+            (76917,(0xc8e,7)), 
+            (76918,(0xc8e,6)), // Recluses River Down
+            (76930,(0xc8f,2)), // Scaduview
+            (76931,(0xc8f,1)), // Shadow Keep Back
+            (76935,(0xc90,5)), // Hinterland
+            (76936,(0xc90,4)), // Fingerstone Hill
+            (76937,(0xc90,3)), // Hinterland Bridge
+            (76940,(0xc90,0)), 
+            (76941,(0xc91,7)), 
+            (76942,(0xc91,6)), 
+            (76943,(0xc91,5)), 
+            (76944,(0xc91,4)), 
+            (76945,(0xc91,3)), 
+            (76960,(0xc93,4)) , // Scadutree Base
             (9410,(0x498,5)),
             (9411,(0x498,4)),
             (9413,(0x498,2)),
@@ -945,6 +1057,7 @@ pub mod event_flags {
             (62103,(0x5e8,0)),
             (62102,(0x5e8,1)),
             (82001,(0xfa0,6)),
+            (82002,(0xfa0,5)),
             (65600,(0x79e,7)),
             (65610,(0x79f,5)),
             (65620,(0x7a0,3)),
