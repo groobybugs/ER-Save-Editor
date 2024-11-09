@@ -218,6 +218,104 @@ pub mod regions {
         WyndhamCatacombs,
         YeloughAnixTunnel,
         ZamorRuins,
+        
+        // Belurat Region
+        BelahurTheatreDivineBeast,
+        BelahurTowerSettlement,
+        BelahurStagefront,
+
+        // Enir-Ilim Region
+        EnirIlimGateofDivinity,
+        EnirIlimOuterWall,
+        EnirIlimSpiralRise,
+        EnirIlimCleansingChamberAnteroom,
+        EnirIlimDivineGateFrontStaircase,
+
+        // Shadow Keep Region
+        ShadowKeepMainGate,
+        ShadowKeepMainGatePlaza,
+        ShadowKeepChurchDistrictEntrance,
+        ShadowKeepSunkenChapel,
+        ShadowKeepTreeWorshipSanctum,
+
+        // Storehouse Region
+        StorehouseMessmersDarkChamber,
+        StorehouseFirstFloor,
+        StorehouseFourthFloor,
+        StorehouseSeventhFloor,
+        StorehouseDarkChamberEntrance,
+        StorehouseBackSection,
+        StorehouseLoft,
+        StorehouseWestRampart,
+
+        // Stone Coffin Fissure Region
+        StoneCoffinFissureGardenofDeepPurple,
+        StoneCoffinFissure,
+        StoneCoffinFissureCross,
+        StoneCoffinFissureWaypointAndDepths,
+
+        // Midra's Manse Region
+        MidraManseDiscussionChamber,
+        MidraManseManseHall,
+        MidraManseLibrary,
+
+        // Gravesite Plain Region
+        FogRiftCatacombs,
+        RuinedForgeLavaIntake,
+        RivermouthCave,
+        DragonsPit,
+        DragonsPitTerminus,
+        GravesitePlain,
+        EllacRiverCave,
+        PillarPath,
+        BeluratGaol,
+        EllacRiverDownstream,
+
+        // Charo's Hidden Grave Region
+        CharosHiddenGrave,
+        LamentersGaol,
+
+        // Castle Ensis Region
+        CastleEnsis,
+        EnsisMoongazingGrounds,
+
+        // Cerulean Coast Region
+        CeruleanCoast,
+        TheFissure,
+
+        // Abyssal Woods Region
+        AbyssalWoods,
+        ForsakenGraveyard,
+
+        // Jagged Peak Region
+        FootoftheJaggedPeak,
+        JaggedPeakMountainside,
+        JaggedPeakSummit,
+        JaggedPeakRestoftheDreadDragon,
+
+        // Ancient Ruins of Rauh Region
+        AncientRuinsofRauhWest,
+        AncientRuinsofRauhChurchoftheBud,
+        AncientRuinsofRauhEast,
+        RauhBaseAncientRuins,
+        ScorpionRiverCatacombs,
+        TaylewsRuinedForge,
+
+        // Scadu Altus Region
+        ScaduAltusFingerBirthingGrounds,
+        ScaduAltus,
+        BonnyVillage,
+        CastleWateringHole,
+        ReclusesRiverDownstream,
+        DarklightCatacombs,
+        BonnyGaol,
+        RuinedForgeofStarfallPast,
+
+        // Scaduview Region
+        ScaduviewScadutreeBase,
+        Scaduview,
+        ShadowKeepBackGate,
+        ScaduviewHinterland,
     }
 
     pub static ID_TO_REGION: Lazy<Mutex<HashMap<u32,Region>>> = Lazy::new(|| {
@@ -432,6 +530,105 @@ pub mod regions {
             (1300020,Region::DragonlordPlacidusax),
             (1300006,Region::BesidetheGreatBridge),
             (1300000,Region::MalikeththeBlackBlade),
+            // Belurat Region
+            (2000000, Region::BelahurTheatreDivineBeast),
+            (2000001, Region::BelahurTowerSettlement),
+            (2000002, Region::BelahurStagefront),
+
+            // Enir-Ilim Region
+            (2001000, Region::EnirIlimGateofDivinity),
+            (2001001, Region::EnirIlimOuterWall),
+            (2001004, Region::EnirIlimSpiralRise),
+            (2001005, Region::EnirIlimCleansingChamberAnteroom),
+            (2001007, Region::EnirIlimDivineGateFrontStaircase),
+
+            // Shadow Keep Region
+            (6900000, Region::ShadowKeepMainGate),
+            (6900010, Region::ShadowKeepMainGatePlaza),
+            (2100011, Region::ShadowKeepChurchDistrictEntrance),
+            (2100014, Region::ShadowKeepSunkenChapel),
+            (2100015, Region::ShadowKeepTreeWorshipSanctum),
+
+            // Storehouse Region
+            (2101000, Region::StorehouseMessmersDarkChamber),
+            (2101001, Region::StorehouseFirstFloor),
+            (2101003, Region::StorehouseFourthFloor),
+            (2101004, Region::StorehouseSeventhFloor),
+            (2101006, Region::StorehouseDarkChamberEntrance),
+            (2101011, Region::StorehouseBackSection),
+            (2101012, Region::StorehouseLoft),
+            (2102001, Region::StorehouseWestRampart),
+
+            // Stone Coffin Fissure Region  
+            (2200000, Region::StoneCoffinFissureGardenofDeepPurple),
+            (2200001, Region::StoneCoffinFissure),
+            (2200002, Region::StoneCoffinFissureCross),
+            (2200004, Region::StoneCoffinFissureWaypointAndDepths),
+
+            // Midra's Manse Region
+            (6860010, Region::MidraManseDiscussionChamber),
+            (6860001, Region::MidraManseManseHall),
+            (6860004, Region::MidraManseLibrary),
+
+            // Gravesite Plain Region
+            (4000001, Region::FogRiftCatacombs),
+            (4200090, Region::RuinedForgeLavaIntake),
+            (4300001, Region::RivermouthCave),
+            (4200090, Region::DragonsPit),
+            (4301090, Region::DragonsPitTerminus),
+            (6800000, Region::GravesitePlain),
+            (6810001, Region::EllacRiverCave),
+            (6810000, Region::PillarPath),
+            (4100001, Region::BeluratGaol),
+            (6810090, Region::EllacRiverDownstream),
+
+            // Charo's Hidden Grave Region
+            (6840000, Region::CharosHiddenGrave),
+            (4102001, Region::LamentersGaol),
+
+            // Castle Ensis Region
+            (6820000, Region::CastleEnsis),
+            (6820010, Region::EnsisMoongazingGrounds),
+
+            // Cerulean Coast Region
+            (6830000, Region::CeruleanCoast),
+            (6830002, Region::TheFissure),
+
+            // Abyssal Woods Region
+            (6860000, Region::AbyssalWoods),
+            (4002000, Region::ForsakenGraveyard),
+
+            // Jagged Peak Region
+            (6841000, Region::FootoftheJaggedPeak),
+            (6850000, Region::JaggedPeakMountainside),
+            (6850001, Region::JaggedPeakSummit),
+            (6850010, Region::JaggedPeakRestoftheDreadDragon),
+
+            // Ancient Ruins of Rauh Region
+            (6941000, Region::AncientRuinsofRauhWest),
+            (6941010, Region::AncientRuinsofRauhChurchoftheBud),
+            (6940000, Region::AncientRuinsofRauhEast),
+            
+            // Rauh Base
+            (6901000, Region::RauhBaseAncientRuins),
+            (4001001, Region::ScorpionRiverCatacombs),
+            (4203090, Region::TaylewsRuinedForge),
+
+            // Scadu Altus Region
+            (2500000, Region::ScaduAltusFingerBirthingGrounds),
+            (6900000, Region::ScaduAltus),
+            (6902000, Region::BonnyVillage),
+            (6903090, Region::CastleWateringHole),
+            (6903000, Region::ReclusesRiverDownstream),
+            (4002001, Region::DarklightCatacombs),
+            (4101001, Region::BonnyGaol),
+            (4202090, Region::RuinedForgeofStarfallPast),
+
+            // Scaduview Region
+            (2100010, Region::ScaduviewScadutreeBase),
+            (2101010, Region::Scaduview),
+            (2101013, Region::ShadowKeepBackGate),
+            (6930000, Region::ScaduviewHinterland),
         ]))
     });
 
@@ -684,6 +881,104 @@ pub mod regions {
             (Region::DragonlordPlacidusax, (1300020,"Dragonlord Placidusax", MapName::CrumblingFarumAzula, false, false, true)),
             (Region::BesidetheGreatBridge, (1300006,"Beside the Great Bridge", MapName::CrumblingFarumAzula, false, false, true)),
             (Region::MalikeththeBlackBlade, (1300000,"Maliketh, the Black Blade", MapName::CrumblingFarumAzula, false, false, true)),
+
+            // Belurat Region
+            (Region::BelahurTheatreDivineBeast, (2000000, "Theatre of the Divine Beast", MapName::RealmOfShadowBelurat, false, false, true)),
+            (Region::BelahurTowerSettlement, (2000001, "Belurat, Tower Settlement", MapName::RealmOfShadowBelurat, false, false, false)),
+            (Region::BelahurStagefront, (2000002, "Stagefront", MapName::RealmOfShadowBelurat, false, false, false)),
+
+            // Enir-Ilim Region
+            (Region::EnirIlimGateofDivinity, (2001000, "Gate of Divinity", MapName::RealmOfShadowEnirIlim, false, false, true)),
+            (Region::EnirIlimOuterWall, (2001001, "Outer Wall", MapName::RealmOfShadowEnirIlim, false, false, false)),
+            (Region::EnirIlimSpiralRise, (2001004, "Spiral Rise", MapName::RealmOfShadowEnirIlim, false, false, false)),
+            (Region::EnirIlimCleansingChamberAnteroom, (2001005, "Cleansing Chamber Anteroom", MapName::RealmOfShadowEnirIlim, false, false, false)),
+            (Region::EnirIlimDivineGateFrontStaircase, (2001007, "Divine Gate Front Staircase", MapName::RealmOfShadowEnirIlim, false, false, false)),
+
+            // Shadow Keep Region
+            (Region::ShadowKeepMainGate, (6900000, "Main Gate", MapName::RealmOfShadowShadowKeep, false, false, false)),
+            (Region::ShadowKeepMainGatePlaza, (6900010, "Main Gate Plaza", MapName::RealmOfShadowShadowKeep, false, false, true)),
+            (Region::ShadowKeepChurchDistrictEntrance, (2100011, "Church District Entrance", MapName::RealmOfShadowShadowKeep, false, false, false)),
+            (Region::ShadowKeepSunkenChapel, (2100014, "Sunken Chapel", MapName::RealmOfShadowShadowKeep, false, false, false)),
+            (Region::ShadowKeepTreeWorshipSanctum, (2100015, "Tree-Worship Sanctum", MapName::RealmOfShadowShadowKeep, false, false, false)),
+
+            // Storehouse Region
+            (Region::StorehouseMessmersDarkChamber, (2101000, "Messmer's Dark Chamber", MapName::RealmOfShadowStorehouse, false, false, true)),
+            (Region::StorehouseFirstFloor, (2101001, "First Floor", MapName::RealmOfShadowStorehouse, false, false, false)),
+            (Region::StorehouseFourthFloor, (2101003, "Fourth Floor", MapName::RealmOfShadowStorehouse, false, false, false)),
+            (Region::StorehouseSeventhFloor, (2101004, "Seventh Floor", MapName::RealmOfShadowStorehouse, false, false, false)),
+            (Region::StorehouseDarkChamberEntrance, (2101006, "Dark Chamber Entrance", MapName::RealmOfShadowStorehouse, false, false, false)),
+            (Region::StorehouseBackSection, (2101011, "Back Section", MapName::RealmOfShadowStorehouse, false, false, false)),
+            (Region::StorehouseLoft, (2101012, "Loft", MapName::RealmOfShadowStorehouse, false, false, false)),
+            (Region::StorehouseWestRampart, (2102001, "West Rampart", MapName::RealmOfShadowStorehouse, false, false, false)),
+
+            // Stone Coffin Fissure Region
+            (Region::StoneCoffinFissureGardenofDeepPurple, (2200000, "Garden of Deep Purple", MapName::RealmOfShadowStoneCoffinFissure, false, false, true)),
+            (Region::StoneCoffinFissure, (2200001, "Stone Coffin Fissure", MapName::RealmOfShadowStoneCoffinFissure, true, false, false)),
+            (Region::StoneCoffinFissureCross, (2200002, "Fissure Cross", MapName::RealmOfShadowStoneCoffinFissure, true, false, false)),
+            (Region::StoneCoffinFissureWaypointAndDepths, (2200004, "Fissure Waypoint & Depths", MapName::RealmOfShadowStoneCoffinFissure, true, false, false)),
+
+            // Midra's Manse Region
+            (Region::MidraManseDiscussionChamber, (6860010, "Discussion Chamber", MapName::RealmOfShadowMidrasManse, false, false, true)),
+            (Region::MidraManseManseHall, (6860001, "Manse Hall", MapName::RealmOfShadowMidrasManse, false, false, false)),
+            (Region::MidraManseLibrary, (6860004, "Midra's Library", MapName::RealmOfShadowMidrasManse, false, false, false)),
+
+            // Gravesite Plain Region
+            (Region::FogRiftCatacombs, (4000001, "Fog Rift Catacombs", MapName::RealmOfShadowGravesitePlain, false, true, false)),
+            (Region::RuinedForgeLavaIntake, (4200090, "Ruined Forge Lava Intake", MapName::RealmOfShadowGravesitePlain, false, true, false)),
+            (Region::RivermouthCave, (4300001, "Rivermouth Cave", MapName::RealmOfShadowGravesitePlain, false, true, false)),
+            (Region::DragonsPit, (4200090, "Dragon's Pit", MapName::RealmOfShadowGravesitePlain, false, true, false)),
+            (Region::DragonsPitTerminus, (4301090, "Dragon's Pit Terminus", MapName::RealmOfShadowGravesitePlain, false, false, false)),
+            (Region::GravesitePlain, (6800000, "Gravesite Plain", MapName::RealmOfShadowGravesitePlain, true, false, false)),
+            (Region::EllacRiverCave, (6810001, "Ellac River Cave", MapName::RealmOfShadowGravesitePlain, true, false, false)),
+            (Region::PillarPath, (6810000, "Pillar Path", MapName::RealmOfShadowGravesitePlain, true, false, false)),
+            (Region::BeluratGaol, (4100001, "Belurat Gaol", MapName::RealmOfShadowGravesitePlain, false, true, false)),
+            (Region::EllacRiverDownstream, (6810090, "Ellac River Downstream", MapName::RealmOfShadowGravesitePlain, true, false, false)),
+
+            // Charo's Hidden Grave Region
+            (Region::CharosHiddenGrave, (6840000, "Charo's Hidden Grave", MapName::RealmOfShadowCharosGrave, true, false, false)),
+            (Region::LamentersGaol, (4102001, "Lamenter's Gaol", MapName::RealmOfShadowCharosGrave, false, true, false)),
+
+            // Castle Ensis Region
+            (Region::CastleEnsis, (6820000, "Castle Ensis", MapName::RealmOfShadowCastleEnsis, false, false, false)),
+            (Region::EnsisMoongazingGrounds, (6820010, "Ensis Moongazing Grounds", MapName::RealmOfShadowCastleEnsis, false, false, true)),
+
+            // Cerulean Coast Region
+            (Region::CeruleanCoast, (6830000, "Cerulean Coast", MapName::RealmOfShadowCeruleanCoast, true, false, false)),
+            (Region::TheFissure, (6830002, "The Fissure", MapName::RealmOfShadowCeruleanCoast, true, false, false)),
+
+            // Abyssal Woods Region
+            (Region::AbyssalWoods, (6860000, "Abyssal Woods", MapName::RealmOfShadowAbyssalWoods, true, false, false)),
+            (Region::ForsakenGraveyard, (4002000, "Forsaken Graveyard", MapName::RealmOfShadowAbyssalWoods, false, false, true)),
+
+            // Jagged Peak Region
+            (Region::FootoftheJaggedPeak, (6841000, "Foot of the Jagged Peak", MapName::RealmOfShadowJaggedPeak, true, false, false)),
+            (Region::JaggedPeakMountainside, (6850000, "Mountainside", MapName::RealmOfShadowJaggedPeak, true, false, false)),
+            (Region::JaggedPeakSummit, (6850001, "Summit", MapName::RealmOfShadowJaggedPeak, true, false, false)),
+            (Region::JaggedPeakRestoftheDreadDragon, (6850010, "Rest of the Dread Dragon", MapName::RealmOfShadowJaggedPeak, false, false, true)),
+
+            // Ancient Ruins of Rauh Region
+            (Region::AncientRuinsofRauhWest, (6941000, "Ancient Ruins of Rauh: West", MapName::RealmOfShadowRauh, true, false, false)),
+            (Region::AncientRuinsofRauhChurchoftheBud, (6941010, "Ancient Ruins of Rauh: Church of the Bud", MapName::RealmOfShadowRauh, false, false, true)),
+            (Region::AncientRuinsofRauhEast, (6940000, "Ancient Ruins of Rauh: East", MapName::RealmOfShadowRauh, true, false, false)),
+            (Region::RauhBaseAncientRuins, (6901000, "Ancient Ruins", MapName::RealmOfShadowRauh, true, false, false)),
+            (Region::ScorpionRiverCatacombs, (4001001, "Scorpion River Catacombs", MapName::RealmOfShadowRauh, false, true, false)),
+            (Region::TaylewsRuinedForge, (4203090, "Taylew's Ruined Forge", MapName::RealmOfShadowRauh, false, true, false)),
+
+            // Scadu Altus Region
+            (Region::ScaduAltusFingerBirthingGrounds, (2500000, "Finger Birthing Grounds", MapName::RealmOfShadowScaduAltus, false, false, true)),
+            (Region::ScaduAltus, (6900000, "Scadu Altus", MapName::RealmOfShadowScaduAltus, true, false, false)),
+            (Region::BonnyVillage, (6902000, "Bonny Village", MapName::RealmOfShadowScaduAltus, true, false, false)),
+            (Region::CastleWateringHole, (6903090, "Castle Watering Hole", MapName::RealmOfShadowScaduAltus, true, false, false)),
+            (Region::ReclusesRiverDownstream, (6903000, "Recluses' River Downstream", MapName::RealmOfShadowScaduAltus, true, false, false)),
+            (Region::DarklightCatacombs, (4002001, "Darklight Catacombs", MapName::RealmOfShadowScaduAltus, false, true, false)),
+            (Region::BonnyGaol, (4101001, "Bonny Gaol", MapName::RealmOfShadowScaduAltus, false, true, false)),
+            (Region::RuinedForgeofStarfallPast, (4202090, "Ruined Forge of Starfall Past", MapName::RealmOfShadowScaduAltus, false, true, false)),
+
+            // Scaduview Region
+            (Region::ScaduviewScadutreeBase, (2100010, "Scadutree Base", MapName::RealmOfShadowScaduview, false, false, true)),
+            (Region::Scaduview, (2101010, "Scaduview", MapName::RealmOfShadowScaduview, false, false, true)),
+            (Region::ShadowKeepBackGate, (2101013, "Shadow Keep, Back Gate", MapName::RealmOfShadowScaduview, false, false, true)),
+            (Region::ScaduviewHinterland, (6930000, "Hinterland", MapName::RealmOfShadowScaduview, true, false, false)),
         ]))
     });
 }
