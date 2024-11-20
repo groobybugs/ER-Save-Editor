@@ -36,6 +36,20 @@ pub mod event_flags {
             (62063,(0x5e3,0)),
             (62064,(0x5e4,7)),
             (62065,(0x5e4,6)),
+            (62066,(0x5e4,5)),
+            (62067,(0x5e4,4)),
+            (62068,(0x5e4,3)),
+            (62069,(0x5e4,2)),
+            (62070,(0x5e4,1)),
+            (62071,(0x5e4,0)),
+            (62072,(0x5e5,7)),
+            (62073,(0x5e5,6)),
+            (62074,(0x5e5,5)),
+            (62075,(0x5e5,4)),
+            (62076,(0x5e5,3)),
+            (62077,(0x5e5,2)),
+            (62078,(0x5e5,1)),
+            (62079,(0x5e5,0)),
             (62080,(0x5e6,7)),
             (62081,(0x5e6,6)),
             (62082,(0x5e6,5)),
@@ -238,19 +252,19 @@ pub mod event_flags {
             (73900,(0xbab,3)),
             (73901,(0xbab,2)),
             (73902,(0xbab,1)),
-            (74000,(0xb21,4)), // Fog Rift Catacombs
-            (74001,(0xb21,3)), // Scorpion River Catacombs
-            (74002,(0xb21,2)), // Darklight Catacombs
-            (74100,(0xb2d,0)), // Belurat Gaol
-            (74101,(0xb2e,7)), // Bonny Gaol
-            (74102,(0xb2e,6)), // Lamenter's Gaol
-            (74200,(0xb3a,4)), // Ruined Forge Lava
-            (74201,(0xb3a,3)), // Dragon's Pit
-            (74202,(0xb3a,2)), // Ruined Forge Starfall
-            (74203,(0xb3a,1)), // Taylew's Forge
-            (74300,(0xb46,0)), // Rivermouth Cave
-            (74301,(0xb47,7)), // Dragon's Pit
-            (74351,(0xb4d,5)), // Dragon's Pit Terminus
+            (74000,(0xbb8,7)), // Fog Rift Catacombs
+            (74001,(0xbb8,6)), // Scorpion River Catacombs
+            (74002,(0xbb8,5)), // Darklight Catacombs
+            (74100,(0xbc4,3)), // Belurat Gaol
+            (74101,(0xbc4,2)), // Bonny Gaol
+            (74102,(0xbc4,1)), // Lamenter's Gaol
+            (74200,(0xbd1,7)), // Ruined Forge Lava
+            (74201,(0xbd1,6)), // Dragon's Pit
+            (74202,(0xbd1,5)), // Ruined Forge Starfall
+            (74203,(0xbd1,4)), // Taylew's Forge
+            (74300,(0xbdd,3)), // Rivermouth Cave
+            (74301,(0xbdd,2)), // Dragon's Pit
+            (74351,(0xbe3,0)), // Dragon's Pit Terminus
             (76100,(0xcbe,3)),
             (76101,(0xcbe,2)),
             (76102,(0xcbe,1)),
@@ -405,66 +419,66 @@ pub mod event_flags {
             (76551,(0xcf6,0)),
             (76652,(0xd03,3)),
             (76653,(0xd03,2)),
-            (76800,(0xc7f,4)), // Gravesite Plain
-            (76801,(0xc7f,3)), // Scorched Ruins
-            (76802,(0xc7f,2)), // Three-Path Cross
-            (76803,(0xc7f,1)), // Main Gate Cross
-            (76804,(0xc7f,0)), // Cliffroad Terminus
-            (76805,(0xc80,7)), // Greatbridge North
-            (76810,(0xc80,2)), // Pillar Path Cross
-            (76811,(0xc80,1)), // Pillar Path Waypoint
-            (76812,(0xc80,0)), // Ellac River Cave
-            (76813,(0xc81,7)), // Castle Front
-            (76821,(0xc82,7)), // Castle Ensis
-            (76822,(0xc82,6)),
-            (76823,(0xc82,5)), // Ensis Moongazing Grounds
-            (76830,(0xc83,6)), // Ellac River Downstream
-            (76831,(0xc83,5)), // Cerulean Coast
-            (76832,(0xc83,4)), // Cerulean Coast West
-            (76833,(0xc83,3)), // The Fissure
-            (76834,(0xc83,2)), // Finger Ruins
-            (76835,(0xc83,1)), // Cerulean Coast Cross
-            (76840,(0xc84,4)), // Dragon Communion
-            (76841,(0xc84,3)), // Charo's Hidden Grave
-            (76850,(0xc85,2)), // Foot of Jagged Peak
-            (76851,(0xc85,1)), // Peak Mountainside
-            (76852,(0xc85,0)), // Peak Summit
-            (76853,(0xc86,7)), // Rest of Dread Dragon
-            (76860,(0xc86,0)), // Abyssal Woods
-            (76861,(0xc87,7)), // Divided Falls
-            (76862,(0xc87,6)), // Forsaken Graveyard
-            (76863,(0xc87,5)), // Woodland Trail
-            (76864,(0xc87,4)), // Church Ruins
-            (76900,(0xc8b,0)), // Highroad Cross
-            (76902,(0xc8c,6)), // Moorth Ruins
-            (76903,(0xc8c,5)), // Bonny Village
-            (76904,(0xc8c,4)), // Bridge to Village
-            (76905,(0xc8c,3)), // Church District Highroad
-            (76906,(0xc8c,2)), // Cathedral Manus
-            (76907,(0xc8c,1)), // Scadu Altus West
-            (76908,(0xc8c,0)), // Moorth Highway South
-            (76909,(0xc8d,7)), // Fort of Reprimand
-            (76910,(0xc8d,6)), // Behind Fort
-            (76911,(0xc8d,5)), // Scaduview Cross
-            (76912,(0xc8d,4)), // Ancient Ruins Base
-            (76913,(0xc8d,3)), // Temple Town Ruins
-            (76914,(0xc8d,2)), // Ravine North
-            (76915,(0xc8d,1)), // Castle Watering Hole
-            (76916,(0xc8d,0)), // Recluses River Up
-            (76917,(0xc8e,7)), 
-            (76918,(0xc8e,6)), // Recluses River Down
-            (76930,(0xc8f,2)), // Scaduview
-            (76931,(0xc8f,1)), // Shadow Keep Back
-            (76935,(0xc90,5)), // Hinterland
-            (76936,(0xc90,4)), // Fingerstone Hill
-            (76937,(0xc90,3)), // Hinterland Bridge
-            (76940,(0xc90,0)), 
-            (76941,(0xc91,7)), 
-            (76942,(0xc91,6)), 
-            (76943,(0xc91,5)), 
-            (76944,(0xc91,4)), 
-            (76945,(0xc91,3)), 
-            (76960,(0xc93,4)) , // Scadutree Base
+            (76800,(0xd16,7)), // Gravesite Plain
+            (76801,(0xd16,6)), // Scorched Ruins
+            (76802,(0xd16,5)), // Three-Path Cross
+            (76803,(0xd16,4)), // Main Gate Cross
+            (76804,(0xd16,3)), // Cliffroad Terminus
+            (76805,(0xd16,2)), // Greatbridge North
+            (76810,(0xd17,5)), // Pillar Path Cross
+            (76811,(0xd17,4)), // Pillar Path Waypoint
+            (76812,(0xd17,3)), // Ellac River Cave
+            (76813,(0xd17,2)), // Castle Front
+            (76821,(0xd18,2)), // Castle Ensis
+            (76822,(0xd18,1)),
+            (76823,(0xd18,0)), // Ensis Moongazing Grounds
+            (76830,(0xd19,1)), // Ellac River Downstream
+            (76831,(0xd19,0)), // Cerulean Coast
+            (76832,(0xd1a,7)), // Cerulean Coast West
+            (76833,(0xd1a,6)), // The Fissure
+            (76834,(0xd1a,5)), // Finger Ruins
+            (76835,(0xd1a,4)), // Cerulean Coast Cross
+            (76840,(0xd1b,7)), // Dragon Communion
+            (76841,(0xd1b,6)), // Charo's Hidden Grave
+            (76850,(0xd1c,5)), // Foot of Jagged Peak
+            (76851,(0xd1c,4)), // Peak Mountainside
+            (76852,(0xd1c,3)), // Peak Summit
+            (76853,(0xd1c,2)), // Rest of Dread Dragon
+            (76860,(0xd1d,3)), // Abyssal Woods
+            (76861,(0xd1d,2)), // Divided Falls
+            (76862,(0xd1d,1)), // Forsaken Graveyard
+            (76863,(0xd1d,0)), // Woodland Trail
+            (76864,(0xd1e,7)), // Church Ruins
+            (76900,(0xd22,3)), // Highroad Cross
+            (76902,(0xd22,1)), // Moorth Ruins
+            (76903,(0xd22,0)), // Bonny Village
+            (76904,(0xd23,7)), // Bridge to Village
+            (76905,(0xd23,6)), // Church District Highroad
+            (76906,(0xd23,5)), // Cathedral Manus
+            (76907,(0xd23,4)), // Scadu Altus West
+            (76908,(0xd23,3)), // Moorth Highway South
+            (76909,(0xd23,2)), // Fort of Reprimand
+            (76910,(0xd23,1)), // Behind Fort
+            (76911,(0xd23,0)), // Scaduview Cross
+            (76912,(0xd24,7)), // Ancient Ruins Base
+            (76913,(0xd24,6)), // Temple Town Ruins
+            (76914,(0xd24,5)), // Ravine North
+            (76915,(0xd24,4)), // Castle Watering Hole
+            (76916,(0xd24,3)), // Recluses River Up
+            (76917,(0xd24,2)), 
+            (76918,(0xd24,1)), // Recluses River Down
+            (76930,(0xd26,5)), // Scaduview
+            (76931,(0xd26,4)), // Shadow Keep Back
+            (76935,(0xd26,0)), // Hinterland
+            (76936,(0xd27,7)), // Fingerstone Hill
+            (76937,(0xd27,6)), // Hinterland Bridge
+            (76940,(0xd27,3)), 
+            (76941,(0xd27,2)), 
+            (76942,(0xd27,1)), 
+            (76943,(0xd27,0)), 
+            (76944,(0xd28,7)), 
+            (76945,(0xd28,6)),
+            (76960,(0xd2a,7)), // Scadutree Base
             (9410,(0x498,5)),
             (9411,(0x498,4)),
             (9413,(0x498,2)),
