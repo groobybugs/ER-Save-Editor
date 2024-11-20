@@ -1871,7 +1871,7 @@ pub mod item_name {
             (2002120,"Iris of Grace"),
             (2002130,"Iris of Occultation"),
             (2002140,"Thiollier's Concoction"),
-            (2002150,",ing Pate \"Lamentation\""),
+            (2002150,"Prattling Pate \"Lamentation\""),
             (2002900,"Remembrance of the Wild Boar Rider"),
             (2002901,"Remembrance of the Impaler"),
             (2002902,"Remembrance of the Shadow Sunflower"),
