@@ -16,11 +16,6 @@ pub mod inventory {
                         vm.slots[vm.index].inventory_vm.filter();
                         vm.slots[vm.index].inventory_vm.current_route = InventoryRoute::Add
                     }
-                    if add_items.hovered() {
-                        egui::popup::show_tooltip(ui.ctx(), add_items.id, |ui|{
-                            ui.label(egui::RichText::new("Warning: This is an experimental feature that is still being worked on. Use with catution.").size(8.0).color(Color32::PLACEHOLDER));
-                        });
-                    }
                     if browse_items.clicked() {
                         vm.slots[vm.index].inventory_vm.filter();
                         vm.regulation.filter(&vm.slots[vm.index].inventory_vm.current_type_route, &vm.slots[vm.index].inventory_vm.filter_text);
@@ -28,11 +23,18 @@ pub mod inventory {
                     }
                     
                     // Highlight active 
-                    match vm.slots[vm.index].inventory_vm.current_route {
-                        InventoryRoute::None => {},
-                        InventoryRoute::Add => {add_items.highlight();},
-                        InventoryRoute::Browse => {browse_items.highlight();},
-                    }
+                    let add_items = match vm.slots[vm.index].inventory_vm.current_route {
+                        InventoryRoute::Add => add_items.highlight(),
+                        _ => add_items,
+                    };
+                    let browse_items = match vm.slots[vm.index].inventory_vm.current_route {
+                        InventoryRoute::Browse => browse_items.highlight(),
+                        _ => browse_items,
+                    };
+                    
+                    add_items.on_hover_ui(|ui| {
+                        ui.label(egui::RichText::new("Warning: This is an experimental feature that is still being worked on. Use with catution.").size(8.0).color(Color32::PLACEHOLDER));
+                    });
                 })
             });
         });

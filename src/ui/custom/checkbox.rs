@@ -22,7 +22,8 @@ pub mod checkbox {
                 rect, 
                 2., 
                 visuals.bg_fill, 
-                visuals.bg_stroke
+                visuals.bg_stroke,
+                egui::StrokeKind::Inside
             );
 
             match state {

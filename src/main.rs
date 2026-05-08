@@ -9,7 +9,7 @@ mod db;
 
 use std::{fs::File, io::Write, path::PathBuf};
 
-use eframe::{egui::{self, text::LayoutJob, Align, FontSelection, Id, LayerId, Layout, Order, RichText, Rounding, Style}, epaint::Color32};
+use eframe::{egui::{self, text::LayoutJob, Align, CornerRadius, FontSelection, Id, LayerId, Layout, Order, RichText, Style}, epaint::Color32};
 use rfd::FileDialog;
 use save::save::save::{Save, SaveType};
 use ui::{equipment::equipment::equipment, events::events::events, general::general::general, importer::import::character_importer, inventory::inventory::inventory::inventory, menu::menu::{menu, Route}, none::none::none, regions::regions::regions, stats::stats::stats};
@@ -50,10 +50,10 @@ fn main() -> Result<(), eframe::Error> {
         creation_context.egui_ctx.set_fonts(fonts);
         let mut visuals = creation_context.egui_ctx.style().visuals.clone();
         let rounding = 3.;
-        visuals.window_rounding = Rounding::default().at_least(rounding);
+        visuals.window_corner_radius = CornerRadius::default().at_least(rounding as u8);
         visuals.window_highlight_topmost = false;
         creation_context.egui_ctx.set_visuals(visuals);
-        Box::new(App::new(creation_context))
+        Ok(Box::new(App::new(creation_context)))
     }))
 }
 
@@ -117,10 +117,11 @@ impl App {
 
 
 impl eframe::App for App {
-    fn update(&mut self, ctx: &egui::Context, _frame: &mut eframe::Frame) {
+    fn ui(&mut self, ui: &mut egui::Ui, _frame: &mut eframe::Frame) {
+        let ctx = ui.ctx();
         ctx.set_zoom_factor(1.75);
         // TOP PANEL
-        egui::TopBottomPanel::top("toolbar").default_height(35.).show(ctx, |ui| {
+        egui::Panel::top("toolbar").default_height(35.).show(ctx, |ui| {
             ui.columns(2, |uis|{
                 uis[0].with_layout(Layout::left_to_right(Align::Center),| ui| {
                     if ui.button(egui::RichText::new(format!("{} open", egui_phosphor::regular::FOLDER_OPEN))).clicked() {
@@ -163,7 +164,7 @@ impl eframe::App for App {
         });
 
         // TOP PANEL
-        egui::TopBottomPanel::top("top").show(ctx, |ui| {
+        egui::Panel::top("top").show(ctx, |ui| {
             if self.picked_path.exists() {
                 let save_type = match self.save.save_type {
                     SaveType::Unknown => {
@@ -190,11 +191,9 @@ impl eframe::App for App {
                                     SaveType::Unknown => {},
                                     SaveType::PC(_) => {
                                         let steam_id_text_edit = ui.add(steam_id_text_edit).labelled_by(ui.label("Steam Id:").id);
-                                        if steam_id_text_edit.hovered() {
-                                            egui::popup::show_tooltip(ui.ctx(), steam_id_text_edit.id, |ui|{
-                                                ui.label(egui::RichText::new("Important: This needs to match the id of the steam account that will use this save!").size(8.0).color(Color32::PLACEHOLDER));
-                                            });
-                                        }
+                                        steam_id_text_edit.on_hover_ui(|ui| {
+                                            ui.label(egui::RichText::new("Important: This needs to match the id of the steam account that will use this save!").size(8.0).color(Color32::PLACEHOLDER));
+                                        });
                                     },
                                     SaveType::PlayStation(_) => {},
                                 };
@@ -212,7 +211,7 @@ impl eframe::App for App {
 
         // Character List Panel
         if self.vm.active.is_some_and(|valid| valid) {
-            egui::SidePanel::left("characters").show(ctx, |ui| {
+            egui::Panel::left("characters").show(ctx, |ui| {
                 egui::ScrollArea::vertical()
                     .id_source("left")
                     .show(ui, |ui| {
@@ -229,7 +228,7 @@ impl eframe::App for App {
             });
 
             // Slot Section Panel
-            egui::SidePanel::left("slot_sections_menu").show(ctx, |ui| {
+            egui::Panel::left("slot_sections_menu").show(ctx, |ui| {
                 egui::ScrollArea::vertical() .id_source("left") .show(ui, |ui| {
                     ui.vertical(|ui| {
                         menu(ui, self);

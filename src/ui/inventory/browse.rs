@@ -54,7 +54,7 @@ pub fn browse_inventory(ui: &mut Ui, vm:&mut ViewModel) {
     });
 
     let mut frame = egui::Frame::none();
-    frame.inner_margin = Margin { top: 8., left: 0., bottom: 8., right: 0. };
+    frame.inner_margin = Margin::symmetric(0, 8);
     frame.show(ui,|ui| {
         egui::Grid::new("browse_header").spacing([16., 16.]).min_col_width(ui.available_width()/4.).striped(true).show(ui, |ui| {
             // Table Header
@@ -102,7 +102,7 @@ pub fn browse_inventory(ui: &mut Ui, vm:&mut ViewModel) {
             for i in row_range {
                 let item = &current_inventory_list[i];
                 ui.label(format!("{}",item.item_id));
-                ui.add(egui::Label::new(item.item_name.to_string()).wrap(true));
+                ui.add(egui::Label::new(item.item_name.to_string()).wrap());
                 ui.label(format!("{}",item.quantity));
                 ui.label(format!("{}",item.inventory_index));
                 ui.end_row();
