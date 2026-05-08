@@ -1,6 +1,6 @@
 use std::{collections::HashMap, io::Error, str::FromStr, sync::{Mutex, RwLock}};
 use std::io::ErrorKind;
-use aes::cipher::{block_padding::NoPadding, BlockDecryptMut, KeyIvInit};
+use aes::cipher::{block_padding::NoPadding, BlockModeDecrypt, KeyIvInit};
 use binary_reader::{BinaryReader, Endian};
 use once_cell::sync::{Lazy, OnceCell};
 use std::io::{self, Write};
@@ -118,9 +118,10 @@ impl Regulation {
         let key = [0x99, 0xBF, 0xFC, 0x36, 0x6A, 0x6B, 0xC8, 0xC6, 0xF5, 0x82, 0x7D, 0x09, 0x36, 0x02, 0xD6, 0x76, 0xC4, 0x28, 0x92, 0xA0, 0x1C, 0x20, 0x7F, 0xB0, 0x24, 0xD3, 0xAF, 0x4E, 0x49, 0x3F, 0xEF, 0x99];
         let iv = &cipher_text[0..16];
         let mut buf = cipher_text[16..cipher_text.len()].to_vec();
-        Aes256CbcDec::new(&key.into(), iv.into())
-            .decrypt_padded_mut::<NoPadding>(&mut buf)
-            .map_err(|e| Error::new(ErrorKind::Other, "upps"))
+        Aes256CbcDec::new_from_slices(&key, iv)
+            .map_err(|_| Error::new(ErrorKind::Other, "upps"))?
+            .decrypt_padded::<NoPadding>(&mut buf)
+            .map_err(|_| Error::new(ErrorKind::Other, "upps"))
             .map(|pt| pt.to_vec())
     }
     
