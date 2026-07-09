@@ -110,6 +110,70 @@ impl From<u32> for InventoryGaitemType {
     }
 }
 
+/// Resolves a weapon display name from its full item id (base id + affinity offset + upgrade level).
+/// Falls back to "<infusion_prefix> <base_name>" when the exact variant key is missing from
+/// WEAPON_NAME, so DLC weapons whose per-affinity name entries were never added still display cleanly.
+/// `base_id` is the known base weapon id when adding; pass None to derive it from `item_id`.
+/// Returns None when no name can be resolved.
+pub fn weapon_display_name(item_id: u32, base_id: Option<u32>) -> Option<String> {
+    let variant_key = (item_id / 100) * 100;
+    let upgrade_level = item_id % 100;
+    let names = WEAPON_NAME.lock().unwrap();
+    let resolved = match names.get(&variant_key).filter(|n| !n.is_empty()) {
+        Some(name) => name.to_string(),
+        None => {
+            // Base weapon ids are multiples of 10000; the affinity offset is 0-1200 in steps of 100.
+            let base_key = match base_id {
+                Some(id) => (id / 100) * 100,
+                None => (variant_key / 10000) * 10000,
+            };
+            let prefix = match variant_key - base_key {
+                0    => None,
+                100  => Some("Heavy"),
+                200  => Some("Keen"),
+                300  => Some("Quality"),
+                400  => Some("Fire"),
+                500  => Some("Flame Art"),
+                600  => Some("Lightning"),
+                700  => Some("Sacred"),
+                800  => Some("Magic"),
+                900  => Some("Cold"),
+                1000 => Some("Poison"),
+                1100 => Some("Blood"),
+                1200 => Some("Occult"),
+                _    => return None,
+            };
+            let base_name = names
+                .get(&base_key)
+                .filter(|n| !n.is_empty())
+                .map(|s| s.to_string())
+                .or_else(|| {
+                    // Params are only present once a save's regulation has been parsed.
+                    if crate::util::regulation::PARAMS
+                        .read()
+                        .unwrap()
+                        .contains_key(&crate::util::params::params::Param::EquipParamWeapon)
+                    {
+                        Regulation::equip_weapon_params_map()
+                            .get(&base_key)
+                            .map(|p| p.name.to_string())
+                    } else {
+                        None
+                    }
+                })?;
+            match prefix {
+                Some(p) => format!("{} {}", p, base_name),
+                None => base_name,
+            }
+        }
+    };
+    Some(if upgrade_level > 0 {
+        format!("{} +{}", resolved, upgrade_level)
+    } else {
+        resolved
+    })
+}
+
 #[derive(Default, Clone)]
 pub struct InventoryItemViewModel {
     pub ga_item_handle: u32,
@@ -132,23 +196,10 @@ impl InventoryItemViewModel {
         let item_type_specific = match gaitem_type {
             InventoryGaitemType::WEAPON => {
                 let id = (gaitem.item_id / 100) * 100;
-                let upgrade_level = gaitem.item_id % 100;
                 (
                     gaitem.item_id,
-                    match WEAPON_NAME.lock().unwrap().get(&id) {
-                        Some(name) => {
-                            if !name.is_empty() {
-                                if upgrade_level > 0 {
-                                    format!("{} +{}", name, upgrade_level)
-                                } else {
-                                    name.to_string()
-                                }
-                            } else {
-                                format!("[UNKNOWN_{}]", id)
-                            }
-                        }
-                        None => format!("[UNKNOWN_{}]", id),
-                    },
+                    weapon_display_name(gaitem.item_id, None)
+                        .unwrap_or_else(|| format!("[UNKNOWN_{}]", id)),
                 )
             }
             InventoryGaitemType::ARMOR => {
@@ -865,3 +916,47 @@ impl InventoryViewModel {
 // Splitting up inventory into multiple files
 mod add_bulk;
 mod add_single;
+
+#[cfg(test)]
+mod tests {
+    use super::weapon_display_name;
+
+    #[test]
+    fn exact_variant_name_is_used() {
+        // Heavy Backhand Blade has its own entry in WEAPON_NAME.
+        assert_eq!(
+            weapon_display_name(64500100, Some(64500000)),
+            Some("Heavy Backhand Blade".to_string())
+        );
+    }
+
+    #[test]
+    fn missing_variant_falls_back_to_prefixed_base_name() {
+        // 3520200 (Keen Lizard Greatsword) has no variant entry, only base 3520000.
+        assert_eq!(
+            weapon_display_name(3520200, Some(3520000)),
+            Some("Keen Lizard Greatsword".to_string())
+        );
+        // Same resolution when the base id has to be derived from the item id (browse path).
+        assert_eq!(
+            weapon_display_name(3520200, None),
+            Some("Keen Lizard Greatsword".to_string())
+        );
+    }
+
+    #[test]
+    fn upgrade_level_is_appended() {
+        assert_eq!(
+            weapon_display_name(3520225, None),
+            Some("Keen Lizard Greatsword +25".to_string())
+        );
+    }
+
+    #[test]
+    fn unresolvable_ids_return_none() {
+        // Offset 1300 is not a valid affinity.
+        assert_eq!(weapon_display_name(3521300, None), None);
+        // Unknown base weapon id (regulation params not loaded in tests).
+        assert_eq!(weapon_display_name(999990100, None), None);
+    }
+}

@@ -2,7 +2,7 @@
 pub mod equipment_view_model {
     use std::collections::HashMap;
 
-    use crate::{save::common::save_slot::{GaItem, SaveSlot}, util::{params::params::Row, regulation::Regulation}, vm::inventory::InventoryGaitemType};
+    use crate::{save::common::save_slot::{GaItem, SaveSlot}, util::{params::params::Row, regulation::Regulation}, vm::inventory::{weapon_display_name, InventoryGaitemType}};
 
     #[derive(Default, Clone)]
     pub struct EquipmentItemViewModel {
@@ -126,7 +126,9 @@ pub mod equipment_view_model {
             weapon.gaitem_handle = *gaitem_handle;
             weapon.id = gaitem_map[gaitem_handle].item_id;
             weapon.equip_index = Self::equip_index(slot, *gaitem_handle);
-            weapon.name = Self::name_or_empty(Regulation::equip_weapon_params_map(), (weapon.id/100)*100);
+            // Variant key (level stripped) so DLC weapons without per-affinity name entries still resolve.
+            weapon.name = weapon_display_name((weapon.id/100)*100, None)
+                .unwrap_or_else(|| Self::name_or_empty(Regulation::equip_weapon_params_map(), (weapon.id/100)*100));
         }
 
         fn projectile(slot:& SaveSlot, projectile: &mut EquipmentItemViewModel, gaitem_map: &HashMap<u32, GaItem>, gaitem_handle: &u32) {
