@@ -907,12 +907,29 @@ mod tests {
 
     #[test]
     fn test_ps_roundtrip_no_modify_v150() {
-        roundtrip("~/ER-Save-Lib/test/PS_Save.txt");
+        let Ok(path_str) = std::env::var("ER_TEST_SAVE_PS") else {
+            eprintln!("skipping: set ER_TEST_SAVE_PS=<path> to run");
+            return;
+        };
+        let path = PathBuf::from(&path_str);
+        if !path.exists() {
+            eprintln!("skipping: ER_TEST_SAVE_PS points to missing file: {}", path.display());
+            return;
+        }
+        roundtrip(&path_str);
     }
 
     #[test]
     fn test_ps_slot_versions() {
-        let path = PathBuf::from("~/Documents/elden/memory.dat.2026-06-19_21-22-18");
+        let Ok(path_str) = std::env::var("ER_TEST_SAVE_PS") else {
+            eprintln!("skipping: set ER_TEST_SAVE_PS=<path> to run");
+            return;
+        };
+        let path = PathBuf::from(&path_str);
+        if !path.exists() {
+            eprintln!("skipping: ER_TEST_SAVE_PS points to missing file: {}", path.display());
+            return;
+        }
         let save = Save::from_path(&path).expect("failed to load save");
         match &save.save_type {
             crate::SaveType::PlayStation(ps) => {
@@ -926,7 +943,16 @@ mod tests {
 
     #[test]
     fn test_ps_roundtrip_no_modify_v251() {
-        roundtrip("~/Documents/elden/memory.dat.2026-06-19_21-22-18");
+        let Ok(path_str) = std::env::var("ER_TEST_SAVE_PS") else {
+            eprintln!("skipping: set ER_TEST_SAVE_PS=<path> to run");
+            return;
+        };
+        let path = PathBuf::from(&path_str);
+        if !path.exists() {
+            eprintln!("skipping: ER_TEST_SAVE_PS points to missing file: {}", path.display());
+            return;
+        }
+        roundtrip(&path_str);
     }
 
     // End-to-end: add a key item through the inventory VM, persist, reload and
@@ -937,7 +963,15 @@ mod tests {
         use crate::vm::inventory::InventoryTypeRoute;
         use crate::vm::vm::vm::ViewModel;
 
-        let path = PathBuf::from("~/Documents/elden/memory.dat.2026-06-19_21-22-18");
+        let Ok(path_str) = std::env::var("ER_TEST_SAVE_PS") else {
+            eprintln!("skipping: set ER_TEST_SAVE_PS=<path> to run");
+            return;
+        };
+        let path = PathBuf::from(&path_str);
+        if !path.exists() {
+            eprintln!("skipping: ER_TEST_SAVE_PS points to missing file: {}", path.display());
+            return;
+        }
         let original = std::fs::read(&path).expect("failed to read original");
 
         let mut save = Save::from_path(&path).expect("failed to load save");
@@ -1005,7 +1039,15 @@ mod tests {
         use crate::db::summoning_pools::summoning_pools::SummoningPool;
         use crate::vm::vm::vm::ViewModel;
 
-        let path = PathBuf::from("~/Documents/elden/memory.dat.2026-06-19_21-22-18");
+        let Ok(path_str) = std::env::var("ER_TEST_SAVE_PS") else {
+            eprintln!("skipping: set ER_TEST_SAVE_PS=<path> to run");
+            return;
+        };
+        let path = PathBuf::from(&path_str);
+        if !path.exists() {
+            eprintln!("skipping: ER_TEST_SAVE_PS points to missing file: {}", path.display());
+            return;
+        }
         let original = std::fs::read(&path).expect("failed to read original");
 
         let mut save = Save::from_path(&path).expect("failed to load save");

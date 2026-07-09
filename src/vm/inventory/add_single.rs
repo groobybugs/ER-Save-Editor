@@ -126,14 +126,55 @@ impl InventoryViewModel {
             ..Default::default()
         }, false); 
         
-        // Try to fetch weapon name from WEAPON_NAME db in order to include infusion in the name,
-        // fallback to weapon name from regulation
-        let weapon_name = match WEAPON_NAME.lock().unwrap().get(&((item_id/100)*100)) {
-            Some(name) => if upgrade_level > 0 {format!("{} +{}", name, upgrade_level)} else {name.to_string()}
-            None => {
-                self.log.insert(0, format!("Failed to find name for weapon with id {}|{:#x}", ((item_id/100)*100), ((item_id/100)*100)));
-                format!("Failed to find name for weapon with id {}|{:#x}", ((item_id/100)*100), ((item_id/100)*100))
-            },
+        // Try to fetch weapon name from WEAPON_NAME db in order to include infusion in the name.
+        // Falls back to <infusion_prefix> <base_name> when the exact variant key is missing,
+        // so DLC weapons whose per-affinity name entries were never added still display cleanly.
+        let weapon_name = {
+            let variant_key = (item_id / 100) * 100;
+            let base_key = (id / 100) * 100;
+            let infusion_offset = variant_key - base_key;
+            let names = WEAPON_NAME.lock().unwrap();
+            let exact = names.get(&variant_key).map(|s| s.to_string());
+            let resolved = match exact {
+                Some(n) => n,
+                None => {
+                    // Build from base name + infusion prefix.
+                    let base_name = names
+                        .get(&base_key)
+                        .map(|s| s.to_string())
+                        .or_else(|| {
+                            Regulation::equip_weapon_params_map()
+                                .get(&id)
+                                .map(|p| p.name.to_string())
+                        })
+                        .unwrap_or_else(|| format!("Unknown weapon {}", id));
+                    let prefix = match infusion_offset {
+                        0    => None,
+                        100  => Some("Heavy"),
+                        200  => Some("Keen"),
+                        300  => Some("Quality"),
+                        400  => Some("Fire"),
+                        500  => Some("Flame Art"),
+                        600  => Some("Lightning"),
+                        700  => Some("Sacred"),
+                        800  => Some("Magic"),
+                        900  => Some("Cold"),
+                        1000 => Some("Poison"),
+                        1100 => Some("Blood"),
+                        1200 => Some("Occult"),
+                        _    => None,
+                    };
+                    match prefix {
+                        Some(p) => format!("{} {}", p, base_name),
+                        None => base_name,
+                    }
+                }
+            };
+            if upgrade_level > 0 {
+                format!("{} +{}", resolved, upgrade_level)
+            } else {
+                resolved
+            }
         };
 
         // Add item to storage
