@@ -55,18 +55,18 @@ impl InventoryViewModel {
             InventoryTypeRoute::KeyItems |
             InventoryTypeRoute::CommonItems => {
                 let mut items: Vec<RegulationItemViewModel> = Vec::new();
-                for (index, _) in db::items::items().iter().enumerate() {
+                for (index, (group_name, _)) in db::items::items().iter().enumerate() {
                     for (item_id, selected) in self.bulk_items_selected[index].iter_mut() {
                         if *selected {
                             let item_param = Regulation::equip_goods_param_map().get(&(item_id^InventoryItemType::ITEM as u32)).unwrap();
 
                             let goods_type = GoodsType::from(item_param.data.goodsType);
                             let quantity = Some({
-                                if self.bulk_items_max_quantity  {
+                                if self.bulk_items_max_quantity && !is_single_quantity_group(group_name) {
                                     (item_param.data.maxRepositoryNum) as i16
                                 }
                                 else {
-                                    1 as i16
+                                    1i16
                                 }
                             });
 
@@ -186,4 +186,21 @@ impl InventoryViewModel {
             self.add_to_inventory(&item);
         }
     }
+}
+
+/// Item categories where the game treats multiples as useless or potentially corrupting.
+/// Always capped to quantity 1 in bulk-add regardless of the "max quantity" toggle.
+fn is_single_quantity_group(name: &str) -> bool {
+    matches!(
+        name,
+        "Bell Bearings"
+            | "Cookbooks"
+            | "Great Rune"
+            | "Incantations"
+            | "Sorceries"
+            | "Prattling Pates"
+            | "Spirit Ashes"
+            | "Crystal tears"
+            | "Remembrances"
+    )
 }

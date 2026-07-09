@@ -29,7 +29,6 @@ pub fn items() -> &'static BTreeMap<String, Vec<u32>> {
             0x400004A6, // Silver-Pickled Fowl Foot
             0x400004B0, // Gold-Pickled Fowl Foot
             0x400006E0, // Ruin Fragment
-            0x40000B67, // Lord's Rune
             0x40001F40, // Stonesword Key
             0x40000834, // Soft Cotton
             0x40000802, // Grace Mimic
@@ -52,18 +51,6 @@ pub fn items() -> &'static BTreeMap<String, Vec<u32>> {
             0x401E893A, // Sacred Bloody Flesh
             0x401E8944, // Silver Horn Tender
             0x401E894E, // Golden Horn Tender
-            0x401E89F8, // Messmerfire Grease
-            0x401E8A02, // Dragonbolt Grease
-            0x401E8A0C, // Royal Magic Grease
-            0x401E8A16, // Golden Grease
-            0x401E8A2A, // Eternal Sleep Grease
-            0x401E8A48, // Dragon Communion Grease
-            0x401E8A5C, // Drawstring Messmerfire Grease
-            0x401E8A66, // Drawstring Dragonbolt Grease
-            0x401E8A70, // Drawstring Royal Magic Grease
-            0x401E8A7A, // Drawstring Golden Grease
-            0x401E8A8E, // Drawstring Eternal Sleep Grease
-            0x401E8AC0, // Festive Grease
             0x401E8B24, // Innard Meat
             0x401E8B2E, // Dragon Communion Harpoon
             0x401E8C50, // Polter Stone
@@ -74,28 +61,6 @@ pub fn items() -> &'static BTreeMap<String, Vec<u32>> {
             0x401E8CC8, // Iris of Grace
             0x401E8CD2, // Iris of Occultation
             0x401E8CDC, // Thiollier's Concoction
-            0x401E8CE6, // Prattling Pate "Lamentation"
-            0x401E8FD4, // Remembrance of the Wild Boar Rider
-            0x401E8FD5, // Remembrance of the Impaler
-            0x401E8FD6, // Remembrance of the Shadow Sunflower
-            0x401E8FD7, // Remembrance of the Twin Moon Knight
-            0x401E8FD8, // Remembrance of the Saint of the Bud
-            0x401E8FD9, // Remembrance of the Dancing Lion
-            0x401E8FDB, // Remembrance of a God and a Lord
-            0x401E8FDC, // Remembrance of the Lord of Frenzied Flame
-            0x401E8FDD, // Remembrance of the Mother of Fingers
-            0x401E8FDE, // Remembrance of Putrescence
-            0x401E9006, // Leda's Rune
-            0x401E9007, // Broken Rune
-            0x401E9008, // Shadow Realm Rune [1]
-            0x401E9009, // Shadow Realm Rune [2]
-            0x401E900A, // Shadow Realm Rune [3]
-            0x401E900B, // Shadow Realm Rune [4]
-            0x401E900C, // Shadow Realm Rune [5]
-            0x401E900D, // Shadow Realm Rune [6]
-            0x401E900E, // Shadow Realm Rune [7]
-            0x401E900F, // Rune of an Unsung Hero
-            0x401E9010, // Marika's Rune
         ]);
         item_groups.insert("Meats".to_string(), vec![
             0x4000044C, // Pickled Turtle Neck
@@ -414,7 +379,73 @@ pub fn items() -> &'static BTreeMap<String, Vec<u32>> {
             0x40001FD8, //Mohg's Great Rune
             0x40001FD9, //Malenia's Great Rune
         ]);
-        item_groups.insert("Cookbooks DLC".to_string(), vec![
+        item_groups.insert("Cookbooks".to_string(), vec![
+            // Base-game cookbooks
+            0x40002454, // Nomadic Warrior's Cookbook [1]
+            0x40002455, // Nomadic Warrior's Cookbook [3]
+            0x40002456, // Nomadic Warrior's Cookbook [6]
+            0x40002457, // Nomadic Warrior's Cookbook [10]
+            0x40002459, // Nomadic Warrior's Cookbook [7]
+            0x4000245A, // Nomadic Warrior's Cookbook [12]
+            0x4000245B, // Nomadic Warrior's Cookbook [19]
+            0x4000245C, // Nomadic Warrior's Cookbook [13]
+            0x4000245D, // Nomadic Warrior's Cookbook [23]
+            0x4000245E, // Nomadic Warrior's Cookbook [17]
+            0x4000245F, // Nomadic Warrior's Cookbook [2]
+            0x40002460, // Nomadic Warrior's Cookbook [21]
+            0x40002461, // Missionary's Cookbook [6]
+            0x40002468, // Armorer's Cookbook [1]
+            0x40002469, // Armorer's Cookbook [2]
+            0x4000246A, // Nomadic Warrior's Cookbook [11]
+            0x4000246B, // Nomadic Warrior's Cookbook [20]
+            0x4000246C, // Armorer's Cookbook [5]
+            0x4000246D, // Armorer's Cookbook [7]
+            0x4000246E, // Armorer's Cookbook [4]
+            0x4000246F, // Nomadic Warrior's Cookbook [18]
+            0x40002470, // Armorer's Cookbook [3]
+            0x40002471, // Nomadic Warrior's Cookbook [16]
+            0x40002472, // Armorer's Cookbook [6]
+            0x40002473, // Armorer's Cookbook [5]
+            0x4000247C, // Glintstone Craftsman's Cookbook [4]
+            0x4000247D, // Glintstone Craftsman's Cookbook [1]
+            0x4000247E, // Glintstone Craftsman's Cookbook [5]
+            0x4000247F, // Nomadic Warrior's Cookbook [9]
+            0x40002480, // Glintstone Craftsman's Cookbook [8]
+            0x40002481, // Glintstone Craftsman's Cookbook [2]
+            0x40002482, // Glintstone Craftsman's Cookbook [6]
+            0x40002483, // Glintstone Craftsman's Cookbook [7]
+            0x40002484, // Glintstone Craftsman's Cookbook [3]
+            0x40002490, // Missionary's Cookbook [2]
+            0x40002491, // Missionary's Cookbook [1]
+            0x40002492, // Missionary's Cookbook [3]
+            0x40002493, // Missionary's Cookbook [5]
+            0x40002494, // Missionary's Cookbook [4]
+            0x40002495, // Missionary's Cookbook [3]
+            0x400024A4, // Nomadic Warrior's Cookbook [4]
+            0x400024A5, // Perfumer's Cookbook [1]
+            0x400024A6, // Perfumer's Cookbook [2]
+            0x400024A7, // Nomadic Warrior's Cookbook [5]
+            0x400024A8, // Perfumer's Cookbook [1]
+            0x400024A9, // Perfumer's Cookbook [2]
+            0x400024AA, // Perfumer's Cookbook [3]
+            0x400024AB, // Nomadic Warrior's Cookbook [14]
+            0x400024AC, // Nomadic Warrior's Cookbook [8]
+            0x400024AD, // Nomadic Warrior's Cookbook [22]
+            0x400024AE, // Nomadic Warrior's Cookbook [15]
+            0x400024AF, // Nomadic Warrior's Cookbook [24]
+            0x400024B0, // Perfumer's Cookbook [4]
+            0x400024B1, // Perfumer's Cookbook [3]
+            0x400024B8, // Ancient Dragon Apostle's Cookbook [1]
+            0x400024B9, // Ancient Dragon Apostle's Cookbook [2]
+            0x400024BA, // Ancient Dragon Apostle's Cookbook [4]
+            0x400024BB, // Ancient Dragon Apostle's Cookbook [3]
+            0x400024CC, // Fevor's Cookbook [1]
+            0x400024CD, // Fevor's Cookbook [3]
+            0x400024CE, // Fevor's Cookbook [2]
+            0x400024CF, // Missionary's Cookbook [7]
+            0x400024E0, // Frenzied's Cookbook [1]
+            0x400024E1, // Frenzied's Cookbook [2]
+            // DLC cookbooks
             0x401EA8D5, //Forager Brood Cookbook [6]
             0x401EA8D6, //Forager Brood Cookbook [1]
             0x401EA8D7, //Forager Brood Cookbook [2]
@@ -460,6 +491,71 @@ pub fn items() -> &'static BTreeMap<String, Vec<u32>> {
             0x401EA8FF, //Battlefield Priest's Cookbook [4]
             0x401EA900, //Grave Keeper's Cookbook [1]
             0x401EA901, //St. Trina Disciple's Cookbook [2]
+        ]);
+        item_groups.insert("Remembrances".to_string(), vec![
+            // Base-game remembrances
+            0x40000B86, // Remembrance of the Grafted
+            0x40000B87, // Remembrance of the Starscourge
+            0x40000B88, // Remembrance of the Omen King
+            0x40000B89, // Remembrance of the Blasphemous
+            0x40000B8A, // Remembrance of the Rot Goddess
+            0x40000B8B, // Remembrance of the Blood Lord
+            0x40000B8C, // Remembrance of the Black Blade
+            0x40000B8D, // Remembrance of Hoarah Loux
+            0x40000B8E, // Remembrance of the Dragonlord
+            0x40000B8F, // Remembrance of the Full Moon Queen
+            0x40000B90, // Remembrance of the Lichdragon
+            0x40000B91, // Remembrance of the Fire Giant
+            0x40000B92, // Remembrance of the Regal Ancestor
+            0x40000B93, // Elden Remembrance
+            0x40000B94, // Remembrance of the Naturalborn
+            // DLC remembrances
+            0x401E8FD4, // Remembrance of the Wild Boar Rider
+            0x401E8FD5, // Remembrance of the Impaler
+            0x401E8FD6, // Remembrance of the Shadow Sunflower
+            0x401E8FD7, // Remembrance of the Twin Moon Knight
+            0x401E8FD8, // Remembrance of the Saint of the Bud
+            0x401E8FD9, // Remembrance of the Dancing Lion
+            0x401E8FDB, // Remembrance of a God and a Lord
+            0x401E8FDC, // Remembrance of the Lord of Frenzied Flame
+            0x401E8FDD, // Remembrance of the Mother of Fingers
+            0x401E8FDE, // Remembrance of Putrescence
+        ]);
+        item_groups.insert("Runes".to_string(), vec![
+            // Base-game runes
+            0x40000B54, // Golden Rune [1]
+            0x40000B55, // Golden Rune [2]
+            0x40000B56, // Golden Rune [3]
+            0x40000B57, // Golden Rune [4]
+            0x40000B58, // Golden Rune [5]
+            0x40000B59, // Golden Rune [6]
+            0x40000B5A, // Golden Rune [7]
+            0x40000B5B, // Golden Rune [8]
+            0x40000B5C, // Golden Rune [9]
+            0x40000B5D, // Golden Rune [10]
+            0x40000B5E, // Golden Rune [11]
+            0x40000B5F, // Golden Rune [12]
+            0x40000B60, // Golden Rune [13]
+            0x40000B61, // Numen's Rune
+            0x40000B62, // Hero's Rune [1]
+            0x40000B63, // Hero's Rune [2]
+            0x40000B64, // Hero's Rune [3]
+            0x40000B65, // Hero's Rune [4]
+            0x40000B66, // Hero's Rune [5]
+            0x40000B67, // Lord's Rune
+            0x40000BAE, // Lands Between Rune
+            // DLC runes
+            0x401E9006, // Leda's Rune
+            0x401E9007, // Broken Rune
+            0x401E9008, // Shadow Realm Rune [1]
+            0x401E9009, // Shadow Realm Rune [2]
+            0x401E900A, // Shadow Realm Rune [3]
+            0x401E900B, // Shadow Realm Rune [4]
+            0x401E900C, // Shadow Realm Rune [5]
+            0x401E900D, // Shadow Realm Rune [6]
+            0x401E900E, // Shadow Realm Rune [7]
+            0x401E900F, // Rune of an Unsung Hero
+            0x401E9010, // Marika's Rune
         ]);
         item_groups.insert("Bell Bearings".to_string(), vec![
             0x400022CE, // Pidia's Bell Bearing

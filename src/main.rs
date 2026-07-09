@@ -72,10 +72,13 @@ pub struct App {
     pending_backup_name: Option<String>,
     save_error: Option<String>,
     save_status: Option<String>,
+    zoom: f32,
 }
 
 impl App {
     pub fn new(cc: &eframe::CreationContext<'_>) -> Self {
+        let zoom = Self::load_zoom(cc).unwrap_or(1.0);
+        cc.egui_ctx.set_zoom_factor(zoom);
         Self {
             save: Save::default(),
             picked_path: Default::default(),
@@ -90,6 +93,7 @@ impl App {
             pending_backup_name: None,
             save_error: None,
             save_status: None,
+            zoom,
         }
     }
 
@@ -100,15 +104,46 @@ impl App {
     }
 
     fn save(&mut self, path: PathBuf) {
+        // Apply all in-memory edits to the save struct first.
         self.vm.update_save(&mut self.save.save_type);
-        match File::create(&path)
-            .and_then(|mut f| f.write_all(&self.save.write().expect("Failed to serialize save")))
-        {
+
+        // Serialize to bytes BEFORE touching the destination file, so a
+        // serialization panic or error never truncates the user's save.
+        let bytes = match self.save.write() {
+            Ok(b) => b,
+            Err(e) => {
+                self.save_error = Some(format!("Failed to serialize save: {}", e));
+                return;
+            }
+        };
+
+        // Atomic write: write to `<path>.tmp`, fsync, then rename over the
+        // target. The original file is never observed in a partial state.
+        let mut tmp = path.clone().into_os_string();
+        tmp.push(".tmp");
+        let tmp_path = PathBuf::from(tmp);
+
+        let result = (|| -> std::io::Result<()> {
+            {
+                let mut f = File::create(&tmp_path)?;
+                f.write_all(&bytes)?;
+                f.sync_all()?;
+            }
+            // os-level atomic replace (handles the case where `path` already exists).
+            fs::rename(&tmp_path, &path)?;
+            Ok(())
+        })();
+
+        match result {
             Ok(_) => {
+                // Clean up a stray tmp file if rename succeeded it's already gone,
+                // but if we returned early after create it might still linger.
+                let _ = fs::remove_file(&tmp_path);
                 self.save_error = None;
                 self.save_status = Some(format!("Saved to {}", path.display()));
             }
             Err(e) => {
+                let _ = fs::remove_file(&tmp_path);
                 self.save_error = Some(format!("Failed to save file: {}", e));
             }
         }
@@ -165,6 +200,12 @@ impl App {
             .and_then(|s| PathBuf::from(s).canonicalize().ok())
     }
 
+    fn load_zoom(cc: &eframe::CreationContext<'_>) -> Option<f32> {
+        cc.storage
+            .and_then(|s| s.get_string("zoom"))
+            .and_then(|s| s.parse::<f32>().ok())
+    }
+
     fn open_file_dialog() -> Option<PathBuf> {
         FileDialog::new()
             .add_filter("SL2/DAT", &["sl2", "dat"])
@@ -201,11 +242,12 @@ impl eframe::App for App {
                 storage.set_string("backup_folder", path.to_string());
             }
         }
+        storage.set_string("zoom", self.zoom.to_string());
     }
 
     fn ui(&mut self, ui: &mut egui::Ui, _frame: &mut eframe::Frame) {
         let ctx = ui.ctx();
-        ctx.set_zoom_factor(1.75);
+        ctx.set_zoom_factor(self.zoom);
         // TOP PANEL
         egui::Panel::top("toolbar").default_height(35.).show(ctx, |ui| {
             ui.columns(2, |uis|{

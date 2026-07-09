@@ -56,5 +56,31 @@ pub mod settings {
                 .color(Color32::PLACEHOLDER),
             );
         });
+
+        ui.add_space(10.0);
+        ui.group(|ui| {
+            ui.label(RichText::new("UI Zoom").strong());
+            ui.add_space(4.0);
+            ui.horizontal(|ui| {
+                ui.label("Zoom:");
+                let resp = ui.add(
+                    egui::Slider::new(&mut app.zoom, 0.5..=2.5)
+                        .step_by(0.05)
+                        .fixed_decimals(2)
+                        .text("x"),
+                );
+                if resp.changed() {
+                    ui.ctx().set_zoom_factor(app.zoom);
+                }
+            });
+            ui.add_space(4.0);
+            ui.label(
+                RichText::new(
+                    "Adjust magnification of the whole UI. 1.0x = native. Default 1.0x.",
+                )
+                .size(10.0)
+                .color(Color32::PLACEHOLDER),
+            );
+        });
     }
 }

@@ -137,7 +137,11 @@ pub fn add(ui: &mut Ui, vm:&mut ViewModel) {
     });
 
     // Side Panel
-    egui::SidePanel::left("item_choice").show(ui.ctx(), |ui| {
+    egui::SidePanel::left("item_choice")
+        .resizable(true)
+        .default_width(300.)
+        .min_width(240.)
+        .show(ui.ctx(), |ui| {
         if inventory_vm.at_single_items {
             // Single items list view
             single(ui, regulation_vm, inventory_vm);
@@ -182,7 +186,7 @@ pub fn add(ui: &mut Ui, vm:&mut ViewModel) {
 }
 
 fn single(ui: &mut Ui, regulation_vm: &mut RegulationViewModel, inventory_vm: &mut InventoryViewModel) {
-    ui.with_layout(Layout::top_down(egui::Align::Max), |ui| {
+    ui.with_layout(Layout::top_down(egui::Align::Min), |ui| {
         ui.add_space(8.);
         ui.horizontal(|ui|{
             if ui.add(egui::TextEdit::singleline(&mut inventory_vm.filter_text)).labelled_by(ui.label("Filter:").id).changed() {

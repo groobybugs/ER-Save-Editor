@@ -1915,7 +1915,18 @@ impl Write for SaveSlot {
         // Write trailing/rest data read from the original save
         bytes.extend(self._rest.to_vec());
 
-        // Empty calories
+        // Empty calories — pad up to the fixed slot size. Bail with an error
+        // instead of panicking (usize underflow) if the serialized slot grew
+        // past the expected size; the caller surfaces this to the user.
+        if bytes.len() > 0x280000 {
+            return Err(io::Error::new(
+                io::ErrorKind::InvalidData,
+                format!(
+                    "save slot too large: {} bytes (max 0x280000) — inventory edit would overflow",
+                    bytes.len()
+                ),
+            ));
+        }
         bytes.extend(vec![0; 0x280000 - bytes.len()]);
 
         Ok(bytes)
