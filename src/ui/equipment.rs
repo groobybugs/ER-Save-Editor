@@ -157,8 +157,8 @@ pub mod equipment {
                             weapons
                         },
                         InventorySubTypeRoute::Head => {vec![equipment_vm.head.equip_index]},
-                        InventorySubTypeRoute::Body => {vec![equipment_vm.arms.equip_index]},
-                        InventorySubTypeRoute::Arms => {vec![equipment_vm.chest.equip_index]},
+                        InventorySubTypeRoute::Body => {vec![equipment_vm.chest.equip_index]},
+                        InventorySubTypeRoute::Arms => {vec![equipment_vm.arms.equip_index]},
                         InventorySubTypeRoute::Legs => {vec![equipment_vm.legs.equip_index]},
                         InventorySubTypeRoute::Arrow => {Vec::from_iter(equipment_vm.arrows.iter().map(|i| i.equip_index))},
                         InventorySubTypeRoute::Bolt => {Vec::from_iter(equipment_vm.bolts.iter().map(|i| i.equip_index))},
@@ -314,19 +314,7 @@ pub mod equipment {
                         let is_equipped_item = equipment_vm.current_equipped_items.iter().any(|id| *id == item.equip_index);
                         ui.label(if is_current_item {item_name_ui} else {item_name_ui});
                         if is_current_item{
-                            if inventory_vm.current_subtype_route == InventorySubTypeRoute::Head && inventory_vm.naked_head.ga_item_handle == 0 {
-                                ui.label("Equipped");
-                            }   
-                            else if inventory_vm.current_subtype_route == InventorySubTypeRoute::Body && inventory_vm.naked_head.ga_item_handle == 0 {
-                                ui.label("Equipped");
-                            }
-                            else if inventory_vm.current_subtype_route == InventorySubTypeRoute::Arms && inventory_vm.naked_head.ga_item_handle == 0 {
-                                ui.label("Equipped");
-                            }
-                            else if inventory_vm.current_subtype_route == InventorySubTypeRoute::Legs && inventory_vm.naked_head.ga_item_handle == 0 {
-                                ui.label("Equipped");
-                            }
-                            else if ui.add_sized([100., 24.], egui::Button::new("Unequip").fill(Color32::LIGHT_RED)).clicked() {
+                            if ui.add_sized([100., 24.], egui::Button::new("Unequip").fill(Color32::LIGHT_RED)).clicked() {
 
                                 // Mark this section as changed so when the file is 
                                 // saved then it will write this section to the file
@@ -355,36 +343,52 @@ pub mod equipment {
                                             equipment_vm.head.gaitem_handle = inventory_vm.naked_head.ga_item_handle;
                                             equipment_vm.head.id = inventory_vm.naked_head.item_id;
                                             equipment_vm.head.equip_index = inventory_vm.naked_head.equip_index;
-                                            equipment_vm.head.name = "Empty".to_string();
-                                            equipment_vm.current_equipped_items[0] = 0;
+                                        } else {
+                                            equipment_vm.head.gaitem_handle = 0;
+                                            equipment_vm.head.id = 0;
+                                            equipment_vm.head.equip_index = 0;
                                         }
+                                        equipment_vm.head.name = "Empty".to_string();
+                                        equipment_vm.current_equipped_items[0] = 0;
                                     },
                                     InventorySubTypeRoute::Body => {
                                         if inventory_vm.naked_body.ga_item_handle != 0 {
                                             equipment_vm.chest.gaitem_handle = inventory_vm.naked_body.ga_item_handle;
                                             equipment_vm.chest.id = inventory_vm.naked_body.item_id;
                                             equipment_vm.chest.equip_index = inventory_vm.naked_body.equip_index;
-                                            equipment_vm.chest.name = "Empty".to_string();
-                                            equipment_vm.current_equipped_items[0] = 0;
+                                        } else {
+                                            equipment_vm.chest.gaitem_handle = 0;
+                                            equipment_vm.chest.id = 0;
+                                            equipment_vm.chest.equip_index = 0;
                                         }
+                                        equipment_vm.chest.name = "Empty".to_string();
+                                        equipment_vm.current_equipped_items[0] = 0;
                                     },
                                     InventorySubTypeRoute::Arms => {
                                         if inventory_vm.naked_arms.ga_item_handle != 0 {
                                             equipment_vm.arms.gaitem_handle = inventory_vm.naked_arms.ga_item_handle;
                                             equipment_vm.arms.id = inventory_vm.naked_arms.item_id;
                                             equipment_vm.arms.equip_index = inventory_vm.naked_arms.equip_index;
-                                            equipment_vm.arms.name = "Empty".to_string();
-                                            equipment_vm.current_equipped_items[0] = 0;
+                                        } else {
+                                            equipment_vm.arms.gaitem_handle = 0;
+                                            equipment_vm.arms.id = 0;
+                                            equipment_vm.arms.equip_index = 0;
                                         }
+                                        equipment_vm.arms.name = "Empty".to_string();
+                                        equipment_vm.current_equipped_items[0] = 0;
                                     },
                                     InventorySubTypeRoute::Legs => {
                                         if inventory_vm.naked_legs.ga_item_handle != 0 {
                                             equipment_vm.legs.gaitem_handle = inventory_vm.naked_legs.ga_item_handle;
                                             equipment_vm.legs.id = inventory_vm.naked_legs.item_id;
                                             equipment_vm.legs.equip_index = inventory_vm.naked_legs.equip_index;
-                                            equipment_vm.legs.name = "Empty".to_string();
-                                            equipment_vm.current_equipped_items[0] = 0;
+                                        } else {
+                                            equipment_vm.legs.gaitem_handle = 0;
+                                            equipment_vm.legs.id = 0;
+                                            equipment_vm.legs.equip_index = 0;
                                         }
+                                        equipment_vm.legs.name = "Empty".to_string();
+                                        equipment_vm.current_equipped_items[0] = 0;
                                     },
                                     InventorySubTypeRoute::Arrow => {
                                         let pos = equipment_vm.current_equipped_items.iter().position(|id| *id == equipment_vm.arrows[equipment_vm.current_index].equip_index).unwrap();

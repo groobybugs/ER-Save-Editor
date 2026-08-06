@@ -162,7 +162,14 @@ pub fn weapon_display_name(item_id: u32, base_id: Option<u32>) -> Option<String>
                     }
                 })?;
             match prefix {
-                Some(p) => format!("{} {}", p, base_name),
+                Some(p) => {
+                    if let Some(pos) = base_name.find("'s ") {
+                        let (head, tail) = base_name.split_at(pos + 3);
+                        format!("{}{} {}", head, p, tail.trim_start())
+                    } else {
+                        format!("{} {}", p, base_name)
+                    }
+                }
                 None => base_name,
             }
         }

@@ -83,7 +83,9 @@ pub mod vm {
         }
 
         pub fn update_save(&self, save_type: &mut SaveType) {
-            let steam_id = self.steam_id.parse::<u64>().expect("");
+            let steam_id = self.steam_id.parse::<u64>().unwrap_or_else(|_| {
+                save_type.get_global_steam_id()
+            });
             // Update SteamID for UserData10
             save_type.set_global_steam_id(steam_id);
 

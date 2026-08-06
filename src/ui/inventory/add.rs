@@ -154,8 +154,10 @@ pub fn add(ui: &mut Ui, vm:&mut ViewModel) {
 
     // Central View (Item Customization)
     egui::CentralPanel::default().show(ui.ctx(), |ui| {
-        ui.with_layout(Layout::top_down(egui::Align::Min), |ui| {
-            egui::ScrollArea::vertical().show(ui, |ui|{
+        egui::ScrollArea::both()
+            .auto_shrink([false, false])
+            .show(ui, |ui| {
+                ui.with_layout(Layout::top_down(egui::Align::Min), |ui| {
                 ui.add_space(8.);
                 ui.vertical(|ui|{
                     // Single Item customization view
@@ -389,7 +391,7 @@ fn single_item_customization(ui: &mut Ui, inventory_vm: &mut InventoryViewModel,
                     }
                 }
                 InventoryTypeRoute::Weapons => {
-                    egui::Grid::new("grid").num_columns(2).spacing([8., 8.]).show(ui,|ui| {
+                    egui::Grid::new("single_weapon_grid").num_columns(2).spacing([8., 8.]).min_col_width(120.).max_col_width(260.).show(ui,|ui| {
                         let res = Regulation::equip_weapon_params_map().get(&regulation_vm.selected_item.id);
                         if res.is_some() {
                             let item = res.unwrap();
@@ -401,6 +403,7 @@ fn single_item_customization(ui: &mut Ui, inventory_vm: &mut InventoryViewModel,
                                     let label = ui.label("Quantity");
                                     ui.add(field).labelled_by(label.id);
                                 });
+                                ui.end_row();
                             }
                             else {
                                 let max_upgrade = if item.data.reinforceTypeId != 0 &&(
@@ -421,7 +424,7 @@ fn single_item_customization(ui: &mut Ui, inventory_vm: &mut InventoryViewModel,
 
                                 if regulation_vm.available_infusions.len() > 0 {
                                     ui.add(egui::Label::new("Infusion:"));
-                                    if egui::ComboBox::new("infsuion", "")
+                                    if egui::ComboBox::new("infusion", "")
                                         .show_index(ui, &mut regulation_vm.selected_infusion, regulation_vm.available_infusions.len(), |i|{
                                         regulation_vm.available_infusions[i].name.to_string()
                                     }).changed() {
@@ -432,7 +435,7 @@ fn single_item_customization(ui: &mut Ui, inventory_vm: &mut InventoryViewModel,
                                 }
 
                                 if regulation_vm.available_affinities.len() > 0 {
-                                    ui.add(egui::Label::new("Affintiy:"));
+                                    ui.add(egui::Label::new("Affinity:"));
                                     if egui::ComboBox::new("affinity", "")
                                     .show_index(ui, &mut regulation_vm.selected_affinity, regulation_vm.available_affinities.len(), |i|{
                                         regulation_vm.available_affinities[i].to_string()
@@ -470,7 +473,7 @@ fn bulk_item_customization(ui: &mut Ui, inventory_vm: &mut InventoryViewModel) {
                 ui.add(egui::Checkbox::new(&mut inventory_vm.bulk_items_max_quantity, "Max Quantity"));
             }
             InventoryTypeRoute::Weapons => {
-                egui::Grid::new("bulk_items_customization").spacing(Vec2::new(6., 6.)).show(ui,|ui| {
+                egui::Grid::new("bulk_items_customization").spacing(Vec2::new(6., 6.)).min_col_width(120.).show(ui,|ui| {
                     let field = egui::DragValue::new(&mut inventory_vm.bulk_items_arrow_quantity).clamp_range(1..=99);
                     let label = ui.label("Projectile Quantity");
                     ui.add(field).labelled_by(label.id);

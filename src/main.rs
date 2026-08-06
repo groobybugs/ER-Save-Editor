@@ -40,6 +40,7 @@ fn main() -> Result<(), eframe::Error> {
         viewport: egui::ViewportBuilder::default()
             .with_title(format!("ER Save Editor {}", env!("CARGO_PKG_VERSION")))
             .with_inner_size([WINDOW_WIDTH, WINDOW_HEIGHT])
+            .with_min_inner_size([1280., 720.])
             .with_icon(app_icon),
         ..Default::default()
     };
@@ -98,9 +99,18 @@ impl App {
     }
 
     fn open(&mut self, path: PathBuf) {
-        self.save = Save::from_path(&path).expect("Failed to read save");
-        self.vm = ViewModel::from_save(&self.save);
-        self.picked_path = path.clone();
+        match Save::from_path(&path) {
+            Ok(save) => {
+                self.vm = ViewModel::from_save(&save);
+                self.save = save;
+                self.picked_path = path.clone();
+                self.save_error = None;
+                self.save_status = Some(format!("Loaded {}", path.display()));
+            }
+            Err(e) => {
+                self.save_error = Some(format!("Failed to read save: {}", e));
+            }
+        }
     }
 
     fn save(&mut self, path: PathBuf) {
