@@ -605,6 +605,25 @@ pub mod regulation_view_model {
 
                     Self::sort_by_score(&mut self.filtered_accessories, filter_text);
                 },
+                InventoryTypeRoute::Gestures => {
+                    // Gestures are not in regulation params usually, but we have a static list.
+                    // We can populate filtered_goods or similar, or just ignore since gestures have their own view.
+                    // If we want to support searching gestures in the add view:
+                     self.filtered_goods = crate::db::gestures::GESTURES.iter().map(|g| RegulationItemViewModel {
+                        id: g.id as u32,
+                        name: g.name.to_string(),
+                        max_held: 1,
+                        max_storage: 1,
+                        item_type: InventoryItemType::GESTURE,
+                        quantity: Some(1),
+                        ..Default::default()
+                    }).filter(|reg_item_vm|{
+                        if filter_text.is_empty() { return true; }
+                        let distance = sorensen_dice(&reg_item_vm.name.to_lowercase(), &filter_text.to_lowercase());
+                        distance > 0.3
+                    }).collect();
+                     self.filtered_goods.sort_by(|a,b| a.name.cmp(&b.name));
+                }
             }
         }
     }

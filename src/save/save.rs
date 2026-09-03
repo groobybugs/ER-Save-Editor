@@ -114,6 +114,18 @@ pub mod save {
             }
         }
 
+        pub fn set_character_arche_type(&mut self, index: usize, arche_type: u8) {
+            match self {
+                SaveType::Unknown => panic!("Why are we here?"),
+                SaveType::PC(pc_save) => {
+                    pc_save.save_slots[index].save_slot.player_game_data.arche_type = arche_type;
+                }
+                SaveType::PlayStation(ps_save) => {
+                    ps_save.save_slots[index].player_game_data.arche_type = arche_type;
+                },
+            }
+        }
+
         pub fn set_character_health(&mut self, index: usize, health: u32) {
             match self {
                 SaveType::Unknown => panic!("Why are we here?"),
@@ -471,6 +483,18 @@ pub mod save {
                 }
                 SaveType::PlayStation(ps_save) => {
                     ps_save.save_slots[index].ga_item_data = gaitem_data;
+                }
+            }
+        }
+
+        pub fn set_gesture_game_data(&mut self, index: usize, gesture_game_data: Vec<i32>) {
+            match self {
+                SaveType::Unknown => panic!("Why are we here?"),
+                SaveType::PC(pc_save) => {
+                    pc_save.save_slots[index].save_slot.gesture_game_data = gesture_game_data;
+                }
+                SaveType::PlayStation(ps_save) => {
+                    ps_save.save_slots[index].gesture_game_data = gesture_game_data;
                 }
             }
         }

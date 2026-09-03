@@ -17,13 +17,14 @@ pub fn browse_inventory(ui: &mut Ui, vm:&mut ViewModel) {
 
     ui.add_space(6.);
 
-    ui.columns(6,|uis| {
+    ui.columns(7,|uis| {
         let common_items = uis[0].add_sized([uis[0].available_width(), 40.], egui::Button::new("Common Item"));
         let key_items = uis[1].add_sized([uis[1].available_width(), 40.], egui::Button::new("Key Item"));
         let weapons = uis[2].add_sized([uis[2].available_width(), 40.], egui::Button::new("Weapons"));
         let armors = uis[3].add_sized([uis[3].available_width(), 40.], egui::Button::new("Armors"));
         let ashofwar = uis[4].add_sized([uis[4].available_width(), 40.], egui::Button::new("Ash of War"));
         let talismans = uis[5].add_sized([uis[5].available_width(), 40.], egui::Button::new("Talismans"));
+        let gestures = uis[6].add_sized([uis[6].available_width(), 40.], egui::Button::new("Gestures"));
 
         if common_items.clicked() {inventory_vm.current_type_route = InventoryTypeRoute::CommonItems}
         if key_items.clicked() {inventory_vm.current_type_route = InventoryTypeRoute::KeyItems}
@@ -31,6 +32,7 @@ pub fn browse_inventory(ui: &mut Ui, vm:&mut ViewModel) {
         if armors.clicked() {inventory_vm.current_type_route = InventoryTypeRoute::Armors}
         if ashofwar.clicked() {inventory_vm.current_type_route = InventoryTypeRoute::AshOfWar}
         if talismans.clicked() {inventory_vm.current_type_route = InventoryTypeRoute::Talismans}
+        if gestures.clicked() {inventory_vm.current_type_route = InventoryTypeRoute::Gestures}
 
         // Highlight active 
         match inventory_vm.current_type_route {
@@ -40,6 +42,7 @@ pub fn browse_inventory(ui: &mut Ui, vm:&mut ViewModel) {
             InventoryTypeRoute::Armors => {armors.highlight();},
             InventoryTypeRoute::AshOfWar => {ashofwar.highlight();},
             InventoryTypeRoute::Talismans => {talismans.highlight();},
+            InventoryTypeRoute::Gestures => {gestures.highlight();},
         }
     });
 
@@ -96,6 +99,7 @@ pub fn browse_inventory(ui: &mut Ui, vm:&mut ViewModel) {
         InventoryTypeRoute::Armors => &inventory_vm.storage[inventory_vm.at_storage_box as usize].filtered_armors,
         InventoryTypeRoute::AshOfWar => &inventory_vm.storage[inventory_vm.at_storage_box as usize].filtered_aows,
         InventoryTypeRoute::Talismans => &inventory_vm.storage[inventory_vm.at_storage_box as usize].filtered_accessories,
+        InventoryTypeRoute::Gestures => &inventory_vm.gestures,
     };
     egui::ScrollArea::vertical().show_rows(ui, 10., current_inventory_list.len(), |ui, row_range| {
         egui::Grid::new("browse_body").spacing([8., 8.]).min_col_width(ui.available_width()/4.).striped(true).show(ui, |ui| {

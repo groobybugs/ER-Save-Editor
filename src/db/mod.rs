@@ -20,3 +20,4 @@ pub mod armors;
 pub mod aows;
 pub mod talismans;
 pub mod items;
+pub mod gestures;
