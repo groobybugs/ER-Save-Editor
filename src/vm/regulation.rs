@@ -271,6 +271,14 @@ pub mod regulation_view_model {
         pub available_affinities: Vec<Affinity>,
     }
 
+    /// Item-name match for the Add Single filter box. Substring matching keeps
+    /// short queries useful (fuzzy dice scores ~0 for 1-2 chars, which used to
+    /// wipe the whole list on the first keystroke); dice keeps typo tolerance
+    /// for longer queries. Both inputs must already be lowercased.
+    fn matches_filter(name: &str, query: &str) -> bool {
+        query.is_empty() || name.contains(query) || sorensen_dice(name, query) > 0.3
+    }
+
     impl RegulationViewModel {
         pub fn update_available_infusions(&mut self){
             self.selected_infusion = 0;
@@ -496,9 +504,7 @@ pub mod regulation_view_model {
                         item_type: InventoryItemType::ITEM,
                         ..Default::default()
                     }).filter(|reg_item_vm|{
-                        if filter_text.is_empty() { return true; }
-                        let distance = sorensen_dice(&reg_item_vm.name.to_lowercase(), &filter_text.to_lowercase());
-                        distance > 0.3 
+                        matches_filter(&reg_item_vm.name.to_lowercase(), &filter_text.to_lowercase())
                     }).filter(|reg_item_vm|{
                         !replacement_items.contains(&reg_item_vm.id)
                     })
@@ -539,9 +545,7 @@ pub mod regulation_view_model {
                         } else {None},
                         ..Default::default()
                     }).filter(|i|{
-                        if filter_text.is_empty() { return true; }
-                        let distance = sorensen_dice(&i.name.to_lowercase(), &filter_text.to_lowercase());
-                        distance > 0.3 
+                        matches_filter(&i.name.to_lowercase(), &filter_text.to_lowercase())
                     }).filter(|i|{
                         i.id % 10_000 == 0
                     }).filter(|reg_item_vm| !reg_item_vm.name.starts_with("[UNKNOWN_")).collect::<Vec<RegulationItemViewModel>>();
@@ -568,9 +572,7 @@ pub mod regulation_view_model {
                         item_type: InventoryItemType::ARMOR,
                         ..Default::default()
                     }).filter(|reg_item_vm|{
-                        if filter_text.is_empty() { return true; }
-                        let distance = sorensen_dice(&reg_item_vm.name.to_lowercase(), &filter_text.to_lowercase());
-                        distance > 0.3 
+                        matches_filter(&reg_item_vm.name.to_lowercase(), &filter_text.to_lowercase())
                     }).filter(|reg_item_vm|{
                         reg_item_vm.id > 40000
                     }).filter(|reg_item_vm| !reg_item_vm.name.starts_with("[UNKNOWN_")).collect::<Vec<RegulationItemViewModel>>();
@@ -597,9 +599,7 @@ pub mod regulation_view_model {
                         item_type: InventoryItemType::AOW,
                         ..Default::default()
                     }).filter(|reg_item_vm|{
-                        if filter_text.is_empty() { return true; }
-                        let distance = sorensen_dice(&reg_item_vm.name.to_lowercase(), &filter_text.to_lowercase());
-                        distance > 0.3 
+                        matches_filter(&reg_item_vm.name.to_lowercase(), &filter_text.to_lowercase())
                     }).filter(|reg_item_vm|{
                         reg_item_vm.id > 10000
                     }).filter(|reg_item_vm| !reg_item_vm.name.starts_with("[UNKNOWN_")).collect::<Vec<RegulationItemViewModel>>();
@@ -626,9 +626,7 @@ pub mod regulation_view_model {
                         item_type: InventoryItemType::ACCESSORY,
                         ..Default::default()
                     }).filter(|reg_item_vm|{
-                        if filter_text.is_empty() { return true; }
-                        let distance = sorensen_dice(&reg_item_vm.name.to_lowercase(), &filter_text.to_lowercase());
-                        distance > 0.3 
+                        matches_filter(&reg_item_vm.name.to_lowercase(), &filter_text.to_lowercase())
                     }).filter(|reg_item_vm| !reg_item_vm.name.starts_with("[UNKNOWN_")).collect::<Vec<RegulationItemViewModel>>();
 
                     self.filtered_accessories.sort_by(|a,b| {
@@ -643,6 +641,38 @@ pub mod regulation_view_model {
                     })
                 },
             }
+        }
+    }
+
+    #[cfg(test)]
+    mod tests {
+        use super::matches_filter;
+
+        #[test]
+        fn empty_query_matches_everything() {
+            assert!(matches_filter("azur's glintstone staff", ""));
+        }
+
+        #[test]
+        fn single_char_query_matches_by_substring() {
+            assert!(matches_filter("azur's glintstone staff", "a"));
+            assert!(!matches_filter("sword", "z"));
+        }
+
+        #[test]
+        fn longer_query_matches_by_substring() {
+            assert!(matches_filter("azur's glintstone staff", "azur"));
+            assert!(!matches_filter("azur's glintstone staff", "sword"));
+        }
+
+        #[test]
+        fn typo_still_matches_via_fuzzy() {
+            assert!(matches_filter("academy glintstone staff", "glinstone"));
+        }
+
+        #[test]
+        fn gibberish_matches_nothing() {
+            assert!(!matches_filter("azur's glintstone staff", "zzzqqq"));
         }
     }
 }

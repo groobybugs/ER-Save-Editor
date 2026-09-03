@@ -192,7 +192,7 @@ fn single(ui: &mut Ui, regulation_vm: &mut RegulationViewModel, inventory_vm: &m
         ui.add_space(8.);
         ui.horizontal(|ui|{
             let label = ui.label("Filter:");
-            if ui.add(egui::TextEdit::singleline(&mut inventory_vm.filter_text).desired_width(f32::INFINITY)).labelled_by(label.id).changed() {
+            if ui.add_sized([ui.available_width(), 20.], egui::TextEdit::singleline(&mut inventory_vm.filter_text).id_source("add_single_filter")).labelled_by(label.id).changed() {
                 regulation_vm.filter(&inventory_vm.current_type_route, &inventory_vm.filter_text);
             };
         });
