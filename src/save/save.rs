@@ -3,7 +3,7 @@ pub mod save {
     use binary_reader::BinaryReader;
     use crate::{
         read::read::Read, save::{
-            common::{ save_slot::{EquipInventoryData, EquipProjectileData, GaItem, GaItemData, SaveSlot}, user_data_10::ProfileSummary, user_data_11::UserData11 },
+            common::{ save_slot::{EquipInventoryData, EquipProjectileData, GaItem, GaItemData, SaveSlot}, user_data_10::ProfileSummary, user_data_11::{REGULATION_BLOCK_SIZE, UserData11, split_regulation_block} },
             pc::pc_save::PCSave, 
             playstation::ps_save::PSSave, 
         }, util::{bit::bit::set_bit, regulation::Regulation}, write::write::Write
@@ -857,10 +857,14 @@ pub mod save {
         // Check if it's a PS Save Wizard save file
         pub fn is_ps_save_wizard(br: &mut BinaryReader) -> bool {
             br.jmp(0x1960080);
-            let regulation = match br.read_bytes(0x1F1240) {
+            let block = match br.read_bytes(REGULATION_BLOCK_SIZE) {
                 Ok(bytes) => bytes,
                 Err(_) => return false,
             };
+            let (regulation, _) = split_regulation_block(block);
+            if regulation.is_empty() {
+                return false;
+            }
             let is_ps_save_wizard = Regulation::check_save_compression(&regulation)
                 .unwrap_or_else(|_| false);
             br.jmp(0);
