@@ -75,9 +75,19 @@ pub mod save {
         pub fn set_character_name(&mut self, index: usize, character_name_str: String) {
             let mut character_name: [u16; 0x10] = [0; 0x10];
             let mut character_name2: [u16; 0x11] = [0; 0x11];
-            for (i, char) in character_name_str.chars().enumerate() {
-                character_name[i] = char as u16;
-                character_name2[i] = char as u16;
+            // Encode as UTF-16 and truncate to the in-game 16-unit limit at
+            // a char boundary: never panics on long names and never splits
+            // surrogate pairs (which would fail to decode on load).
+            let mut i = 0;
+            for ch in character_name_str.chars() {
+                let mut buf = [0u16; 2];
+                let enc = ch.encode_utf16(&mut buf);
+                if i + enc.len() > 0x10 {
+                    break;
+                }
+                character_name[i..i + enc.len()].copy_from_slice(enc);
+                character_name2[i..i + enc.len()].copy_from_slice(enc);
+                i += enc.len();
             }
             match self {
                 SaveType::Unknown => panic!("Why are we here?"),
@@ -1102,6 +1112,52 @@ mod tests {
             "unexpectedly large change ({} bytes) for a single flag toggle",
             changed_bytes
         );
+    }
+    /// Repro for "renamed character, in-game status screen still shows the old
+    /// name": rename via the same path the UI uses, serialize, reload from
+    /// disk, and assert BOTH name copies the game reads.
+    #[test]
+    fn test_set_character_name_roundtrips_both_copies() {
+        let Ok(path_str) = std::env::var("ER_TEST_SAVE_PS") else {
+            eprintln!("skipping: set ER_TEST_SAVE_PS=<path> to run");
+            return;
+        };
+        let path = PathBuf::from(&path_str);
+        if !path.exists() {
+            eprintln!("skipping: ER_TEST_SAVE_PS points to missing file: {}", path.display());
+            return;
+        }
+
+        let mut save = Save::from_path(&path).expect("failed to load save");
+        let idx = save
+            .save_type
+            .active_slots()
+            .iter()
+            .position(|a| *a)
+            .expect("expected at least one active slot");
+
+        save.save_type.set_character_name(idx, "RenameTest01".to_string());
+        // Over-long names must truncate, not panic (the UI caps at 16 chars,
+        // but all paths share this function).
+        save.save_type.set_character_name(idx, "RenameTest01extra-chars-here".to_string());
+        let bytes = save.write().expect("failed to write save");
+
+        let tmp = std::env::temp_dir().join("er_save_editor_rename_test.dat");
+        std::fs::write(&tmp, &bytes).expect("failed to write temp save");
+        let save2 = Save::from_path(&tmp).expect("failed to reload save");
+        let _ = std::fs::remove_file(&tmp);
+
+        let read_name = |units: &[u16]| {
+            String::from_utf16(
+                &units.iter().take_while(|u| **u != 0).copied().collect::<Vec<u16>>(),
+            )
+            .expect("name must be valid UTF-16")
+        };
+        // "RenameTest01extra-chars-here" truncated to the 16-unit limit.
+        let slot_name = read_name(&save2.save_type.get_slot(idx).player_game_data.character_name);
+        let summary_name = read_name(&save2.save_type.get_profile_summary(idx).character_name);
+        assert_eq!(slot_name, "RenameTest01extra");
+        assert_eq!(summary_name, "RenameTest01extra");
     }
 }
 
