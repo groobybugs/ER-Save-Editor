@@ -50,7 +50,7 @@ fn main() -> Result<(), eframe::Error> {
         egui_phosphor::add_to_fonts(&mut fonts, egui_phosphor::Variant::Regular);
         egui_phosphor::add_to_fonts(&mut fonts, egui_phosphor::Variant::Fill);
         creation_context.egui_ctx.set_fonts(fonts);
-        let mut visuals = creation_context.egui_ctx.style().visuals.clone();
+        let mut visuals = creation_context.egui_ctx.global_style().visuals.clone();
         let rounding = 3.;
         visuals.window_corner_radius = CornerRadius::default().at_least(rounding as u8);
         visuals.window_highlight_topmost = false;
@@ -256,10 +256,9 @@ impl eframe::App for App {
     }
 
     fn ui(&mut self, ui: &mut egui::Ui, _frame: &mut eframe::Frame) {
-        let ctx = ui.ctx();
-        ctx.set_zoom_factor(self.zoom);
+        ui.ctx().set_zoom_factor(self.zoom);
         // TOP PANEL
-        egui::Panel::top("toolbar").default_height(35.).show(ctx, |ui| {
+        egui::Panel::top("toolbar").default_size(35.).show(&mut *ui, |ui| {
             ui.columns(2, |uis|{
                 uis[0].with_layout(Layout::left_to_right(Align::Center),| ui| {
                     if ui.button(egui::RichText::new(format!("{} open", egui_phosphor::regular::FOLDER_OPEN))).clicked() {
@@ -320,7 +319,7 @@ impl eframe::App for App {
         });
 
         // TOP PANEL
-        egui::Panel::top("top").show(ctx, |ui| {
+        egui::Panel::top("top").show(&mut *ui, |ui| {
             if self.picked_path.exists() {
                 let save_type = match self.save.save_type {
                     SaveType::Unknown => {
@@ -336,8 +335,8 @@ impl eframe::App for App {
 
                 ui.columns(2,| uis| {
                     if self.vm.active.is_some_and(|valid| valid) {
-                        egui::Frame::none().show(&mut uis[1], |ui| {
-                            let steam_id_text_edit = egui::widgets::TextEdit::singleline(&mut self.vm.steam_id)
+                        egui::Frame::new().show(&mut uis[1], |ui| {
+                            let steam_id_text_edit = egui::widgets::TextEdit::singleline(&mut self.vm.steam_id).id(egui::Id::new("steam_id_field"))
                             .char_limit(17)
                             .desired_width(125.);
                             ui.with_layout(egui::Layout::right_to_left(egui::Align::Center), |ui| {
@@ -356,7 +355,7 @@ impl eframe::App for App {
                             });
                         });
                     }
-                    egui::Frame::none().show(&mut uis[0], |ui| {
+                    egui::Frame::new().show(&mut uis[0], |ui| {
                         ui.with_layout(egui::Layout::left_to_right(egui::Align::Center), |ui| {
                             ui.label(format!("{}",save_type));
                         });
@@ -367,9 +366,12 @@ impl eframe::App for App {
 
         // Character List Panel
         if self.vm.active.is_some_and(|valid| valid) {
-            egui::Panel::left("characters").show(ctx, |ui| {
+            egui::Panel::left("characters")
+                .resizable(false)
+                .exact_size(140.)
+                .show(&mut *ui, |ui| {
                 egui::ScrollArea::vertical()
-                    .id_source("left")
+                    .id_salt("left")
                     .show(ui, |ui| {
                         ui.vertical(|ui| {
                             for i in 0..0xA {
@@ -384,8 +386,11 @@ impl eframe::App for App {
             });
 
             // Slot Section Panel
-            egui::Panel::left("slot_sections_menu").show(ctx, |ui| {
-                egui::ScrollArea::vertical() .id_source("left") .show(ui, |ui| {
+            egui::Panel::left("slot_sections_menu")
+                .resizable(false)
+                .exact_size(140.)
+                .show(&mut *ui, |ui| {
+                egui::ScrollArea::vertical() .id_salt("left") .show(ui, |ui| {
                     ui.vertical(|ui| {
                         menu(ui, self);
                     })
@@ -393,7 +398,7 @@ impl eframe::App for App {
             });
 
             // Main Content
-            egui::CentralPanel::default().show(ctx, |ui| {
+            egui::CentralPanel::default().show(&mut *ui, |ui| {
                 match self.current_route {
                     Route::None => none(ui),
                     Route::General => general(ui, &mut self.vm),
@@ -408,9 +413,9 @@ impl eframe::App for App {
         // No file loaded View
         else {
             // Listen for dragged files and update path
-            egui::CentralPanel::default().show(ctx, |ui| {
+            egui::CentralPanel::default().show(&mut *ui, |ui| {
                 // Check if hovering a file
-                let path = ctx.input(|i| {
+                let path = ui.ctx().input(|i| {
                     if !i.raw.hovered_files.is_empty() {
                         let file = i.raw.hovered_files[0].clone();
                         let path: std::path::PathBuf = file.path.expect("Error!");
@@ -423,9 +428,9 @@ impl eframe::App for App {
                 ui.centered_and_justified(|ui| {
                     if !path.is_empty() {
                         let painter =
-                            ctx.layer_painter(LayerId::new(Order::Foreground, Id::new("file_drop_target")));
+                            ui.ctx().layer_painter(LayerId::new(Order::Foreground, Id::new("file_drop_target")));
                 
-                        let screen_rect = ctx.screen_rect();
+                        let screen_rect = ui.ctx().viewport_rect();
                         painter.rect_filled(screen_rect, 0.0, Color32::from_black_alpha(96));
                         ui.label(egui::RichText::new(path));
                     }
@@ -454,7 +459,7 @@ impl eframe::App for App {
                 });
 
                 // Check a file that has been dropped in the window
-                ctx.input(|i| {
+ui.ctx().input(|i| {
                     if !i.raw.dropped_files.is_empty() {
                         let file = i.raw.dropped_files[0].clone();
                         let path: std::path::PathBuf = file.path.expect("Error!");
@@ -472,7 +477,7 @@ impl eframe::App for App {
                 .collapsible(false)
                 .resizable(false)
                 .anchor(egui::Align2::CENTER_CENTER, [0.0, 0.0])
-                .show(ctx, |ui| {
+                .show(ui.ctx(), |ui| {
                     ui.set_min_width(380.0);
                     let dest = self
                         .pending_save_path
@@ -537,7 +542,7 @@ impl eframe::App for App {
                 .collapsible(false)
                 .resizable(false)
                 .anchor(egui::Align2::CENTER_CENTER, [0.0, 0.0])
-                .show(ctx, |ui| {
+                .show(ui.ctx(), |ui| {
                     settings_view(ui, self);
                 });
             if !open {
@@ -551,7 +556,7 @@ impl eframe::App for App {
                 .collapsible(false)
                 .resizable(false)
                 .anchor(egui::Align2::CENTER_TOP, [0.0, 60.0])
-                .show(ctx, |ui| {
+                .show(ui.ctx(), |ui| {
                     if let Some(err) = &self.save_error {
                         ui.label(RichText::new(err).color(Color32::DARK_RED));
                     }

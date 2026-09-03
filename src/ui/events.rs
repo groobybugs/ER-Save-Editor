@@ -6,9 +6,9 @@ pub mod events {
     use crate::{db::{bosses::bosses::{Boss, BOSSES}, colosseums::colosseums::{Colosseum, COLOSSEUMS}, cookbooks::books::{Cookbook, COOKBOKS}, graces::maps::GRACES, map_name::map_name::{MapName, MAP_NAME}, maps::maps::{Map, MAPS}, summoning_pools::summoning_pools::{SummoningPool, SUMMONING_POOLS}, whetblades::whetblades::{Whetblade, WHETBLADES}}, ui::custom::checkbox::checkbox::{three_states_checkbox, State}, vm::{events::events_view_model::EventsRoute, vm::vm::ViewModel}};
 
     pub fn events(ui: &mut Ui, vm:&mut ViewModel) {
-        egui::SidePanel::left("inventory_menu").show(ui.ctx(), |ui|{
+        egui::Panel::left("inventory_menu").show(&mut *ui, |ui|{
             egui::ScrollArea::vertical()
-            .id_source("left")
+            .id_salt("left")
             .show(ui, |ui| {
                 ui.vertical(|ui| {
                     let sites_of_grace = ui.add_sized([100., 40.], egui::Button::new("Sites Of Grace"));
@@ -42,9 +42,9 @@ pub mod events {
             });
         });
 
-        egui::CentralPanel::default().show(ui.ctx(), |ui|{
+        egui::CentralPanel::default().show(&mut *ui, |ui|{
             egui::ScrollArea::vertical()
-            .id_source("left")
+            .id_salt("left")
             .auto_shrink(false)
             .show(ui, |ui| {
                 match vm.slots[vm.index].events_vm.current_route {
@@ -67,8 +67,8 @@ pub mod events {
             let maps = &vm.slots[vm.index].events_vm.grace_groups;
             let graces = &mut vm.slots[vm.index].events_vm.graces;
             select_all_checkbox(ui, graces, "All Graces");
-            for map in maps {
-                ui.push_id(map.0, |ui| {
+            for (map_index, map) in maps.iter().enumerate() {
+                ui.push_id(map_index, |ui| {
                     let collapsing = egui::containers::collapsing_header::CollapsingHeader::new(MAP_NAME.lock().unwrap()[&map.0]);
                     ui.horizontal(|ui|{
                         let mut state = State::Off;

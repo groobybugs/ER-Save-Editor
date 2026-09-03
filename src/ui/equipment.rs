@@ -8,11 +8,11 @@ pub mod equipment {
     const EQUIPMENT_BOX_WIDTH: f32 = 110.; 
 
     pub fn equipment(ui: &mut Ui, vm: &mut ViewModel) {
-        egui::SidePanel::right("equipment_list").show(ui.ctx(), |ui| {
+        egui::Panel::right("equipment_list").show(&mut *ui, |ui| {
             side_panel(ui, vm);
         });
 
-        egui::CentralPanel::default().show(ui.ctx(), |ui| {
+        egui::CentralPanel::default().show(&mut *ui, |ui| {
             egui::ScrollArea::vertical().auto_shrink(false).show(ui, |ui| {
                 row(ui, vm, format!("Weapons - Right Hand"), |ui, vm| {
                     group(ui, vm, |ui, vm| {
@@ -101,7 +101,7 @@ pub mod equipment {
     }
 
     fn group(ui: &mut Ui, vm: &mut ViewModel, f: fn(&mut Ui, &mut ViewModel) -> ()) {
-        egui::Frame::none().show(ui, |ui| {
+        egui::Frame::new().show(ui, |ui| {
             ui.horizontal_wrapped(|ui|{
                 f(ui, vm);
             });
@@ -242,7 +242,7 @@ pub mod equipment {
         ui.add_space(8.);
         ui.horizontal(|ui|{
             let label = ui.label("Filter:");
-            if ui.add(egui::widgets::TextEdit::singleline(&mut inventory_vm.filter_text)).labelled_by(label.id).changed() {
+            if ui.add(egui::widgets::TextEdit::singleline(&mut inventory_vm.filter_text).id(egui::Id::new("equipment_filter"))).labelled_by(label.id).changed() {
                 inventory_vm.filter_with_subtype();
             };
         });

@@ -20,7 +20,7 @@ pub fn add(ui: &mut Ui, vm:&mut ViewModel) {
     let regulation_vm = &mut vm.regulation;
     let inventory_vm = &mut vm.slots[vm.index].inventory_vm;
 
-    egui::TopBottomPanel::top("top_panel").show(ui.ctx(), |ui| {
+    egui::Panel::top("top_panel").show(&mut *ui, |ui| {
         ui.add_space(6.);
         ui.columns(2, |uis| {
             let single_button = uis[0].add_sized([100.,40.], egui::Button::new("Single"));
@@ -136,12 +136,13 @@ pub fn add(ui: &mut Ui, vm:&mut ViewModel) {
 
     });
 
-    // Side Panel
-    egui::SidePanel::left("item_choice")
+    // Middle list (resizable by drag, capped so details always fit)
+    egui::Panel::left("item_choice")
         .resizable(true)
-        .default_width(300.)
-        .min_width(240.)
-        .show(ui.ctx(), |ui| {
+        .default_size(300.)
+        .min_size(220.)
+        .max_size(480.)
+.show(&mut *ui, |ui| {
         if inventory_vm.at_single_items {
             // Single items list view
             single(ui, regulation_vm, inventory_vm);
@@ -152,10 +153,10 @@ pub fn add(ui: &mut Ui, vm:&mut ViewModel) {
         }
     });
 
-    // Central View (Item Customization)
-    egui::CentralPanel::default().show(ui.ctx(), |ui| {
-        egui::ScrollArea::both()
-            .auto_shrink([false, false])
+    // Details + log share the central column (2 columns total, no dead space)
+    egui::CentralPanel::default().show(&mut *ui, |ui| {
+        egui::ScrollArea::vertical()
+            .auto_shrink([false, true])
             .show(ui, |ui| {
                 ui.with_layout(Layout::top_down(egui::Align::Min), |ui| {
                 ui.add_space(8.);
@@ -191,7 +192,8 @@ fn single(ui: &mut Ui, regulation_vm: &mut RegulationViewModel, inventory_vm: &m
     ui.with_layout(Layout::top_down(egui::Align::Min), |ui| {
         ui.add_space(8.);
         ui.horizontal(|ui|{
-            if ui.add(egui::TextEdit::singleline(&mut inventory_vm.filter_text)).labelled_by(ui.label("Filter:").id).changed() {
+            let label = ui.label("Filter:");
+            if ui.add(egui::TextEdit::singleline(&mut inventory_vm.filter_text).id(egui::Id::new("add_single_filter"))).labelled_by(label.id).changed() {
                 regulation_vm.filter(&inventory_vm.current_type_route, &inventory_vm.filter_text);
             };
         });
@@ -201,7 +203,8 @@ fn single(ui: &mut Ui, regulation_vm: &mut RegulationViewModel, inventory_vm: &m
         let row_height = 10.;
         match inventory_vm.current_type_route {
             InventoryTypeRoute::CommonItems => {
-                egui::ScrollArea::vertical().max_height(ui.available_height()-8.).show_rows(ui, row_height, regulation_vm.filtered_goods.len(), |ui, row_range|{
+                egui::ScrollArea::vertical().auto_shrink([false, true]).max_height(ui.available_height()-8.).show_rows(ui, row_height, regulation_vm.filtered_goods.len(), |ui, row_range|{
+                    ui.set_max_width((ui.available_width() - 14.).max(0.));
                     for i in row_range {
                         let item = &regulation_vm.filtered_goods[i];
                         let mut text = egui::RichText::new(format!("{}", item.name));
@@ -209,7 +212,7 @@ fn single(ui: &mut Ui, regulation_vm: &mut RegulationViewModel, inventory_vm: &m
                             text = egui::RichText::new(format!("{}", item.name)).strong().heading();
                         }
                         ui.with_layout(Layout::left_to_right(egui::Align::Min), |ui| {
-                            if ui.add(egui::Button::new(text).fill(Color32::TRANSPARENT)).clicked() {
+                            if ui.add(egui::Button::new(text).fill(Color32::TRANSPARENT).truncate()).on_hover_text(format!("{}", item.name)).clicked() {
                                 regulation_vm.selected_item = item.clone();
                             };
                         });
@@ -219,14 +222,15 @@ fn single(ui: &mut Ui, regulation_vm: &mut RegulationViewModel, inventory_vm: &m
             InventoryTypeRoute::KeyItems => {
             }, 
             InventoryTypeRoute::Weapons => {
-                egui::ScrollArea::vertical().max_height(ui.available_height()-8.).show_rows(ui, row_height, regulation_vm.filtered_weapons.len(), |ui, row_range|{
+                egui::ScrollArea::vertical().auto_shrink([false, true]).max_height(ui.available_height()-8.).show_rows(ui, row_height, regulation_vm.filtered_weapons.len(), |ui, row_range|{
+                    ui.set_max_width((ui.available_width() - 14.).max(0.));
                     for i in row_range {
                         let mut text = egui::RichText::new(format!("{}", &regulation_vm.filtered_weapons[i].name));
                         if regulation_vm.selected_item.id == regulation_vm.filtered_weapons[i].id {
                             text = egui::RichText::new(format!("{}", &regulation_vm.filtered_weapons[i].name)).strong().heading();
                         }
                         ui.with_layout(Layout::left_to_right(egui::Align::Min), |ui| {
-                            if ui.add(egui::Button::new(text).fill(Color32::TRANSPARENT)).clicked() {
+                            if ui.add(egui::Button::new(text).fill(Color32::TRANSPARENT).truncate()).on_hover_text(format!("{}", regulation_vm.filtered_weapons[i].name)).clicked() {
                                 regulation_vm.selected_item = regulation_vm.filtered_weapons[i].clone();
                                 regulation_vm.update_available_infusions();
                                 regulation_vm.update_available_affinities();
@@ -236,7 +240,8 @@ fn single(ui: &mut Ui, regulation_vm: &mut RegulationViewModel, inventory_vm: &m
                 });
             },
             InventoryTypeRoute::Armors => {
-                egui::ScrollArea::vertical().max_height(ui.available_height()-8.).show_rows(ui, row_height, regulation_vm.filtered_protectors.len(), |ui, row_range|{
+                egui::ScrollArea::vertical().auto_shrink([false, true]).max_height(ui.available_height()-8.).show_rows(ui, row_height, regulation_vm.filtered_protectors.len(), |ui, row_range|{
+                    ui.set_max_width((ui.available_width() - 14.).max(0.));
                     for i in row_range {
                         let item = &regulation_vm.filtered_protectors[i];
                         let mut text = egui::RichText::new(format!("{}", item.name));
@@ -244,7 +249,7 @@ fn single(ui: &mut Ui, regulation_vm: &mut RegulationViewModel, inventory_vm: &m
                             text = egui::RichText::new(format!("{}", item.name)).strong().heading();
                         }
                         ui.with_layout(Layout::left_to_right(egui::Align::Min), |ui| {
-                            if ui.add(egui::Button::new(text).fill(Color32::TRANSPARENT)).clicked() {
+                            if ui.add(egui::Button::new(text).fill(Color32::TRANSPARENT).truncate()).on_hover_text(format!("{}", item.name)).clicked() {
                                 regulation_vm.selected_item = item.clone();
                             };
                         });
@@ -252,7 +257,8 @@ fn single(ui: &mut Ui, regulation_vm: &mut RegulationViewModel, inventory_vm: &m
                 });
             },
             InventoryTypeRoute::AshOfWar => {
-                egui::ScrollArea::vertical().max_height(ui.available_height()-8.).show_rows(ui, row_height, regulation_vm.filtered_gems.len(), |ui, row_range|{
+                egui::ScrollArea::vertical().auto_shrink([false, true]).max_height(ui.available_height()-8.).show_rows(ui, row_height, regulation_vm.filtered_gems.len(), |ui, row_range|{
+                    ui.set_max_width((ui.available_width() - 14.).max(0.));
                     for i in row_range {
                         let item = &regulation_vm.filtered_gems[i];
                         let mut text = egui::RichText::new(format!("{}", item.name));
@@ -260,7 +266,7 @@ fn single(ui: &mut Ui, regulation_vm: &mut RegulationViewModel, inventory_vm: &m
                             text = egui::RichText::new(format!("{}", item.name)).strong().heading();
                         }
                         ui.with_layout(Layout::left_to_right(egui::Align::Min), |ui| {
-                            if ui.add(egui::Button::new(text).fill(Color32::TRANSPARENT)).clicked() {
+                            if ui.add(egui::Button::new(text).fill(Color32::TRANSPARENT).truncate()).on_hover_text(format!("{}", item.name)).clicked() {
                                 regulation_vm.selected_item = item.clone();
                             };
                         });
@@ -268,7 +274,8 @@ fn single(ui: &mut Ui, regulation_vm: &mut RegulationViewModel, inventory_vm: &m
                 });
             },
             InventoryTypeRoute::Talismans => {
-                egui::ScrollArea::vertical().max_height(ui.available_height()-8.).show_rows(ui, row_height, regulation_vm.filtered_accessories.len(), |ui, row_range|{
+                egui::ScrollArea::vertical().auto_shrink([false, true]).max_height(ui.available_height()-8.).show_rows(ui, row_height, regulation_vm.filtered_accessories.len(), |ui, row_range|{
+                    ui.set_max_width((ui.available_width() - 14.).max(0.));
                     for i in row_range {
                         let item = &regulation_vm.filtered_accessories[i];
                         let mut text = egui::RichText::new(format!("{}", item.name));
@@ -276,7 +283,7 @@ fn single(ui: &mut Ui, regulation_vm: &mut RegulationViewModel, inventory_vm: &m
                             text = egui::RichText::new(format!("{}", item.name)).strong().heading();
                         }
                         ui.with_layout(Layout::left_to_right(egui::Align::Min), |ui| {
-                            if ui.add(egui::Button::new(text).fill(Color32::TRANSPARENT)).clicked() {
+                            if ui.add(egui::Button::new(text).fill(Color32::TRANSPARENT).truncate()).on_hover_text(format!("{}", item.name)).clicked() {
                                 regulation_vm.selected_item = item.clone();
                             };
                         });
@@ -309,6 +316,7 @@ fn bulk(ui: &mut Ui, inventory_vm: &mut InventoryViewModel) {
             .auto_shrink(false)
             .max_height(ui.available_height()-8.)
             .show(ui, |ui|{
+            ui.set_max_width((ui.available_width() - 14.).max(0.));
             match inventory_vm.current_bulk_type_route {
                 InventoryTypeRoute::KeyItems |
                 InventoryTypeRoute::CommonItems => {
@@ -372,8 +380,9 @@ fn bulk(ui: &mut Ui, inventory_vm: &mut InventoryViewModel) {
 
 fn single_item_customization(ui: &mut Ui, inventory_vm: &mut InventoryViewModel, regulation_vm: &mut RegulationViewModel) {
     if !regulation_vm.selected_item.name.is_empty() {
-        egui::Frame::none().inner_margin(8.).show(ui, |ui|{
-            ui.label(egui::RichText::new(regulation_vm.selected_item.name.to_string()).strong().heading().size(24.));
+        egui::Frame::new().inner_margin(8.).show(ui, |ui|{
+            let title = regulation_vm.selected_item.name.to_string();
+            ui.add(egui::Label::new(egui::RichText::new(&title).strong().heading().size(20.)).truncate()).on_hover_text(&title);
             ui.add_space(8.);
 
             match inventory_vm.current_type_route {
@@ -383,7 +392,7 @@ fn single_item_customization(ui: &mut Ui, inventory_vm: &mut InventoryViewModel,
                         let item = res.unwrap();
                         let goods_type = GoodsType::from(item.data.goodsType);
                         let max_repository_num = if goods_type == GoodsType::KeyItem {item.data.maxNum} else {item.data.maxRepositoryNum};
-                        let field = egui::DragValue::new(regulation_vm.selected_item.quantity.as_mut().unwrap()).clamp_range(1..=max_repository_num);
+                        let field = egui::DragValue::new(regulation_vm.selected_item.quantity.as_mut().unwrap()).range(1..=max_repository_num);
                         ui.horizontal(|ui|{
                             let label = ui.label("Quantity");
                             ui.add(field).labelled_by(label.id);
@@ -391,7 +400,7 @@ fn single_item_customization(ui: &mut Ui, inventory_vm: &mut InventoryViewModel,
                     }
                 }
                 InventoryTypeRoute::Weapons => {
-                    egui::Grid::new("single_weapon_grid").num_columns(2).spacing([8., 8.]).min_col_width(120.).max_col_width(260.).show(ui,|ui| {
+                    egui::Grid::new("single_weapon_grid").num_columns(2).spacing([12., 8.]).show(ui,|ui| {
                         let res = Regulation::equip_weapon_params_map().get(&regulation_vm.selected_item.id);
                         if res.is_some() {
                             let item = res.unwrap();
@@ -399,7 +408,7 @@ fn single_item_customization(ui: &mut Ui, inventory_vm: &mut InventoryViewModel,
                         
                             if wep_type == WepType::Arrow || wep_type == WepType::Greatarrow || wep_type == WepType::Bolt || wep_type == WepType::BallistaBolt  {
                                 ui.horizontal(|ui|{
-                                    let field = egui::DragValue::new(regulation_vm.selected_item.quantity.as_mut().unwrap()).clamp_range(1..=item.data.maxArrowQuantity);
+                                    let field = egui::DragValue::new(regulation_vm.selected_item.quantity.as_mut().unwrap()).range(1..=item.data.maxArrowQuantity);
                                     let label = ui.label("Quantity");
                                     ui.add(field).labelled_by(label.id);
                                 });
@@ -414,17 +423,17 @@ fn single_item_customization(ui: &mut Ui, inventory_vm: &mut InventoryViewModel,
                                     item.data.reinforceTypeId % 8300 == 0 ||
                                     item.data.reinforceTypeId % 8500 == 0) {10} else {25};
                                 let field = egui::DragValue::new(regulation_vm.selected_item.upgrade.as_mut().unwrap())
-                                .clamp_range(0..=max_upgrade)
+                                .range(0..=max_upgrade)
                                 .custom_formatter(|n, _| {
                                     format!("+{}", n)
                                 });
-                                let label = ui.add(egui::Label::new("Weapon Level:"));
-                                ui.add(field).labelled_by(label.id);
+                                let label = ui.add_sized([100., 20.], egui::Label::new("Weapon Level:"));
+                                ui.add_sized([140., 20.], field).labelled_by(label.id);
                                 ui.end_row();
 
                                 if regulation_vm.available_infusions.len() > 0 {
-                                    ui.add(egui::Label::new("Infusion:"));
-                                    if egui::ComboBox::new("infusion", "")
+                                    ui.add_sized([100., 20.], egui::Label::new("Infusion:"));
+                                    if egui::ComboBox::new("infusion", "").width(160.)
                                         .show_index(ui, &mut regulation_vm.selected_infusion, regulation_vm.available_infusions.len(), |i|{
                                         regulation_vm.available_infusions[i].name.to_string()
                                     }).changed() {
@@ -435,8 +444,8 @@ fn single_item_customization(ui: &mut Ui, inventory_vm: &mut InventoryViewModel,
                                 }
 
                                 if regulation_vm.available_affinities.len() > 0 {
-                                    ui.add(egui::Label::new("Affinity:"));
-                                    if egui::ComboBox::new("affinity", "")
+                                    ui.add_sized([100., 20.], egui::Label::new("Affinity:"));
+                                    if egui::ComboBox::new("affinity", "").width(160.)
                                     .show_index(ui, &mut regulation_vm.selected_affinity, regulation_vm.available_affinities.len(), |i|{
                                         regulation_vm.available_affinities[i].to_string()
                                     }).changed() {
@@ -454,7 +463,7 @@ fn single_item_customization(ui: &mut Ui, inventory_vm: &mut InventoryViewModel,
             };
         });
         
-        egui::Frame::none().inner_margin(8.).show(ui, |ui|{
+        egui::Frame::new().inner_margin(8.).show(ui, |ui|{
             ui.add_enabled_ui(true, |ui| {
                 if ui.add_sized([ui.available_width(), 40.], egui::Button::new("Add")).clicked() {
                     inventory_vm.add_to_inventory(&regulation_vm.selected_item);
@@ -465,7 +474,7 @@ fn single_item_customization(ui: &mut Ui, inventory_vm: &mut InventoryViewModel,
 }
 
 fn bulk_item_customization(ui: &mut Ui, inventory_vm: &mut InventoryViewModel) {
-    egui::Frame::none().inner_margin(8.).show(ui, |ui|{
+    egui::Frame::new().inner_margin(8.).show(ui, |ui|{
         ui.label(egui::RichText::new("Customize").strong().heading().size(24.));
         ui.add_space(6.);
         match inventory_vm.current_bulk_type_route {
@@ -473,14 +482,14 @@ fn bulk_item_customization(ui: &mut Ui, inventory_vm: &mut InventoryViewModel) {
                 ui.add(egui::Checkbox::new(&mut inventory_vm.bulk_items_max_quantity, "Max Quantity"));
             }
             InventoryTypeRoute::Weapons => {
-                egui::Grid::new("bulk_items_customization").spacing(Vec2::new(6., 6.)).min_col_width(120.).show(ui,|ui| {
-                    let field = egui::DragValue::new(&mut inventory_vm.bulk_items_arrow_quantity).clamp_range(1..=99);
+                egui::Grid::new("bulk_items_customization").spacing(Vec2::new(6., 6.)).show(ui,|ui| {
+                    let field = egui::DragValue::new(&mut inventory_vm.bulk_items_arrow_quantity).range(1..=99);
                     let label = ui.label("Projectile Quantity");
                     ui.add(field).labelled_by(label.id);
                     ui.end_row();
 
                     let label = ui.label("Weapon Level:");
-                    ui.add(egui::DragValue::new(&mut inventory_vm.bulk_items_weapon_level).clamp_range(0..=25).custom_formatter(|val, _| {
+                    ui.add(egui::DragValue::new(&mut inventory_vm.bulk_items_weapon_level).range(0..=25).custom_formatter(|val, _| {
                         let somber_upgrade_level: f64 = (val + 0.5)/2.5;
                         format!("Normal: +{}\t Somber: +{}", val as u32, somber_upgrade_level as u32)
                     })).labelled_by(label.id);
@@ -493,7 +502,7 @@ fn bulk_item_customization(ui: &mut Ui, inventory_vm: &mut InventoryViewModel) {
         };
     });
         
-    egui::Frame::none().inner_margin(8.).show(ui, |ui|{
+    egui::Frame::new().inner_margin(8.).show(ui, |ui|{
         ui.add_enabled_ui(true, |ui| {
             if ui.add_sized([ui.available_width(), 40.], egui::Button::new("Add All")).clicked() {
                 inventory_vm.add_all_to_inventory();

@@ -48,12 +48,12 @@ pub fn browse_inventory(ui: &mut Ui, vm:&mut ViewModel) {
     ui.horizontal(|ui|{
         let height = 20.;
         let label = ui.label("Filter: ");
-        if ui.add_sized([ui.available_size().x,height], egui::widgets::TextEdit::singleline(&mut inventory_vm.filter_text)).labelled_by(label.id).changed() {
+        if ui.add_sized([ui.available_size().x,height], egui::widgets::TextEdit::singleline(&mut inventory_vm.filter_text).id(egui::Id::new("browse_filter"))).labelled_by(label.id).changed() {
             inventory_vm.filter();
         };
     });
 
-    let mut frame = egui::Frame::none();
+    let mut frame = egui::Frame::new();
     frame.inner_margin = Margin::symmetric(0, 8);
     frame.show(ui,|ui| {
         egui::Grid::new("browse_header").spacing([16., 16.]).min_col_width(ui.available_width()/4.).striped(true).show(ui, |ui| {
