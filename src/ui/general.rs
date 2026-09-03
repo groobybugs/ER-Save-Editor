@@ -9,7 +9,7 @@ pub mod general {
             
             // Character Name
             ui.label("Character Name:");
-            ui.add(egui::widgets::TextEdit::singleline(&mut general_vm.character_name).char_limit(0x10));
+            ui.add(egui::widgets::TextEdit::singleline(&mut general_vm.character_name).char_limit(0x10).id(egui::Id::new("character_name_field")));
         
             ui.add_space(8.0);
 

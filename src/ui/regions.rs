@@ -22,8 +22,8 @@ pub mod regions {
             });
             ui.separator();
             
-            for map in maps {
-                ui.push_id(map.0, |ui| {
+            for (map_index, map) in maps.iter().enumerate() {
+                ui.push_id(map_index, |ui| {
                     let collapsing = egui::containers::collapsing_header::CollapsingHeader::new(MAP_NAME.lock().unwrap()[&map.0]);
                     ui.horizontal(|ui|{
                         let mut state = State::Off;
