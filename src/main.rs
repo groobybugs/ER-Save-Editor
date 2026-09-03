@@ -74,6 +74,11 @@ pub struct App {
     save_error: Option<String>,
     save_status: Option<String>,
     zoom: f32,
+    /// Zoom factor actually applied to the UI. The settings slider edits
+    /// `zoom` without applying it live (applying mid-drag rescales the
+    /// slider under the cursor and flings it to min/max); it is only
+    /// copied here on slider release, Apply, or preset.
+    zoom_applied: f32,
 }
 
 impl App {
@@ -95,6 +100,7 @@ impl App {
             save_error: None,
             save_status: None,
             zoom,
+            zoom_applied: zoom,
         }
     }
 
@@ -252,11 +258,11 @@ impl eframe::App for App {
                 storage.set_string("backup_folder", path.to_string());
             }
         }
-        storage.set_string("zoom", self.zoom.to_string());
+        storage.set_string("zoom", self.zoom_applied.to_string());
     }
 
     fn ui(&mut self, ui: &mut egui::Ui, _frame: &mut eframe::Frame) {
-        ui.ctx().set_zoom_factor(self.zoom);
+        ui.ctx().set_zoom_factor(self.zoom_applied);
         // TOP PANEL
         egui::Panel::top("toolbar").default_size(35.).show(&mut *ui, |ui| {
             ui.columns(2, |uis|{
