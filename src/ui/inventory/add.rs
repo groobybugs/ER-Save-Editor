@@ -191,7 +191,8 @@ fn single(ui: &mut Ui, regulation_vm: &mut RegulationViewModel, inventory_vm: &m
     ui.with_layout(Layout::top_down(egui::Align::Min), |ui| {
         ui.add_space(8.);
         ui.horizontal(|ui|{
-            if ui.add(egui::TextEdit::singleline(&mut inventory_vm.filter_text)).labelled_by(ui.label("Filter:").id).changed() {
+            let label = ui.label("Filter:");
+            if ui.add(egui::TextEdit::singleline(&mut inventory_vm.filter_text).desired_width(f32::INFINITY)).labelled_by(label.id).changed() {
                 regulation_vm.filter(&inventory_vm.current_type_route, &inventory_vm.filter_text);
             };
         });
@@ -201,7 +202,7 @@ fn single(ui: &mut Ui, regulation_vm: &mut RegulationViewModel, inventory_vm: &m
         let row_height = 10.;
         match inventory_vm.current_type_route {
             InventoryTypeRoute::CommonItems => {
-                egui::ScrollArea::vertical().max_height(ui.available_height()-8.).show_rows(ui, row_height, regulation_vm.filtered_goods.len(), |ui, row_range|{
+                egui::ScrollArea::vertical().auto_shrink([false, false]).max_height(ui.available_height()-8.).show_rows(ui, row_height, regulation_vm.filtered_goods.len(), |ui, row_range|{
                     for i in row_range {
                         let item = &regulation_vm.filtered_goods[i];
                         let mut text = egui::RichText::new(format!("{}", item.name));
@@ -219,7 +220,7 @@ fn single(ui: &mut Ui, regulation_vm: &mut RegulationViewModel, inventory_vm: &m
             InventoryTypeRoute::KeyItems => {
             }, 
             InventoryTypeRoute::Weapons => {
-                egui::ScrollArea::vertical().max_height(ui.available_height()-8.).show_rows(ui, row_height, regulation_vm.filtered_weapons.len(), |ui, row_range|{
+                egui::ScrollArea::vertical().auto_shrink([false, false]).max_height(ui.available_height()-8.).show_rows(ui, row_height, regulation_vm.filtered_weapons.len(), |ui, row_range|{
                     for i in row_range {
                         let mut text = egui::RichText::new(format!("{}", &regulation_vm.filtered_weapons[i].name));
                         if regulation_vm.selected_item.id == regulation_vm.filtered_weapons[i].id {
@@ -236,7 +237,7 @@ fn single(ui: &mut Ui, regulation_vm: &mut RegulationViewModel, inventory_vm: &m
                 });
             },
             InventoryTypeRoute::Armors => {
-                egui::ScrollArea::vertical().max_height(ui.available_height()-8.).show_rows(ui, row_height, regulation_vm.filtered_protectors.len(), |ui, row_range|{
+                egui::ScrollArea::vertical().auto_shrink([false, false]).max_height(ui.available_height()-8.).show_rows(ui, row_height, regulation_vm.filtered_protectors.len(), |ui, row_range|{
                     for i in row_range {
                         let item = &regulation_vm.filtered_protectors[i];
                         let mut text = egui::RichText::new(format!("{}", item.name));
@@ -252,7 +253,7 @@ fn single(ui: &mut Ui, regulation_vm: &mut RegulationViewModel, inventory_vm: &m
                 });
             },
             InventoryTypeRoute::AshOfWar => {
-                egui::ScrollArea::vertical().max_height(ui.available_height()-8.).show_rows(ui, row_height, regulation_vm.filtered_gems.len(), |ui, row_range|{
+                egui::ScrollArea::vertical().auto_shrink([false, false]).max_height(ui.available_height()-8.).show_rows(ui, row_height, regulation_vm.filtered_gems.len(), |ui, row_range|{
                     for i in row_range {
                         let item = &regulation_vm.filtered_gems[i];
                         let mut text = egui::RichText::new(format!("{}", item.name));
@@ -268,7 +269,7 @@ fn single(ui: &mut Ui, regulation_vm: &mut RegulationViewModel, inventory_vm: &m
                 });
             },
             InventoryTypeRoute::Talismans => {
-                egui::ScrollArea::vertical().max_height(ui.available_height()-8.).show_rows(ui, row_height, regulation_vm.filtered_accessories.len(), |ui, row_range|{
+                egui::ScrollArea::vertical().auto_shrink([false, false]).max_height(ui.available_height()-8.).show_rows(ui, row_height, regulation_vm.filtered_accessories.len(), |ui, row_range|{
                     for i in row_range {
                         let item = &regulation_vm.filtered_accessories[i];
                         let mut text = egui::RichText::new(format!("{}", item.name));
