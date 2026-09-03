@@ -1,7 +1,7 @@
 use std::cmp::min;
 use crate::{ 
     db::{
-        accessory_name::accessory_name::ACCESSORY_NAME, aow_name::aow_name::AOW_NAME, armor_name::armor_name::ARMOR_NAME, item_name::item_name::ITEM_NAME, items::items, weapon_name::weapon_name::WEAPON_NAME
+        accessory_name::accessory_name::ACCESSORY_NAME, aow_name::aow_name::AOW_NAME, armor_name::armor_name::ARMOR_NAME, gestures::GESTURES, item_name::item_name::ITEM_NAME, items::items, weapon_name::weapon_name::WEAPON_NAME
     }, 
     save::common::save_slot::{EquipProjectile, GaItem, GaItem2}, 
     util::regulation::Regulation, 
@@ -81,9 +81,31 @@ impl InventoryViewModel {
             InventoryItemType::AOW => {
                 self.add_aow(item.id);
             },
+            InventoryItemType::GESTURE => {
+                self.add_gesture(item.id);
+            },
             InventoryItemType::None => {
                 self.log.insert(0, "Failed! Item type is 'None'.".to_string())
             },
+        }
+    }
+
+    fn add_gesture(&mut self, id: u32) {
+        if let Some(gesture_info) = GESTURES.iter().find(|g| g.id as u32 == id) {
+             if gesture_info.index < self.gesture_game_data.len() {
+                self.gesture_game_data[gesture_info.index] = id as i32;
+                
+                // Update view model
+                if let Some(vm_gesture) = self.gestures.iter_mut().find(|g| g.item_id == id) {
+                    vm_gesture.quantity = 1;
+                }
+                
+                self.log.insert(0, format!("> Unlocked gesture: {}", gesture_info.name));
+            } else {
+                 self.log.insert(0, format!("Failed! Gesture index {} out of bounds.", gesture_info.index));
+            }
+        } else {
+            self.log.insert(0, format!("Failed! Gesture ID {} not found in db.", id));
         }
     }
 

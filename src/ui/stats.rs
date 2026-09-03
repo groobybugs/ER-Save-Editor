@@ -3,7 +3,7 @@ pub mod stats {
 
     use eframe::egui::{self, Ui};
     use egui_extras::{Column, TableBody, TableBuilder};
-    use crate::{db::classes::classes::STARTER_CLASSES, vm::vm::vm::ViewModel};
+    use crate::{db::classes::classes::{ArcheType, STARTER_CLASSES}, vm::vm::vm::ViewModel};
 
     pub fn stats(ui: &mut Ui,  vm: &mut ViewModel) {
         egui::Frame::default()
@@ -11,21 +11,65 @@ pub mod stats {
             ui.with_layout( egui::Layout::top_down_justified(egui::Align::Min),|ui|{
                 ui.with_layout(egui::Layout::top_down(egui::Align::Min), |ui|{
 
-                    ui.heading(vm.slots[vm.index].stats_vm.arche_type.to_string());
+                    let stats_vm = &mut vm.slots[vm.index].stats_vm;
+
+                    let class_options = {
+                        let classes = STARTER_CLASSES.lock().unwrap();
+                        let mut keys: Vec<ArcheType> = classes.keys().copied().collect();
+                        keys.sort();
+                        keys
+                    };
+
+                    let mut selected_class = stats_vm.arche_type;
+                    ui.horizontal(|ui| {
+                        ui.label("Class:");
+                        egui::ComboBox::from_id_source(("stats_class_selector", vm.index))
+                            .selected_text(selected_class.to_string())
+                            .show_ui(ui, |ui| {
+                                for class in &class_options {
+                                    ui.selectable_value(&mut selected_class, *class, class.to_string());
+                                }
+                            });
+                    });
+
+                    if selected_class != stats_vm.arche_type {
+                        stats_vm.arche_type = selected_class;
+                        let base_stats = {
+                            let classes = STARTER_CLASSES.lock().unwrap();
+                            *classes
+                                .get(&selected_class)
+                                .expect("Starter class definition missing")
+                        };
+                        stats_vm.vigor = stats_vm.vigor.max(base_stats.vigor);
+                        stats_vm.mind = stats_vm.mind.max(base_stats.mind);
+                        stats_vm.endurance = stats_vm.endurance.max(base_stats.endurance);
+                        stats_vm.strength = stats_vm.strength.max(base_stats.strength);
+                        stats_vm.dexterity = stats_vm.dexterity.max(base_stats.dexterity);
+                        stats_vm.intelligence =
+                            stats_vm.intelligence.max(base_stats.intelligence);
+                        stats_vm.faith = stats_vm.faith.max(base_stats.faith);
+                        stats_vm.arcane = stats_vm.arcane.max(base_stats.arcane);
+                    }
+
                     ui.add_space(8.0);
 
-                    let class = &STARTER_CLASSES.lock().unwrap()[&vm.slots[vm.index].stats_vm.arche_type];
+                    let class = {
+                        let classes = STARTER_CLASSES.lock().unwrap();
+                        *classes
+                            .get(&stats_vm.arche_type)
+                            .expect("Starter class definition missing")
+                    };
 
                     // Calculate level from stats
-                    let level = 
-                        vm.slots[vm.index].stats_vm.vigor + 
-                        vm.slots[vm.index].stats_vm.mind + 
-                        vm.slots[vm.index].stats_vm.endurance + 
-                        vm.slots[vm.index].stats_vm.strength + 
-                        vm.slots[vm.index].stats_vm.dexterity + 
-                        vm.slots[vm.index].stats_vm.intelligence + 
-                        vm.slots[vm.index].stats_vm.faith + 
-                        vm.slots[vm.index].stats_vm.arcane-
+                    let level =
+                        stats_vm.vigor +
+                        stats_vm.mind +
+                        stats_vm.endurance +
+                        stats_vm.strength +
+                        stats_vm.dexterity +
+                        stats_vm.intelligence +
+                        stats_vm.faith +
+                        stats_vm.arcane -
                         79;
 
 
@@ -46,25 +90,25 @@ pub mod stats {
                         });
                         
                         // Stats
-                        self::stat_field(&mut body, class.vigor..=99, "Vigor:", &mut vm.slots[vm.index].stats_vm.vigor);
-                        self::stat_field(&mut body, class.mind..=99, "Mind:", &mut vm.slots[vm.index].stats_vm.mind);
-                        self::stat_field(&mut body, class.endurance..=99, "Endurance:", &mut vm.slots[vm.index].stats_vm.endurance);
-                        self::stat_field(&mut body, class.strength..=99, "Strength:", &mut vm.slots[vm.index].stats_vm.strength);
-                        self::stat_field(&mut body, class.dexterity..=99, "Dexterity:", &mut vm.slots[vm.index].stats_vm.dexterity);
-                        self::stat_field(&mut body, class.intelligence..=99, "Intelligence:", &mut vm.slots[vm.index].stats_vm.intelligence);
-                        self::stat_field(&mut body, class.faith..=99, "Faith:", &mut vm.slots[vm.index].stats_vm.faith);
-                        self::stat_field(&mut body, class.arcane..=99, "Arcane:", &mut vm.slots[vm.index].stats_vm.arcane);
+                        self::stat_field(&mut body, class.vigor..=99, "Vigor:", &mut stats_vm.vigor);
+                        self::stat_field(&mut body, class.mind..=99, "Mind:", &mut stats_vm.mind);
+                        self::stat_field(&mut body, class.endurance..=99, "Endurance:", &mut stats_vm.endurance);
+                        self::stat_field(&mut body, class.strength..=99, "Strength:", &mut stats_vm.strength);
+                        self::stat_field(&mut body, class.dexterity..=99, "Dexterity:", &mut stats_vm.dexterity);
+                        self::stat_field(&mut body, class.intelligence..=99, "Intelligence:", &mut stats_vm.intelligence);
+                        self::stat_field(&mut body, class.faith..=99, "Faith:", &mut stats_vm.faith);
+                        self::stat_field(&mut body, class.arcane..=99, "Arcane:", &mut stats_vm.arcane);
 
                         // DLC Stats
                         self::space(&mut body, 8.);
-                        self::stat_field(&mut body, 0..=20, "Scadutree Blessing:", &mut vm.slots[vm.index].stats_vm.scadutree);
-                        self::stat_field(&mut body, 0..=10, "Shadow Realm Blessing:", &mut vm.slots[vm.index].stats_vm.spirit_ash);
+                        self::stat_field(&mut body, 0..=20, "Scadutree Blessing:", &mut stats_vm.scadutree);
+                        self::stat_field(&mut body, 0..=10, "Shadow Realm Blessing:", &mut stats_vm.spirit_ash);
 
                         // Space
                         self::space(&mut body, 8.);
 
                         // Souls
-                        let field = egui::widgets::DragValue::new(&mut vm.slots[vm.index].stats_vm.souls)
+                        let field = egui::widgets::DragValue::new(&mut stats_vm.souls)
                             .clamp_range(0..=999999999)
                             .custom_formatter(|n, _|{
                                 format!("{:09}", n)

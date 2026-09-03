@@ -1,6 +1,6 @@
 use std::collections::HashMap;
 
-use crate::{db::{self, aows::aows, armors::armor_sets, items::items, talismans::talismans, weapons::weapons}, util::regulation::Regulation, vm::regulation::regulation_view_model::{GoodsType, RegulationItemViewModel, WepType}};
+use crate::{db::{self, aows::aows, armors::armor_sets, gestures::GESTURES, items::items, talismans::talismans, weapons::weapons}, util::regulation::Regulation, vm::regulation::regulation_view_model::{GoodsType, RegulationItemViewModel, WepType}};
 
 use super::{InventoryItemType, InventoryTypeRoute, InventoryViewModel};
 
@@ -42,6 +42,14 @@ impl InventoryViewModel {
                     let talisman_map =  talismans.iter().map(|weapon| (*weapon, false)).collect::<HashMap<u32, bool>>();
                     self.bulk_items_selected.push(talisman_map);
                 }
+            },
+            InventoryTypeRoute::Gestures => {
+                self.bulk_items_selected.clear();
+                let mut gesture_map = HashMap::new();
+                for gesture in GESTURES {
+                    gesture_map.insert(gesture.id as u32, false);
+                }
+                self.bulk_items_selected.push(gesture_map);
             },
         }
     }
@@ -173,6 +181,25 @@ impl InventoryViewModel {
                                 id: talisman_param.id,
                                 name: talisman_param.name.to_string(),
                                 item_type: InventoryItemType::ACCESSORY,
+                                ..Default::default()
+                            });
+                        }
+                    }
+                }
+                items
+            },
+            InventoryTypeRoute::Gestures => {
+                let mut items: Vec<RegulationItemViewModel> = Vec::new();
+                // Gestures only have 1 group
+                if let Some(selected_map) = self.bulk_items_selected.first() {
+                     for (gesture_id, selected) in selected_map {
+                        if *selected {
+                             let gesture_info = GESTURES.iter().find(|g| g.id as u32 == *gesture_id).unwrap();
+                             items.push(RegulationItemViewModel {
+                                id: gesture_info.id as u32,
+                                name: gesture_info.name.to_string(),
+                                item_type: InventoryItemType::GESTURE,
+                                quantity: Some(1),
                                 ..Default::default()
                             });
                         }

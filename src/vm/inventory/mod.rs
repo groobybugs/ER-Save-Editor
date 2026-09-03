@@ -4,7 +4,7 @@ use strsim::sorensen_dice;
 use crate::{
     db::{
         accessory_name::accessory_name::ACCESSORY_NAME, aow_name::aow_name::AOW_NAME,
-        armor_name::armor_name::ARMOR_NAME, item_name::item_name::ITEM_NAME,
+        armor_name::armor_name::ARMOR_NAME, gestures::GESTURES, item_name::item_name::ITEM_NAME,
         weapon_name::weapon_name::WEAPON_NAME,
     },
     save::common::save_slot::{
@@ -33,6 +33,7 @@ pub enum InventoryTypeRoute {
     Armors,
     AshOfWar,
     Talismans,
+    Gestures,
 }
 
 #[derive(Default, PartialEq, Clone)]
@@ -60,6 +61,7 @@ pub enum InventoryItemType {
     ARMOR = 0x10000000,
     ACCESSORY = 0x20000000,
     ITEM = 0x40000000,
+    GESTURE = 0x50000000,
     AOW = 0x80000000,
 }
 impl From<u8> for InventoryItemType {
@@ -69,6 +71,7 @@ impl From<u8> for InventoryItemType {
             0x10 => InventoryItemType::ARMOR,
             0x20 => InventoryItemType::ACCESSORY,
             0x40 => InventoryItemType::ITEM,
+            0x50 => InventoryItemType::GESTURE,
             0x80 => InventoryItemType::AOW,
             _ => InventoryItemType::None,
         }
@@ -82,6 +85,7 @@ impl ToString for InventoryItemType {
             InventoryItemType::ARMOR => format!("ARMOR"),
             InventoryItemType::ACCESSORY => format!("ACCESSORY"),
             InventoryItemType::ITEM => format!("ITEM"),
+            InventoryItemType::GESTURE => format!("GESTURE"),
             InventoryItemType::AOW => format!("AOW"),
         }
     }
@@ -95,6 +99,7 @@ pub enum InventoryGaitemType {
     ARMOR = 0x90000000,
     ACCESSORY = 0xa0000000,
     ITEM = 0xb0000000,
+    GESTURE = 0xd0000000,
     AOW = 0xc0000000,
 }
 impl From<u32> for InventoryGaitemType {
@@ -104,6 +109,7 @@ impl From<u32> for InventoryGaitemType {
             x if x == InventoryGaitemType::ARMOR as u32 => InventoryGaitemType::ARMOR,
             x if x == InventoryGaitemType::ACCESSORY as u32 => InventoryGaitemType::ACCESSORY,
             x if x == InventoryGaitemType::ITEM as u32 => InventoryGaitemType::ITEM,
+            x if x == InventoryGaitemType::GESTURE as u32 => InventoryGaitemType::GESTURE,
             x if x == InventoryGaitemType::AOW as u32 => InventoryGaitemType::AOW,
             _ => InventoryGaitemType::EMPTY,
         }
@@ -215,6 +221,15 @@ impl InventoryItemViewModel {
                     },
                 )
             }
+            InventoryGaitemType::GESTURE => {
+                (
+                    gaitem.item_id,
+                    match crate::db::gestures::GESTURES.iter().find(|g| g.id == gaitem.item_id as i32) {
+                        Some(g) => g.name.to_string(),
+                        None => format!("Gesture {}", gaitem.item_id),
+                    }
+                )
+            }
             InventoryGaitemType::EMPTY => panic!("We shouldn't reach this!"),
         };
 
@@ -271,6 +286,9 @@ pub struct InventoryViewModel {
     pub bulk_items_arrow_quantity: u32,
     pub bulk_items_weapon_level: u32,
 
+    pub gesture_game_data: Vec<i32>,
+    pub gestures: Vec<InventoryItemViewModel>,
+
     // Used for unqeuipping weapon or armor
     pub unarmed: InventoryItemViewModel,
     pub naked_head: InventoryItemViewModel,
@@ -306,6 +324,26 @@ impl InventoryViewModel {
 
         // Projectile list
         inventory_vm.projectile_list = slot.equip_projectile_data.clone();
+
+        // Gestures
+        inventory_vm.gesture_game_data = slot.gesture_game_data.clone();
+        for gesture_info in GESTURES {
+            let is_owned = if gesture_info.index < inventory_vm.gesture_game_data.len() {
+                inventory_vm.gesture_game_data[gesture_info.index] == gesture_info.id
+            } else {
+                false
+            };
+
+            inventory_vm.gestures.push(InventoryItemViewModel {
+                ga_item_handle: 0,
+                item_id: gesture_info.id as u32,
+                item_name: gesture_info.name.to_string(),
+                quantity: if is_owned { 1 } else { 0 },
+                inventory_index: gesture_info.index as u32,
+                equip_index: 0,
+                r#type: InventoryGaitemType::GESTURE,
+            });
+        }
 
         // Find the next gaitem_handle used when adding new weapon, armors or ashes of war
         inventory_vm
@@ -450,6 +488,7 @@ impl InventoryViewModel {
                         .push(inventory_item_vm.clone());
                     inventory_storage.filtered_aows.push(inventory_item_vm);
                 }
+                InventoryGaitemType::GESTURE => {}
                 InventoryGaitemType::EMPTY => {
                     inventory_storage
                         .common_items
@@ -486,7 +525,10 @@ impl InventoryViewModel {
         inventory_storage
             .filtered_aows
             .sort_by(|a, b| a.item_name.cmp(&b.item_name));
-
+        
+        // No sorting for gestures as they are fixed order? Or sort?
+        // Gestures are in self.gestures, not in storage.
+        
         inventory_storage.common_item_count =
             equip_inventory_data.common_inventory_items_distinct_count;
         inventory_storage.key_item_count = equip_inventory_data.key_inventory_items_distinct_count;
@@ -723,6 +765,11 @@ impl InventoryViewModel {
                     a.item_name.cmp(&b.item_name)
                 }
             });
+            
+            // Filter gestures
+            // Wait, gestures are in self.gestures, not storage.
+            // But if we want to filter them in UI, we should probably have filtered_gestures?
+            // Or just filter in UI. The UI code for gestures can access self.gestures.
         }
     }
 

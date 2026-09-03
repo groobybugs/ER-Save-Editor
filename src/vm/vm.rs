@@ -124,6 +124,8 @@ pub mod vm {
         fn update_stats(&self, save_type: &mut SaveType, index: usize) {
             let stats_vm = &self.slots[index].stats_vm;
 
+            save_type.set_character_arche_type(index, u8::from(stats_vm.arche_type));
+
             let level = stats_vm.vigor
                 + stats_vm.mind
                 + stats_vm.endurance
@@ -550,6 +552,9 @@ pub mod vm {
             // Update gaitem item data
             let gaitem_data = inventory_vm.gaitem_data.clone();
             save_type.set_gaitem_item_data(index, gaitem_data);
+
+            // Update gestures
+            save_type.set_gesture_game_data(index, inventory_vm.gesture_game_data.clone());
         }
     }
 }

@@ -36,6 +36,24 @@ pub mod classes {
         }
     }
 
+    impl From<ArcheType> for u8 {
+        fn from(value: ArcheType) -> Self {
+            match value {
+                ArcheType::Unknown => 0xFF,
+                ArcheType::Vagabond => ArcheType::Vagabond as u8,
+                ArcheType::Warrior => ArcheType::Warrior as u8,
+                ArcheType::Hero => ArcheType::Hero as u8,
+                ArcheType::Bandit => ArcheType::Bandit as u8,
+                ArcheType::Astrologer => ArcheType::Astrologer as u8,
+                ArcheType::Prophet => ArcheType::Prophet as u8,
+                ArcheType::Samurai => ArcheType::Samurai as u8,
+                ArcheType::Prisoner => ArcheType::Prisoner as u8,
+                ArcheType::Confessor => ArcheType::Confessor as u8,
+                ArcheType::Wretch => ArcheType::Wretch as u8,
+            }
+        }
+    }
+
     impl ToString for ArcheType {
         fn to_string(&self) -> String {
             match self {
@@ -54,6 +72,7 @@ pub mod classes {
         }
     }
 
+    #[derive(Clone, Copy)]
     pub struct Stats {
         pub level: u32,
         pub vigor: u32,

@@ -34,12 +34,13 @@ pub fn add(ui: &mut Ui, vm:&mut ViewModel) {
         });
 
         ui.add_space(6.);
-        ui.columns(5,|uis| {
+        ui.columns(6,|uis| {
             let common_items = uis[0].add_sized([uis[0].available_width(), 40.], egui::Button::new("Items"));
             let weapons = uis[1].add_sized([uis[1].available_width(), 40.], egui::Button::new("Weapons"));
             let armors = uis[2].add_sized([uis[2].available_width(), 40.], egui::Button::new("Armors"));
             let ashofwar = uis[3].add_sized([uis[3].available_width(), 40.], egui::Button::new("Ash of War"));
             let talismans = uis[4].add_sized([uis[4].available_width(), 40.], egui::Button::new("Talismans"));
+            let gestures = uis[5].add_sized([uis[5].available_width(), 40.], egui::Button::new("Gestures"));
 
             if common_items.clicked() {
                 // Update route for single item add
@@ -106,6 +107,19 @@ pub fn add(ui: &mut Ui, vm:&mut ViewModel) {
                 // Trigger filtering
                 regulation_vm.filter(&inventory_vm.current_type_route, &inventory_vm.filter_text);
             }
+            if gestures.clicked() {
+                // Update route for single item add
+                inventory_vm.current_type_route = InventoryTypeRoute::Gestures; regulation_vm.selected_item = Default::default();
+                
+                // Update route for bulk item add
+                inventory_vm.current_bulk_type_route = InventoryTypeRoute::Gestures;
+
+                // Update lists for bulk items use
+                inventory_vm.replace_bulk_items_selected_map(InventoryTypeRoute::Gestures);
+                
+                // Trigger filtering
+                regulation_vm.filter(&inventory_vm.current_type_route, &inventory_vm.filter_text);
+            }
 
             // Highlight active
             match inventory_vm.at_single_items {
@@ -117,6 +131,7 @@ pub fn add(ui: &mut Ui, vm:&mut ViewModel) {
                         InventoryTypeRoute::Armors => {armors.highlight();},
                         InventoryTypeRoute::AshOfWar => {ashofwar.highlight();},
                         InventoryTypeRoute::Talismans => {talismans.highlight();},
+                        InventoryTypeRoute::Gestures => {gestures.highlight();},
                     }
                 },
                 false => {
@@ -127,6 +142,7 @@ pub fn add(ui: &mut Ui, vm:&mut ViewModel) {
                         InventoryTypeRoute::Armors => {armors.highlight();},
                         InventoryTypeRoute::AshOfWar => {ashofwar.highlight();},
                         InventoryTypeRoute::Talismans => {talismans.highlight();},
+                        InventoryTypeRoute::Gestures => {gestures.highlight();},
                     }
                 },
             }
@@ -277,6 +293,22 @@ fn single(ui: &mut Ui, regulation_vm: &mut RegulationViewModel, inventory_vm: &m
                     }
                 });
             },
+            InventoryTypeRoute::Gestures => {
+                egui::ScrollArea::vertical().max_height(ui.available_height()-8.).show_rows(ui, row_height, regulation_vm.filtered_goods.len(), |ui, row_range|{
+                    for i in row_range {
+                        let item = &regulation_vm.filtered_goods[i];
+                        let mut text = egui::RichText::new(format!("{}", item.name));
+                        if regulation_vm.selected_item.id == item.id {
+                            text = egui::RichText::new(format!("{}", item.name)).strong().heading();
+                        }
+                        ui.with_layout(Layout::left_to_right(egui::Align::Min), |ui| {
+                            if ui.add(egui::Button::new(text).fill(Color32::TRANSPARENT)).clicked() {
+                                regulation_vm.selected_item = item.clone();
+                            };
+                        });
+                    }
+                });
+            },
         };
     });
 }
@@ -359,6 +391,21 @@ fn bulk(ui: &mut Ui, inventory_vm: &mut InventoryViewModel) {
                         });
                     }
                 },
+                InventoryTypeRoute::Gestures => {
+                    if let Some(map) = inventory_vm.bulk_items_selected.first_mut() {
+                        ui.vertical(|ui| {
+                            let mut keys: Vec<u32> = map.keys().cloned().collect();
+                            keys.sort(); // Sort by ID to have stable order, or match DB order if possible
+                            for gesture_id in keys {
+                                if let Some(selected) = map.get_mut(&gesture_id) {
+                                    if let Some(gesture) = crate::db::gestures::GESTURES.iter().find(|g| g.id as u32 == gesture_id) {
+                                        ui.checkbox(selected, gesture.name);
+                                    }
+                                }
+                            }
+                        });
+                    }
+                }
             };
         });
     });
@@ -443,7 +490,8 @@ fn single_item_customization(ui: &mut Ui, inventory_vm: &mut InventoryViewModel,
                 },
                 InventoryTypeRoute::Armors|
                 InventoryTypeRoute::AshOfWar |
-                InventoryTypeRoute::Talismans => {},
+                InventoryTypeRoute::Talismans |
+                InventoryTypeRoute::Gestures => {},
             };
         });
         
@@ -482,7 +530,8 @@ fn bulk_item_customization(ui: &mut Ui, inventory_vm: &mut InventoryViewModel) {
             },
             InventoryTypeRoute::Armors|
             InventoryTypeRoute::AshOfWar |
-            InventoryTypeRoute::Talismans => {},
+            InventoryTypeRoute::Talismans |
+            InventoryTypeRoute::Gestures => {},
         };
     });
         
