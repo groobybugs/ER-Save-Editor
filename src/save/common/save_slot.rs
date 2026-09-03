@@ -1912,12 +1912,29 @@ impl Write for SaveSlot {
 
         bytes.extend(self._0x80);
 
-        // Write trailing/rest data read from the original save
-        bytes.extend(self._rest.to_vec());
+        // Write trailing/rest data read from the original save. Mid-slot
+        // sections can legitimately grow when the user edits the inventory
+        // (e.g. an empty 8-byte gaitem entry becomes a 21-byte weapon entry,
+        // +13 bytes each). The game absorbs that growth by shrinking the
+        // trailing slack, so do the same: trim _rest down to whatever space
+        // is left, cutting zero padding before real tail bytes. Untouched
+        // slots are unaffected (zero growth trims nothing, so they still
+        // round-trip byte-identical).
+        let rest_allowance = 0x280000usize.saturating_sub(bytes.len());
+        let mut rest = self._rest.as_slice();
+        if rest.len() > rest_allowance {
+            let excess = rest.len() - rest_allowance;
+            let trailing_zeros = rest.iter().rev().take_while(|b| **b == 0).count();
+            let zero_trim = trailing_zeros.min(excess);
+            let head_trim = excess - zero_trim;
+            rest = &rest[head_trim..rest.len() - zero_trim];
+        }
+        bytes.extend_from_slice(rest);
 
         // Empty calories — pad up to the fixed slot size. Bail with an error
         // instead of panicking (usize underflow) if the serialized slot grew
-        // past the expected size; the caller surfaces this to the user.
+        // past the expected size even after absorbing the trailing slack;
+        // the caller surfaces this to the user.
         if bytes.len() > 0x280000 {
             return Err(io::Error::new(
                 io::ErrorKind::InvalidData,
@@ -1930,5 +1947,77 @@ impl Write for SaveSlot {
         bytes.extend(vec![0; 0x280000 - bytes.len()]);
 
         Ok(bytes)
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    /// Mirror an untouched on-disk save: structured bytes plus trailing
+    /// slack totalling exactly 0x280000.
+    ///
+    /// NOTE: write() always pads up to 0x280000, so the pre-rest body size
+    /// cannot be observed through it. A default slot's body is fixed-size
+    /// (every section is fixed-width except gaitem entry widths, which start
+    /// empty here), leaving exactly 434881 bytes of slack. The assert below
+    /// fails loudly if struct layouts ever change and stale the constant.
+    fn full_slack_slot() -> SaveSlot {
+        let mut slot = SaveSlot::default();
+        // Default leaves the inventory vecs empty, but the writer loops
+        // fixed capacities — size them the way read() does.
+        slot.equip_inventory_data.common_items = vec![EquipInventoryItem::default(); 0xa80];
+        slot.equip_inventory_data.key_items = vec![EquipInventoryItem::default(); 0x180];
+        slot.storage_inventory_data.common_items = vec![EquipInventoryItem::default(); 0x780];
+        slot.storage_inventory_data.key_items = vec![EquipInventoryItem::default(); 0x80];
+        slot._unk_lists = vec![UknownList::default(); 5];
+        slot._rest = vec![0u8; 434881];
+        assert_eq!(
+            slot.write().expect("slack slot must serialize").len(),
+            0x280000,
+            "untouched slot must total exactly one slot (stale slack constant?)"
+        );
+        slot
+    }
+
+    /// Regression test: converting empty 8-byte gaitem entries into 21-byte
+    /// weapon entries (+13 B each) must be absorbed by the trailing slack
+    /// instead of erroring (3 weapons = +39 B overflowed before the fix).
+    #[test]
+    fn weapon_growth_is_absorbed_by_trailing_slack() {
+        let mut slot = full_slack_slot();
+        for (i, id) in [10000u32, 20000, 30000].iter().enumerate() {
+            slot.ga_items[i] = GaItem {
+                gaitem_handle: 0x10000 + i as u32,
+                item_id: *id,
+                ..Default::default()
+            };
+        }
+        let out = slot
+            .write()
+            .expect("weapon growth must be absorbed by trailing slack");
+        assert_eq!(out.len(), 0x280000);
+    }
+
+    /// Trimming must eat zero padding before real tail bytes.
+    #[test]
+    fn slack_trim_prefers_zero_padding_over_tail_data() {
+        let mut slot = full_slack_slot();
+        let slack = slot._rest.len();
+        assert!(slack > 300, "need room for synthetic tail");
+        let tail_data = vec![0xABu8; 100];
+        slot._rest = [tail_data.clone(), vec![0u8; slack - 100]].concat();
+
+        // One weapon = +13 B; all 13 bytes must come off the zero padding,
+        // leaving the 100 real tail bytes intact.
+        slot.ga_items[0] = GaItem {
+            gaitem_handle: 0x10000,
+            item_id: 10000,
+            ..Default::default()
+        };
+        let out = slot.write().expect("growth must be absorbed");
+        assert_eq!(out.len(), 0x280000);
+        let rest_start = 0x280000 - (slack - 13);
+        assert_eq!(&out[rest_start..rest_start + 100], tail_data.as_slice());
     }
 }
