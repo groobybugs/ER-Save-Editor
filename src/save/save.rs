@@ -957,28 +957,6 @@ mod tests {
     }
 
     #[test]
-    fn test_ps_slot_versions() {
-        let Ok(path_str) = std::env::var("ER_TEST_SAVE_PS") else {
-            eprintln!("skipping: set ER_TEST_SAVE_PS=<path> to run");
-            return;
-        };
-        let path = PathBuf::from(&path_str);
-        if !path.exists() {
-            eprintln!("skipping: ER_TEST_SAVE_PS points to missing file: {}", path.display());
-            return;
-        }
-        let save = Save::from_path(&path).expect("failed to load save");
-        match &save.save_type {
-            crate::SaveType::PlayStation(ps) => {
-                for (i, slot) in ps.save_slots.iter().enumerate() {
-                    println!("slot {}: ver={}", i, slot.ver);
-                }
-            }
-            _ => {}
-        }
-    }
-
-    #[test]
     fn test_ps_roundtrip_no_modify_v251() {
         let Ok(path_str) = std::env::var("ER_TEST_SAVE_PS") else {
             eprintln!("skipping: set ER_TEST_SAVE_PS=<path> to run");
