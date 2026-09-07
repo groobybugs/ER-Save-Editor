@@ -2,7 +2,7 @@ pub mod classes {
     use std::{collections::HashMap, sync::Mutex};
     use once_cell::sync::Lazy;
 
-    #[derive(PartialEq, Eq, Hash, Clone, Copy, PartialOrd, Ord)]
+    #[derive(PartialEq, Eq, Hash, Clone, Copy, PartialOrd, Ord, Debug)]
     pub enum ArcheType {
         Unknown = -1,
         Vagabond = 0,
@@ -15,6 +15,11 @@ pub mod classes {
         Prisoner = 8,
         Confessor = 6,
         Wretch = 9,
+        // 1.17 Tarnished Pack classes. IDs are inferred (first free values;
+        // game values 0-9 verified stable) — confirm against a live
+        // new-class save when available.
+        HeavyKnight = 10,
+        IdusKnight = 11,
     }
 
     impl TryFrom<u8> for ArcheType {
@@ -31,6 +36,8 @@ pub mod classes {
                 x if x == ArcheType::Prisoner as u8 => Ok(ArcheType::Prisoner),
                 x if x == ArcheType::Confessor as u8 => Ok(ArcheType::Confessor),
                 x if x == ArcheType::Wretch as u8 => Ok(ArcheType::Wretch),
+                x if x == ArcheType::HeavyKnight as u8 => Ok(ArcheType::HeavyKnight),
+                x if x == ArcheType::IdusKnight as u8 => Ok(ArcheType::IdusKnight),
                 _ => Err(()),
             }
         }
@@ -50,6 +57,8 @@ pub mod classes {
                 ArcheType::Prisoner => ArcheType::Prisoner as u8,
                 ArcheType::Confessor => ArcheType::Confessor as u8,
                 ArcheType::Wretch => ArcheType::Wretch as u8,
+                ArcheType::HeavyKnight => ArcheType::HeavyKnight as u8,
+                ArcheType::IdusKnight => ArcheType::IdusKnight as u8,
             }
         }
     }
@@ -68,6 +77,8 @@ pub mod classes {
                 ArcheType::Prisoner => "Prisoner".to_string(),
                 ArcheType::Confessor => "Confessor".to_string(),
                 ArcheType::Wretch => "Wretch".to_string(),
+                ArcheType::HeavyKnight => "Heavy Knight".to_string(),
+                ArcheType::IdusKnight => "Idus Knight".to_string(),
             }
         }
     }
@@ -208,6 +219,106 @@ pub mod classes {
                 faith: 10,
                 arcane: 10,
             }),
+
+            // 1.17 Tarnished Pack starters (stats per community wiki).
+            (ArcheType::HeavyKnight, Stats{
+                level: 10,
+                vigor: 14,
+                mind: 8,
+                endurance: 17,
+                strength: 15,
+                dexterity: 11,
+                intelligence: 7,
+                faith: 8,
+                arcane: 9,
+            }),
+
+            (ArcheType::IdusKnight, Stats{
+                level: 7,
+                vigor: 10,
+                mind: 12,
+                endurance: 11,
+                strength: 13,
+                dexterity: 15,
+                intelligence: 8,
+                faith: 11,
+                arcane: 6,
+            }),
         ]))
     });
+
+    #[cfg(test)]
+    mod tests {
+        use super::{ArcheType, Stats, STARTER_CLASSES};
+
+        #[test]
+        fn new_117_classes_roundtrip_byte_values() {
+            assert_eq!(ArcheType::try_from(10u8), Ok(ArcheType::HeavyKnight));
+            assert_eq!(ArcheType::try_from(11u8), Ok(ArcheType::IdusKnight));
+            assert_eq!(u8::from(ArcheType::HeavyKnight), 10);
+            assert_eq!(u8::from(ArcheType::IdusKnight), 11);
+            assert_eq!(ArcheType::HeavyKnight.to_string(), "Heavy Knight");
+            assert_eq!(ArcheType::IdusKnight.to_string(), "Idus Knight");
+        }
+
+        #[test]
+        fn base_game_class_ids_are_unchanged() {
+            let expected = [
+                (0, ArcheType::Vagabond),
+                (1, ArcheType::Warrior),
+                (2, ArcheType::Hero),
+                (3, ArcheType::Bandit),
+                (4, ArcheType::Astrologer),
+                (5, ArcheType::Prophet),
+                (6, ArcheType::Confessor),
+                (7, ArcheType::Samurai),
+                (8, ArcheType::Prisoner),
+                (9, ArcheType::Wretch),
+            ];
+            for (byte, class) in expected {
+                assert_eq!(ArcheType::try_from(byte), Ok(class));
+                assert_eq!(u8::from(class), byte);
+            }
+        }
+
+        fn starter_stats(class: ArcheType) -> Stats {
+            *STARTER_CLASSES
+                .lock()
+                .unwrap()
+                .get(&class)
+                .expect("starter class definition missing")
+        }
+
+        #[test]
+        fn heavy_knight_starter_stats_match_wiki() {
+            let s = starter_stats(ArcheType::HeavyKnight);
+            assert_eq!(
+                (
+                    s.level, s.vigor, s.mind, s.endurance, s.strength, s.dexterity,
+                    s.intelligence, s.faith, s.arcane
+                ),
+                (10, 14, 8, 17, 15, 11, 7, 8, 9)
+            );
+        }
+
+        #[test]
+        fn idus_knight_starter_stats_match_wiki() {
+            let s = starter_stats(ArcheType::IdusKnight);
+            assert_eq!(
+                (
+                    s.level, s.vigor, s.mind, s.endurance, s.strength, s.dexterity,
+                    s.intelligence, s.faith, s.arcane
+                ),
+                (7, 10, 12, 11, 13, 15, 8, 11, 6)
+            );
+        }
+
+        #[test]
+        fn unknown_archetype_fallback_never_panics() {
+            // Bytes outside the known range must map to Err (callers fall
+            // back to Unknown) rather than panic.
+            assert!(ArcheType::try_from(12u8).is_err());
+            assert!(ArcheType::try_from(0xFEu8).is_err());
+        }
+    }
 }

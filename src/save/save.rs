@@ -119,9 +119,11 @@ pub mod save {
                 SaveType::Unknown => panic!("Why are we here?"),
                 SaveType::PC(pc_save) => {
                     pc_save.save_slots[index].save_slot.player_game_data.arche_type = arche_type;
+                    pc_save.user_data_10.profile_summary[index].archetype = arche_type;
                 }
                 SaveType::PlayStation(ps_save) => {
                     ps_save.save_slots[index].player_game_data.arche_type = arche_type;
+                    ps_save.user_data_10.profile_summary[index].archetype = arche_type;
                 },
             }
         }

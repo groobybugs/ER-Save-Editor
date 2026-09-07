@@ -212,9 +212,9 @@ pub struct ProfileSummary{
     _0x38_0x8: [u8;0x120] ,
     pub equipment_gaitem: ProfileSummaryEquipmentGaitem,
     pub equipment_item: ProfileSummaryEquipmentItem,
-    _0x290: u8 ,
-    _0x291: u8 ,
-    _0x292: u8 ,
+    pub gender: u8 ,
+    pub archetype: u8 ,
+    pub starting_gift: u8 ,
     _0x293: u8 ,
     _0x294: u8 ,
     _0x295: u8 ,
@@ -234,9 +234,9 @@ impl Default for ProfileSummary {
             _0x38_0x8: [0x0; 0x120],
             equipment_gaitem: Default::default(),
             equipment_item: Default::default(),
-            _0x290: 0,
-            _0x291: 0,
-            _0x292: 0,
+            gender: 0,
+            archetype: 0,
+            starting_gift: 0,
             _0x293: 0,
             _0x294: 0,
             _0x295: 0,
@@ -258,9 +258,9 @@ impl Read for ProfileSummary {
         profile_summary._0x38_0x8.copy_from_slice(br.read_bytes(0x120)?);
         profile_summary.equipment_gaitem = ProfileSummaryEquipmentGaitem::read(br)?;
         profile_summary.equipment_item = ProfileSummaryEquipmentItem::read(br)?;
-        profile_summary._0x290 = br.read_u8()?;
-        profile_summary._0x291 = br.read_u8()?;
-        profile_summary._0x292 = br.read_u8()?;
+        profile_summary.gender = br.read_u8()?;
+        profile_summary.archetype = br.read_u8()?;
+        profile_summary.starting_gift = br.read_u8()?;
         profile_summary._0x293 = br.read_u8()?;
         profile_summary._0x294 = br.read_u8()?;
         profile_summary._0x295 = br.read_u8()?;
@@ -282,9 +282,9 @@ impl Write for ProfileSummary{
         bytes.extend(self._0x38_0x8);
         bytes.extend(self.equipment_gaitem.write()?);
         bytes.extend(self.equipment_item.write()?);
-        bytes.push(self._0x290);
-        bytes.push(self._0x291);
-        bytes.push(self._0x292);
+        bytes.push(self.gender);
+        bytes.push(self.archetype);
+        bytes.push(self.starting_gift);
         bytes.push(self._0x293);
         bytes.push(self._0x294);
         bytes.push(self._0x295);

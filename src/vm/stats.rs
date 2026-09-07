@@ -42,7 +42,11 @@ pub mod stats_view_model {
 
     impl StatsViewModel {
         pub fn from_save(slot: &SaveSlot) -> Self {
-            let arche_type = ArcheType::try_from(slot.player_game_data.arche_type).expect("");
+            // Unknown archetype bytes (e.g. classes added by later game
+            // versions, such as the 1.17 Heavy/Idus Knights) must not crash
+            // loading: fall back to Unknown instead of panicking.
+            let arche_type =
+                ArcheType::try_from(slot.player_game_data.arche_type).unwrap_or(ArcheType::Unknown);
             let vigor = slot.player_game_data.vigor;
             let mind = slot.player_game_data.mind;
             let endurance = slot.player_game_data.endurance;
