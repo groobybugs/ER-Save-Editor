@@ -15,11 +15,12 @@ pub mod classes {
         Prisoner = 8,
         Confessor = 6,
         Wretch = 9,
-        // 1.17 Tarnished Pack classes. IDs are inferred (first free values;
-        // game values 0-9 verified stable) — confirm against a live
-        // new-class save when available.
-        HeavyKnight = 10,
-        IdusKnight = 11,
+        // 1.17 Tarnished Pack classes. IDs confirmed via the 1.17
+        // regulation CharaInitParam: row 3010 = Idus Knight (level 7 +
+        // Idus stats), row 3011 = Heavy Knight (level 10 + Heavy stats),
+        // continuing the 3000+N class row order.
+        IdusKnight = 10,
+        HeavyKnight = 11,
     }
 
     impl TryFrom<u8> for ArcheType {
@@ -253,10 +254,10 @@ pub mod classes {
 
         #[test]
         fn new_117_classes_roundtrip_byte_values() {
-            assert_eq!(ArcheType::try_from(10u8), Ok(ArcheType::HeavyKnight));
-            assert_eq!(ArcheType::try_from(11u8), Ok(ArcheType::IdusKnight));
-            assert_eq!(u8::from(ArcheType::HeavyKnight), 10);
-            assert_eq!(u8::from(ArcheType::IdusKnight), 11);
+            assert_eq!(ArcheType::try_from(10u8), Ok(ArcheType::IdusKnight));
+            assert_eq!(ArcheType::try_from(11u8), Ok(ArcheType::HeavyKnight));
+            assert_eq!(u8::from(ArcheType::IdusKnight), 10);
+            assert_eq!(u8::from(ArcheType::HeavyKnight), 11);
             assert_eq!(ArcheType::HeavyKnight.to_string(), "Heavy Knight");
             assert_eq!(ArcheType::IdusKnight.to_string(), "Idus Knight");
         }
