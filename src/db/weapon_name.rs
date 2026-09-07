@@ -3385,6 +3385,117 @@ pub mod weapon_name {
             (8511000,"Freyja's Poison Greatsword"),
             (8511100,"Freyja's Blood Greatsword"),
             (8511200,"Freyja's Occult Greatsword"),
+            // 1.17 Tarnished Pack. IDs verified against the 1.17 regulation
+            // weapon table (equipModelId match + family/sortId checks);
+            // somber entries (Leontiel, Golden Order Flail) are singles.
+            (8530000,"Hefty Scimitar"),
+            (8530100,"Heavy Hefty Scimitar"),
+            (8530200,"Keen Hefty Scimitar"),
+            (8530300,"Quality Hefty Scimitar"),
+            (8530400,"Fire Hefty Scimitar"),
+            (8530500,"Flame Art Hefty Scimitar"),
+            (8530600,"Lightning Hefty Scimitar"),
+            (8530700,"Sacred Hefty Scimitar"),
+            (8530800,"Magic Hefty Scimitar"),
+            (8530900,"Cold Hefty Scimitar"),
+            (8531000,"Poison Hefty Scimitar"),
+            (8531100,"Blood Hefty Scimitar"),
+            (8531200,"Occult Hefty Scimitar"),
+            (3560000,"Leontiel's Greatsword"),
+            (13510000,"Golden Order Flail"),
+            (64530000,"Reverse-Bladed Sword"),
+            (64530100,"Heavy Reverse-Bladed Sword"),
+            (64530200,"Keen Reverse-Bladed Sword"),
+            (64530300,"Quality Reverse-Bladed Sword"),
+            (64530400,"Fire Reverse-Bladed Sword"),
+            (64530500,"Flame Art Reverse-Bladed Sword"),
+            (64530600,"Lightning Reverse-Bladed Sword"),
+            (64530700,"Sacred Reverse-Bladed Sword"),
+            (64530800,"Magic Reverse-Bladed Sword"),
+            (64530900,"Cold Reverse-Bladed Sword"),
+            (64531000,"Poison Reverse-Bladed Sword"),
+            (64531100,"Blood Reverse-Bladed Sword"),
+            (64531200,"Occult Reverse-Bladed Sword"),
+            (62520000,"Ritual Thrusting Shield"),
+            (62520100,"Heavy Ritual Thrusting Shield"),
+            (62520200,"Keen Ritual Thrusting Shield"),
+            (62520300,"Quality Ritual Thrusting Shield"),
+            (62520400,"Fire Ritual Thrusting Shield"),
+            (62520500,"Flame Art Ritual Thrusting Shield"),
+            (62520600,"Lightning Ritual Thrusting Shield"),
+            (62520700,"Sacred Ritual Thrusting Shield"),
+            (62520800,"Magic Ritual Thrusting Shield"),
+            (62520900,"Cold Ritual Thrusting Shield"),
+            (62521000,"Poison Ritual Thrusting Shield"),
+            (62521100,"Blood Ritual Thrusting Shield"),
+            (62521200,"Occult Ritual Thrusting Shield"),
+            (66530000,"Reed Great Katana"),
+            (66530100,"Heavy Reed Great Katana"),
+            (66530200,"Keen Reed Great Katana"),
+            (66530300,"Quality Reed Great Katana"),
+            (66530400,"Fire Reed Great Katana"),
+            (66530500,"Flame Art Reed Great Katana"),
+            (66530600,"Lightning Reed Great Katana"),
+            (66530700,"Sacred Reed Great Katana"),
+            (66530800,"Magic Reed Great Katana"),
+            (66530900,"Cold Reed Great Katana"),
+            (66531000,"Poison Reed Great Katana"),
+            (66531100,"Blood Reed Great Katana"),
+            (66531200,"Occult Reed Great Katana"),
+            (67530000,"Idus Sword"),
+            (67530100,"Heavy Idus Sword"),
+            (67530200,"Keen Idus Sword"),
+            (67530300,"Quality Idus Sword"),
+            (67530400,"Fire Idus Sword"),
+            (67530500,"Flame Art Idus Sword"),
+            (67530600,"Lightning Idus Sword"),
+            (67530700,"Sacred Idus Sword"),
+            (67530800,"Magic Idus Sword"),
+            (67530900,"Cold Idus Sword"),
+            (67531000,"Poison Idus Sword"),
+            (67531100,"Blood Idus Sword"),
+            (67531200,"Occult Idus Sword"),
         ]))
     });
+
+    #[cfg(test)]
+    mod tests {
+        use super::WEAPON_NAME;
+
+        fn name(id: u32) -> String {
+            WEAPON_NAME
+                .lock()
+                .unwrap()
+                .get(&id)
+                .expect("1.17 weapon row must exist")
+                .to_string()
+        }
+
+        #[test]
+        fn tarnished_pack_base_weapons_resolve() {
+            assert_eq!(name(8530000), "Hefty Scimitar");
+            assert_eq!(name(3560000), "Leontiel's Greatsword");
+            assert_eq!(name(13510000), "Golden Order Flail");
+            assert_eq!(name(64530000), "Reverse-Bladed Sword");
+            assert_eq!(name(62520000), "Ritual Thrusting Shield");
+            assert_eq!(name(66530000), "Reed Great Katana");
+            assert_eq!(name(67530000), "Idus Sword");
+        }
+
+        #[test]
+        fn tarnished_pack_infusion_variants_follow_prefix_convention() {
+            assert_eq!(name(8530100), "Heavy Hefty Scimitar");
+            assert_eq!(name(67531100), "Blood Idus Sword");
+            assert_eq!(name(62520900), "Cold Ritual Thrusting Shield");
+            assert_eq!(name(66531200), "Occult Reed Great Katana");
+            assert_eq!(name(64530500), "Flame Art Reverse-Bladed Sword");
+        }
+
+        #[test]
+        fn somber_tarnished_weapons_have_no_infusion_variants() {
+            let map = WEAPON_NAME.lock().unwrap();
+            assert!(!map.contains_key(&3560100));
+            assert!(!map.contains_key(&13510100));
+        }
+    }
 }

@@ -79,6 +79,7 @@ pub fn weapons() -> &'static BTreeMap<String, Vec<u32>> {
             0x00358EF0, // Greatsword of Damnation
             0x0035B600, // Lizard Greatsword
             0x00362B30, // Greatsword of Solitude
+            0x00365240, // Leontiel's Greatsword
             0x0081DA30, // Freyja's Greatsword
         ]);
         weapon_groups.insert("Colossal Swords".to_string(),vec![
@@ -149,6 +150,7 @@ pub fn weapons() -> &'static BTreeMap<String, Vec<u32>> {
             0x007B4A80, // Beastman's Cleaver
             0x007B98A0, // Morgott's Cursed Sword
             0x00820140, // Horned Warrior's Greatsword
+            0x00822850, // Hefty Scimitar
         ]);
         weapon_groups.insert("Katana".to_string(),vec![
             0x002673C0, // Star-Lined Sword
@@ -217,6 +219,7 @@ pub fn weapons() -> &'static BTreeMap<String, Vec<u32>> {
             0x00C6D270, // Bastard's Stars
             0x00C6F980, // Chainlink Flail
             0x00CDFE60, // Serpent Flail
+            0x00CE2570, // Golden Order Flail
         ]);
         weapon_groups.insert("Axes".to_string(),vec![
             0x00D59F80, // Battle Axe
@@ -624,6 +627,7 @@ pub fn weapons() -> &'static BTreeMap<String, Vec<u32>> {
         weapon_groups.insert("Thrusting Shields".to_string(),vec![
             0x03B9ACA0, // Dueling Shield
             0x03B9D3B0, // Carian Thrusting Shield
+            0x03B9FAC0, // Ritual Thrusting Shield
         ]);
         weapon_groups.insert("Throwing Blades".to_string(),vec![
             0x03C8EEE0, // Smithscript Dagger
@@ -632,16 +636,19 @@ pub fn weapons() -> &'static BTreeMap<String, Vec<u32>> {
             0x03D83120, // Backhand Blade
             0x03D85830, // Smithscript Cirque
             0x03D87F40, // Curseblade's Cirque
+            0x03D8A650, // Reverse-Bladed Sword
         ]);
         weapon_groups.insert("Great Katanas".to_string(),vec![
             0x03F6B5A0, // Great Katana
             0x03F6DCB0, // Dragon-Hunter's Great Katana
             0x03F703C0, // Rakshasa's Great Katana
+            0x03F72AD0, // Reed Great Katana
         ]);
         weapon_groups.insert("Light Greatswords".to_string(),vec![
             0x0405F7E0, // Milady
             0x04061EF0, // Leda's Sword
             0x04064600, // Rellana's Twin Blades
+            0x04066D10, // Idus Sword
         ]);
         weapon_groups.insert("Beast Claws".to_string(),vec![
             0x04153A20, // Beast Claw
