@@ -3567,6 +3567,23 @@ pub mod weapon_name {
             (31541000,"Poison Silver Grooved Shield"),
             (31541100,"Blood Silver Grooved Shield"),
             (31541200,"Occult Silver Grooved Shield"),
+            // WARNING: sentinel-sortId dummy rows (cut/unused cousins, incl.
+            // near-misses of Reed Great Katana / Idus Sword families). Tracked
+            // with empty names so they resolve explicitly; do not invent names.
+            (41690000,""),
+            (42690000,""),
+            (43690000,""),
+            (52690000,""),
+            (60680000,""),
+            (60690000,""),
+            (61690000,""),
+            (66680000,""),
+            (66690000,""),
+            (67690000,""),
+            (68520000,""),
+            (68530000,""),
+            (68680000,""),
+            (68690000,""),
         ]))
     });
 
