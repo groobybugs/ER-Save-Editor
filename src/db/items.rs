@@ -61,6 +61,11 @@ pub fn items() -> &'static BTreeMap<String, Vec<u32>> {
             0x401E8CC8, // Iris of Grace
             0x401E8CD2, // Iris of Occultation
             0x401E8CDC, // Thiollier's Concoction
+            0x401E9038, // Bondstone
+            0x401E9039, // Spritestone
+            0x401E916E, // Sunwarmth Stone
+            0x401E9196, // Charming Branch
+            0x401E90F6, // Fire Spritestone
         ]);
         item_groups.insert("Meats".to_string(), vec![
             0x4000044C, // Pickled Turtle Neck
@@ -100,6 +105,8 @@ pub fn items() -> &'static BTreeMap<String, Vec<u32>> {
             0x40000BEB, // Large Glintstone Scrap
             0x40000BF4, // Gravity Stone Fan
             0x40000BFE, // Gravity Stone Chunk
+            0x401E90EC, // Fire Coil
+            0x401E9100, // Glinting Nail
         ]);
         item_groups.insert("Grease".to_string(), vec![
             0x40000578, // Fire Grease
@@ -168,6 +175,25 @@ pub fn items() -> &'static BTreeMap<String, Vec<u32>> {
             0x4000515E, // Gold-Tinged Excrement
             0x4000515F, // Blood-Tainted Excrement
             0x4000516D, // Yellow Ember
+            // SOTE special materials (rows verified in 1.17 regulation).
+            0x401EBF18, // Beast Horn
+            0x401EBF22, // Spirit Calculus
+            0x401EBF2C, // Pearlescent Scale
+            0x401EBF36, // Scorpion Liver
+            0x401EBF40, // Fly Mold
+            // SOTE animal materials.
+            0x401ED2A6, // Black Pyrefly
+            0x401ED2A7, // Glintslab Firefly
+            0x401ED2AA, // Toxic Mossling
+            0x401ED2AD, // Frozen Maggot
+            0x401ED2B0, // Winter-Lantern Fly
+            0x401ED2B1, // Swollen Grape
+            0x401ED2B2, // Grave Keeper's Brainpan
+            0x401ED2B3, // Horn-Strewn Excrement
+            0x401ED2B6, // Grave Cricket
+            0x401ED2BA, // Congealed Putrescence
+            0x401ED2BE, // Ember of Messmer
+            0x401ED2BF, // Blessed Bone Shard
         ]);
         item_groups.insert("Crafting: Plant".to_string(), vec![
             0x40003B2E, // Miranda Powder
@@ -200,6 +226,23 @@ pub fn items() -> &'static BTreeMap<String, Vec<u32>> {
             0x40005168, // Cave Moss
             0x40005169, // Budding Cave Moss
             0x4000516A, // Crystal Cave Moss
+            // SOTE plant materials.
+            0x401ED2A1, // Rada Fruit
+            0x401ED2A2, // Redflesh Mushroom
+            0x401ED2A3, // Whiteflesh Mushroom
+            0x401ED2A4, // Knot Resin
+            0x401ED2A5, // Dewgem
+            0x401ED2A8, // Yellow Fulgurbloom
+            0x401ED2A9, // Shadow Sunflower
+            0x401ED2AB, // Scarlet Bud
+            0x401ED2AC, // Sanguine Amaryllis
+            0x401ED2AE, // Deep-Purple Lily
+            0x401ED2AF, // Nectarblood Burgeon
+            0x401ED2B5, // Ghostflame Bloom
+            0x401ED2B7, // Dragon's Calorbloom
+            0x401ED2B8, // Finger Mimic
+            0x401ED2B9, // Empyrean-Blood Burgeon
+            0x401ED2C0, // Red Fulgurbloom
         ]);
         item_groups.insert("Crafting: Inorganic".to_string(), vec![
             0x400006E0, // Ruin Fragment
@@ -209,6 +252,14 @@ pub fn items() -> &'static BTreeMap<String, Vec<u32>> {
             0x40005172, // Volcanic Stone
             0x40005174, // Formic Rock
             0x40005177, // Gravel Stone
+            // SOTE inorganic materials.
+            0x401ED2B4, // Gas Stone
+            0x401ED2BB, // Roundrock
+            0x401ED2BC, // Spiritgrave Stone
+            0x401ED2BD, // Rauh Burrow
+            0x401ED2C1, // Nailstone
+            0x401ED2C2, // Sharp Gravel Stone
+            0x401ED2C3, // Furnace Visage
         ]);
         item_groups.insert("Smithing Stone".to_string(), vec![
             0x40002774, // Smithing Stone [1]
