@@ -94,7 +94,6 @@ pub fn weapons() -> &'static BTreeMap<String, Vec<u32>> {
             0x003E4180, // Ruins Greatsword
             0x003E8FA0, // Grafted Blade Greatsword
             0x003EB6B0, // Troll Knight's Sword
-            0x00362B30, // Greatsword of Solitude
             0x0044AA20, // Ancient Meteoric Ore Greatsword
             0x0044F840, // Fire Knight's Greatsword
             0x00451F50, // Greatsword of Radahn (Lord)
@@ -368,6 +367,7 @@ pub fn weapons() -> &'static BTreeMap<String, Vec<u32>> {
             0x016694E0, // Devonia's Hammer
             0x0166BBF0, // Shadow Sunflower Blossom
             0x0166E300, // Gazing Finger
+            0x00BF3150, // Bloodfiend's Arm
         ]);
         weapon_groups.insert("Torches".to_string(),vec![
             0x016E3600, // Torch

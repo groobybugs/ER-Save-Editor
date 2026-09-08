@@ -264,7 +264,6 @@ pub fn items() -> &'static BTreeMap<String, Vec<u32>> {
             0x40000DDE, // Bloodboil Aromatic
             0x40000DFC, // Poison Spraymist
             0x40000E1A, // Acid Spraymist
-            0x40000DC0, // Ironjar Aromatic
         ]);
         item_groups.insert("Pots".to_string(), vec![
             0x4000012C, // Fire Pot
