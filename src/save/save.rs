@@ -1157,11 +1157,12 @@ mod tests {
             )
             .expect("name must be valid UTF-16")
         };
-        // "RenameTest01extra-chars-here" truncated to the 16-unit limit.
+        // "RenameTest01extra-chars-here" truncated to the 16-unit limit
+        // ("RenameTest01extr" — count them, it is 16 chars, not 17).
         let slot_name = read_name(&save2.save_type.get_slot(idx).player_game_data.character_name);
         let summary_name = read_name(&save2.save_type.get_profile_summary(idx).character_name);
-        assert_eq!(slot_name, "RenameTest01extra");
-        assert_eq!(summary_name, "RenameTest01extra");
+        assert_eq!(slot_name, "RenameTest01extr");
+        assert_eq!(summary_name, "RenameTest01extr");
     }
 }
 

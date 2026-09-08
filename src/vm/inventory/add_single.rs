@@ -752,27 +752,51 @@ impl InventoryViewModel {
     }
 
     fn get_free_space_for_item_quantity_in_storage(&mut self, id: u32, storage_index: usize, is_projectile: bool, is_key_item: bool) -> Result<u32, String>{
-        // Gaitem handle for items created from item id, projectile must be looked up
+        // 0: Max amount of item in held storage
+        // 1: Max amount of item in box storage
+        let mut max: [u32; 2] = [0; 2];
+
+        // Projectile limit is always the same; matched by item id below, no
+        // gaitem-map lookup (map handles can diverge from storage handles).
+        if is_projectile {
+            max[0] = 99;
+            max[1] = 600;
+        }
+        // Look up item param to fetch storage limits
+        else {
+            let item_params_res = Regulation::equip_goods_param_map().get(&id);
+            if item_params_res.is_some() {
+                let item_params = item_params_res.unwrap();
+                max[0] = item_params.data.maxNum as u32;
+                max[1] = item_params.data.maxRepositoryNum as u32;
+            }
+            else {
+                return Err(format!("Failed to determine storage limits for item {}|{:#x}: no goods param row. Add item failed!", id, id));
+            }
+        }
+
+        // Gaitem handle for items created from item id, projectile matched by id.
         let gaitem_handle = if !is_projectile {
             id | InventoryGaitemType::ITEM as u32
-        } 
+        }
         else {
-            let gaitem_map_res = self.gaitem_map.iter().filter(|gaitem| gaitem.item_id == id).map(|&gaitem| gaitem).collect::<Vec<GaItem>>();
+            // Look up item in storage box. Projectiles are matched by item id
+            // (their gaitem-map handles can diverge from storage handles after
+            // bulk adds, so handle matching misfires for them); everything else
+            // matches by gaitem handle as before.
+            let item_res = self.storage[storage_index].common_items.iter().find(|i| i.item_id == id);
+            if item_res.is_some() {
+                // Fetch item from item list
+                let item = item_res.unwrap();
+                let current_item_quantity = item.quantity;
 
-            // Shouldn't happen. It's expected that there's at least one instance of 
-            // the projectile in the gaitem map by this point
-            if gaitem_map_res.is_empty() {
-                return Err(format!("Failed! Couldn't find projectile with {}|{:#x} in gaitem map.!", id, id));
+                // Calculate how much free space for item is left in storage
+                let free_space = max[storage_index].saturating_sub(current_item_quantity);
+
+                return Ok(free_space);
             }
 
-            // Storage box requires there to be a second entry the projectiles in the 
-            // gaitem map
-            if storage_index == 1 && gaitem_map_res.len() == 1 {
-                return Err(format!("Failed! Couldn't find projectile with {}|{:#x} in the storage box in gaitem map.!", id, id));
-            }
-
-            let gaitem = gaitem_map_res[storage_index];
-            gaitem.gaitem_handle
+            return Err(format!("Failed to determine storage limits for item {}|{:#x}: not present in storage {}. Add item failed!", id, id, storage_index));
         };
 
         // 0: Max amount of item in held storage
@@ -793,29 +817,36 @@ impl InventoryViewModel {
                 max[1] = item_params.data.maxRepositoryNum as u32;
             }
             else {
-                return Err(format!("Failed to determine storage limits for item {}|{:#x}. Add item failed!", id, id));
+                return Err(format!("Failed to determine storage limits for item {}|{:#x}: no goods param row. Add item failed!", id, id));
             }
         }
 
-        // Look up item in storage box
-        let item_res = match is_key_item {
-            true => self.storage[storage_index].key_items.iter().find(|i| i.ga_item_handle == gaitem_handle),
-            false => self.storage[storage_index].common_items.iter().find(|i| i.ga_item_handle == gaitem_handle),
+        // Look up item in storage box. Projectiles are matched by item id
+        // (their gaitem-map handles can diverge from storage handles after
+        // bulk adds, so handle matching misfires for them); everything else
+        // matches by gaitem handle as before.
+        let item_res = if is_projectile {
+            self.storage[storage_index].common_items.iter().find(|i| i.item_id == id)
+        } else {
+            match is_key_item {
+                true => self.storage[storage_index].key_items.iter().find(|i| i.ga_item_handle == gaitem_handle),
+                false => self.storage[storage_index].common_items.iter().find(|i| i.ga_item_handle == gaitem_handle),
+            }
         };
 
         if item_res.is_some() {
             // Fetch item from item list 
             let item = item_res.unwrap();
             let current_item_quantity = item.quantity;
-
             // Calculate how much free space for item is left in storage 
-            let free_space = max[storage_index] - current_item_quantity;
+            let free_space = max[storage_index].saturating_sub(current_item_quantity);
 
             return Ok(free_space);
         }
 
 
-        Err(format!("Failed to determine storage limits for item {}|{:#x}. Add item failed!", id, id))
+
+        Err(format!("Failed to determine storage limits for item {}|{:#x}: not present in storage {}. Add item failed!", id, id, storage_index))
     }
     
     fn increase_item_quantity(&mut self, id: u32, amount: u32, storage_index: usize, is_key_item: bool) {
