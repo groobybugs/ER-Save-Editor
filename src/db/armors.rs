@@ -1067,6 +1067,35 @@ pub fn armor_sets() -> &'static BTreeMap<String, Vec<u32>> {
             0x10512D40, // Greatjar
             0x10515450, // Imp Head (Lion)
          ]);
+         // 1.17 Tarnished Pack. Gaitem IDs taken from live starting
+         // inventories (Steel/Silver Grooved) and the 1.17 regulation
+         // protector table (Leontiel/Broken Mask/Gold Tattoo).
+         armor_sets.insert("Steel".to_string(),vec![
+            0x1051F090, // Steel Helm
+            0x1051F0F4, // Steel Armor
+            0x1051F158, // Steel Gauntlets
+            0x1051F1BC, // Steel Greaves
+         ]);
+         armor_sets.insert("Silver Grooved".to_string(),vec![
+            0x1051A270, // Silver Grooved Helm
+            0x1051A2D4, // Silver Grooved Armor
+            0x1051A338, // Silver Grooved Gauntlets
+            0x1051A39C, // Silver Grooved Greaves
+            0x1051A6BC, // Silver Grooved Armor (Altered)
+         ]);
+         armor_sets.insert("Leontiel's".to_string(),vec![
+            0x1051C980, // Leontiel's Hat
+            0x1051C9E4, // Leontiel's Armor
+            0x1051CA48, // Leontiel's Leather Gloves
+            0x1051CAAC, // Leontiel's Boots
+            0x1051CD68, // Leontiel's Hat (Altered)
+         ]);
+         armor_sets.insert("Gold Tattoo".to_string(),vec![
+            0x10517B60, // Broken Gold Mask
+            0x10517BC4, // Gold Tattoo (Chest)
+            0x10517C28, // Gold Tattoo (Arm)
+            0x10517C8C, // Gold Tattoo (Leg)
+         ]);
         armor_sets
     })
 }

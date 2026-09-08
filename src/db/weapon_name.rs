@@ -3455,6 +3455,21 @@ pub mod weapon_name {
             (67531000,"Poison Idus Sword"),
             (67531100,"Blood Idus Sword"),
             (67531200,"Occult Idus Sword"),
+            // Silver Grooved Shield (1.17): protector-style shield kept in
+            // the weapon table like the other shields (3154 family).
+            (31540000,"Silver Grooved Shield"),
+            (31540100,"Heavy Silver Grooved Shield"),
+            (31540200,"Keen Silver Grooved Shield"),
+            (31540300,"Quality Silver Grooved Shield"),
+            (31540400,"Fire Silver Grooved Shield"),
+            (31540500,"Flame Art Silver Grooved Shield"),
+            (31540600,"Lightning Silver Grooved Shield"),
+            (31540700,"Sacred Silver Grooved Shield"),
+            (31540800,"Magic Silver Grooved Shield"),
+            (31540900,"Cold Silver Grooved Shield"),
+            (31541000,"Poison Silver Grooved Shield"),
+            (31541100,"Blood Silver Grooved Shield"),
+            (31541200,"Occult Silver Grooved Shield"),
         ]))
     });
 

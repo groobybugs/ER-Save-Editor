@@ -430,6 +430,7 @@ pub fn weapons() -> &'static BTreeMap<String, Vec<u32>> {
             0x01E0CDF0, // Wolf Crest Shield
             0x01E0F500, // Serpent Crest Shield
             0x01E11C10, // Golden Lion Shield
+            0x01E14320, // Silver Grooved Shield
         ]);
         weapon_groups.insert("Greatshields".to_string(),vec![
             0x01E84800, // Dragon Towershield
