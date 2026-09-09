@@ -3277,7 +3277,7 @@ pub mod weapon_name {
             (8511000,"Freyja's Poison Greatsword"),
             (8511100,"Freyja's Blood Greatsword"),
             (8511200,"Freyja's Occult Greatsword"),
-            // SOTE infusion variants missing from the original bulk import (rows verified in 1.17 regulation).
+            // SOTE infusion variants missing from the original bulk import.
             (6500100,"Heavy Queelign's Greatsword"),
             (6500200,"Keen Queelign's Greatsword"),
             (6500300,"Quality Queelign's Greatsword"),
@@ -3482,9 +3482,7 @@ pub mod weapon_name {
             (32501000,"Poison Black Steel Greatshield"),
             (32501100,"Blood Black Steel Greatshield"),
             (32501200,"Occult Black Steel Greatshield"),
-            // 1.17 Tarnished Pack. IDs verified against the 1.17 regulation
-            // weapon table (equipModelId match + family/sortId checks);
-            // somber entries (Leontiel, Golden Order Flail) are singles.
+            // 1.17 Tarnished Pack (somber entries are singles).
             (8530000,"Hefty Scimitar"),
             (8530100,"Heavy Hefty Scimitar"),
             (8530200,"Keen Hefty Scimitar"),
@@ -3567,23 +3565,6 @@ pub mod weapon_name {
             (31541000,"Poison Silver Grooved Shield"),
             (31541100,"Blood Silver Grooved Shield"),
             (31541200,"Occult Silver Grooved Shield"),
-            // WARNING: sentinel-sortId dummy rows (cut/unused cousins, incl.
-            // near-misses of Reed Great Katana / Idus Sword families). Tracked
-            // with empty names so they resolve explicitly; do not invent names.
-            (41690000,""),
-            (42690000,""),
-            (43690000,""),
-            (52690000,""),
-            (60680000,""),
-            (60690000,""),
-            (61690000,""),
-            (66680000,""),
-            (66690000,""),
-            (67690000,""),
-            (68520000,""),
-            (68530000,""),
-            (68680000,""),
-            (68690000,""),
         ]))
     });
 

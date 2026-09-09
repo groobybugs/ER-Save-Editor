@@ -15,10 +15,7 @@ pub mod classes {
         Prisoner = 8,
         Confessor = 6,
         Wretch = 9,
-        // 1.17 Tarnished Pack classes. IDs confirmed via the 1.17
-        // regulation CharaInitParam: row 3010 = Idus Knight (level 7 +
-        // Idus stats), row 3011 = Heavy Knight (level 10 + Heavy stats),
-        // continuing the 3000+N class row order.
+        // 1.17 Tarnished Pack classes.
         IdusKnight = 10,
         HeavyKnight = 11,
     }

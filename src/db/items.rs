@@ -175,7 +175,7 @@ pub fn items() -> &'static BTreeMap<String, Vec<u32>> {
             0x4000515E, // Gold-Tinged Excrement
             0x4000515F, // Blood-Tainted Excrement
             0x4000516D, // Yellow Ember
-            // SOTE special materials (rows verified in 1.17 regulation).
+            // Shadow of the Erdtree special materials.
             0x401EBF18, // Beast Horn
             0x401EBF22, // Spirit Calculus
             0x401EBF2C, // Pearlescent Scale
