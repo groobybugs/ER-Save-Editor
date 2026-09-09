@@ -1156,7 +1156,13 @@ pub struct PlayerGameData {
     _0x19: [u8; 0x19],
     pub scadutree_lvl: u8,
     pub spirit_ash_lvl: u8,
-    _0x1a: [u8; 0x1a],
+    _0x1a_1: [u8; 3],
+    // Flask charges, verified against 1.17 saves (PGD+0xF9 crimson, +0xFA
+    // cerulean): maxed slot shows 12/2 (total 14 = game max), fresh slots
+    // show 3/1. No profile-summary mirror exists; slot-only data.
+    pub flask_hp: u8,
+    pub flask_fp: u8,
+    _0x1a_2: [u8; 0x15],
     pub password: [u8; 0x12],
     pub group_password1: [u8; 0x12],
     pub group_password2: [u8; 0x12],
@@ -1208,7 +1214,10 @@ impl Default for PlayerGameData {
             _0x19: [0; 0x19],
             scadutree_lvl: 0,
             spirit_ash_lvl: 0,
-            _0x1a: [0; 0x1a],
+            _0x1a_1: [0; 3],
+            flask_hp: 0,
+            flask_fp: 0,
+            _0x1a_2: [0; 0x15],
             password: Default::default(),
             group_password1: Default::default(),
             group_password2: Default::default(),
@@ -1301,7 +1310,13 @@ impl Read for PlayerGameData {
         // DLC - Revered Spirit Ash Level
         player_game_data.spirit_ash_lvl = br.read_u8()?;
 
-        player_game_data._0x1a.copy_from_slice(br.read_bytes(0x1a)?);
+        player_game_data._0x1a_1.copy_from_slice(br.read_bytes(0x3)?);
+
+        // Flask charges: crimson (HP) then cerulean (FP)
+        player_game_data.flask_hp = br.read_u8()?;
+        player_game_data.flask_fp = br.read_u8()?;
+
+        player_game_data._0x1a_2.copy_from_slice(br.read_bytes(0x15)?);
 
         // Passwords
         let password = br.read_bytes(0x12)?;
@@ -1418,7 +1433,13 @@ impl Write for PlayerGameData {
         // DLC - Revered Spirit Ash Level
         bytes.push(self.spirit_ash_lvl);
 
-        bytes.extend(self._0x1a);
+        bytes.extend(self._0x1a_1);
+
+        // Flask charges: crimson (HP) then cerulean (FP)
+        bytes.push(self.flask_hp);
+        bytes.push(self.flask_fp);
+
+        bytes.extend(self._0x1a_2);
 
         // Passwords
         bytes.extend(self.password);

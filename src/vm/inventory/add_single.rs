@@ -10,7 +10,7 @@ use crate::{
         WepType
     } 
 };
-use super::{InventoryGaitemType, InventoryItemType, InventoryItemViewModel, InventoryViewModel};
+use super::{InventoryGaitemType, InventoryItemType, InventoryItemViewModel, InventoryViewModel, TALISMAN_POUCH_ITEM_ID};
 
 impl InventoryViewModel {
     pub fn add_to_inventory(&mut self, item: &RegulationItemViewModel) {
@@ -419,6 +419,44 @@ impl InventoryViewModel {
         // Add to gaitem data list if not present
         self.upsert_gaitem_data_list(id);
 
+    }
+
+    /// Set the held Talisman Pouch quantity (exact, not additive), which
+    /// drives the enabled talisman slot count as min(1 + quantity, 4).
+    /// Entries are updated in place so the fixed-size key-item table keeps
+    /// its length; a missing entry is created only for quantity > 0, and
+    /// quantity 0 keeps the entry (the game treats it like an absent pouch).
+    pub fn set_talisman_pouch_quantity(&mut self, quantity: u32) {
+        let gaitem_handle = TALISMAN_POUCH_ITEM_ID | InventoryGaitemType::ITEM as u32;
+
+        if let Some(entry) = self.storage[0]
+            .key_items
+            .iter_mut()
+            .find(|i| i.ga_item_handle == gaitem_handle)
+        {
+            entry.quantity = quantity;
+            self.changed = true;
+            return;
+        }
+
+        if quantity == 0 {
+            return;
+        }
+
+        let name = match ITEM_NAME.lock().unwrap().get(&TALISMAN_POUCH_ITEM_ID) {
+            Some(name) => format!("{}", name),
+            None => format!("[UNKNOWN_{}]", TALISMAN_POUCH_ITEM_ID),
+        };
+        self.add_to_storage_key_items(
+            gaitem_handle,
+            TALISMAN_POUCH_ITEM_ID,
+            quantity,
+            0,
+            name,
+            InventoryGaitemType::ITEM,
+        );
+        self.upsert_gaitem_data_list(TALISMAN_POUCH_ITEM_ID);
+        self.changed = true;
     }
 
     fn add_key_item(&mut self, id: u32, quantity: u32) {

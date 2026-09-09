@@ -17,6 +17,8 @@ pub mod stats_view_model {
         pub soulsmemory: u32,
         pub scadutree: u32,
         pub spirit_ash: u32,
+        pub flask_hp: u32,
+        pub flask_fp: u32,
     }
 
     impl Default for StatsViewModel {
@@ -36,6 +38,8 @@ pub mod stats_view_model {
                 soulsmemory: Default::default(),
                 scadutree: Default::default(),
                 spirit_ash: Default::default(),
+                flask_hp: Default::default(),
+                flask_fp: Default::default(),
             }
         }
     }
@@ -63,6 +67,10 @@ pub mod stats_view_model {
             let scadutree = slot.player_game_data.scadutree_lvl.into();
             let spirit_ash = slot.player_game_data.spirit_ash_lvl.into();
 
+            // Flask charges (crimson HP / cerulean FP)
+            let flask_hp = slot.player_game_data.flask_hp.into();
+            let flask_fp = slot.player_game_data.flask_fp.into();
+
             Self {
                 arche_type,
                 vigor,
@@ -78,6 +86,8 @@ pub mod stats_view_model {
                 soulsmemory,
                 scadutree,
                 spirit_ash,
+                flask_hp,
+                flask_fp,
             }
         }
     }

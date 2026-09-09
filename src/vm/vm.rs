@@ -162,6 +162,10 @@ pub mod vm {
             // DLC Stats
             save_type.set_character_scadutree_lvl(index, stats_vm.scadutree);
             save_type.set_character_spirit_ash_lvl(index, stats_vm.spirit_ash);
+
+            // Flask charges (game caps the split at 14 total; UI clamps)
+            save_type.set_character_flask_hp(index, stats_vm.flask_hp);
+            save_type.set_character_flask_fp(index, stats_vm.flask_fp);
         }
 
         fn update_weapon_match_making_level(&self, save_type: &mut SaveType, index: usize) {

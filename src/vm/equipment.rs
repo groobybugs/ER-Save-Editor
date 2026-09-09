@@ -2,7 +2,7 @@
 pub mod equipment_view_model {
     use std::collections::HashMap;
 
-    use crate::{save::common::save_slot::{GaItem, SaveSlot}, util::{params::params::Row, regulation::Regulation}, vm::inventory::{weapon_display_name, InventoryGaitemType}};
+    use crate::{save::common::save_slot::{GaItem, SaveSlot}, util::{params::params::Row, regulation::Regulation}, vm::inventory::{weapon_display_name, InventoryGaitemType, TALISMAN_POUCH_ITEM_ID}};
 
     #[derive(Default, Clone)]
     pub struct EquipmentItemViewModel {
@@ -46,7 +46,7 @@ pub mod equipment_view_model {
             equipment_vm.talisman_count = 1; 
             for i in 0..slot.equip_inventory_data.key_inventory_items_distinct_count as usize {
                 let key_item = slot.equip_inventory_data.key_items[i];
-                if (key_item.ga_item_handle ^ InventoryGaitemType::ITEM as u32) == 10040 {
+                if (key_item.ga_item_handle ^ InventoryGaitemType::ITEM as u32) == TALISMAN_POUCH_ITEM_ID {
                     equipment_vm.talisman_count = u32::min(1+key_item.quantity as u32, 4);
                 } 
             }

@@ -107,9 +107,11 @@ pub mod save {
                 SaveType::Unknown => panic!("Why are we here?"),
                 SaveType::PC(pc_save) => {
                     pc_save.save_slots[index].save_slot.player_game_data.gender = gender;
+                    pc_save.user_data_10.profile_summary[index].gender = gender;
                 }
                 SaveType::PlayStation(ps_save) => {
                     ps_save.save_slots[index].player_game_data.gender = gender;
+                    ps_save.user_data_10.profile_summary[index].gender = gender;
                 },
             }
         }
@@ -209,6 +211,7 @@ pub mod save {
                 }
                 SaveType::PlayStation(ps_save) => {
                     ps_save.save_slots[index].player_game_data.level = level;
+                    ps_save.user_data_10.profile_summary[index].level = level;
                 },
             }
         }
@@ -822,6 +825,39 @@ pub mod save {
                 }
             }
         }
+
+        // Flask charges (PGD+0xF9 crimson/HP, +0xFA cerulean/FP). Slot-only
+        // data: the profile summary carries no flask fields, so no mirror
+        // write is needed. Callers must keep hp + fp within 1..=14 total.
+        pub fn set_character_flask_hp(&mut self, index: usize, charges: u32) {
+            match self {
+                SaveType::Unknown => panic!("Why are we here?"),
+                SaveType::PC(pc_save) => {
+                    pc_save.save_slots[index]
+                        .save_slot
+                        .player_game_data
+                        .flask_hp = charges as u8;
+                }
+                SaveType::PlayStation(ps_save) => {
+                    ps_save.save_slots[index].player_game_data.flask_hp = charges as u8;
+                }
+            }
+        }
+
+        pub fn set_character_flask_fp(&mut self, index: usize, charges: u32) {
+            match self {
+                SaveType::Unknown => panic!("Why are we here?"),
+                SaveType::PC(pc_save) => {
+                    pc_save.save_slots[index]
+                        .save_slot
+                        .player_game_data
+                        .flask_fp = charges as u8;
+                }
+                SaveType::PlayStation(ps_save) => {
+                    ps_save.save_slots[index].player_game_data.flask_fp = charges as u8;
+                }
+            }
+        }
     }
 
     pub struct Save {
@@ -1163,6 +1199,62 @@ mod tests {
         let summary_name = read_name(&save2.save_type.get_profile_summary(idx).character_name);
         assert_eq!(slot_name, "RenameTest01extr");
         assert_eq!(summary_name, "RenameTest01extr");
+    }
+
+    /// Flask charge offsets (PGD+0xF9 crimson, +0xFA cerulean), verified
+    /// against 1.17 saves: the played slot holds 12/2 (total 14 = game
+    /// max), fresh slots hold 3/1. Guards the mapping, then round-trips an
+    /// edited split through serialize/reload.
+    #[test]
+    fn test_ps_flask_charges_anchor_and_roundtrip() {
+        let Ok(path_str) = std::env::var("ER_TEST_SAVE_PS") else {
+            eprintln!("skipping: set ER_TEST_SAVE_PS=<path> to run");
+            return;
+        };
+        let path = PathBuf::from(&path_str);
+        if !path.exists() {
+            eprintln!("skipping: ER_TEST_SAVE_PS points to missing file");
+            return;
+        }
+        let mut save = Save::from_path(&path).expect("failed to load save");
+        // Slot 0 is the played character: 12 crimson / 2 cerulean.
+        let pgd0 = &save.save_type.get_slot(0).player_game_data;
+        assert_eq!((pgd0.flask_hp, pgd0.flask_fp), (12, 2));
+
+        // Edit a fresh slot's split, serialize, reload from disk.
+        save.save_type.set_character_flask_hp(2, 7);
+        save.save_type.set_character_flask_fp(2, 7);
+        let bytes = save.write().expect("failed to write save");
+        let tmp = std::env::temp_dir().join("er_save_editor_flask_test.dat");
+        std::fs::write(&tmp, &bytes).expect("failed to write temp save");
+        let save2 = Save::from_path(&tmp).expect("failed to reload save");
+        let _ = std::fs::remove_file(&tmp);
+        let pgd2 = &save2.save_type.get_slot(2).player_game_data;
+        assert_eq!((pgd2.flask_hp, pgd2.flask_fp), (7, 7));
+    }
+
+    /// PS summary level must mirror the slot level (PC path already did;
+    /// the PS path skipped it, leaving stale load-screen levels).
+    #[test]
+    fn test_ps_summary_level_mirrors_slot() {
+        let Ok(path_str) = std::env::var("ER_TEST_SAVE_PS") else {
+            eprintln!("skipping: set ER_TEST_SAVE_PS=<path> to run");
+            return;
+        };
+        let path = PathBuf::from(&path_str);
+        if !path.exists() {
+            eprintln!("skipping: ER_TEST_SAVE_PS points to missing file");
+            return;
+        }
+        let mut save = Save::from_path(&path).expect("failed to load save");
+        save.save_type.set_character_level(1, 700);
+        let bytes = save.write().expect("failed to write save");
+        let tmp = std::env::temp_dir().join("er_save_editor_summary_test.dat");
+        std::fs::write(&tmp, &bytes).expect("failed to write temp save");
+        let save2 = Save::from_path(&tmp).expect("failed to reload save");
+        let _ = std::fs::remove_file(&tmp);
+        assert_eq!(save2.save_type.get_slot(1).player_game_data.level, 700);
+        assert_eq!(save2.save_type.get_profile_summary(1).level, 700);
     }
 }
 

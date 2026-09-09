@@ -62,6 +62,22 @@ pub mod equipment {
                         }
                     });
                 });
+
+                // Enabled talisman slots (1-4). Writes the Talisman Pouch
+                // key-item quantity (slots - 1); the slot row above follows
+                // immediately since talisman_count is display state.
+                row(ui, vm, format!("Talisman Slots"), |ui, vm| {
+                    group(ui, vm, |ui, vm| {
+                        let slot = &mut vm.slots[vm.index];
+                        let mut slots = slot.equipment_vm.talisman_count.clamp(1, 4);
+                        ui.add(egui::widgets::DragValue::new(&mut slots).range(1..=4));
+                        let slots = slots.clamp(1, 4);
+                        if slots != slot.equipment_vm.talisman_count {
+                            slot.equipment_vm.talisman_count = slots;
+                            slot.inventory_vm.set_talisman_pouch_quantity(slots - 1);
+                        }
+                    });
+                });
                 
                 row(ui, vm, format!("Quickslots"), |ui, vm| {
                     group(ui, vm, |ui, vm| {

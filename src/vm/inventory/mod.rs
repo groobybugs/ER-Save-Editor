@@ -108,6 +108,11 @@ impl ToString for InventoryItemType {
     }
 }
 
+/// Key-item id of the Talisman Pouch. Held quantity maps to enabled
+/// talisman slots as min(1 + quantity, 4); verified against 1.17 saves
+/// (maxed slot holds quantity 3, fresh slots hold none).
+pub const TALISMAN_POUCH_ITEM_ID: u32 = 10040;
+
 #[derive(Default, Clone, PartialEq)]
 pub enum InventoryGaitemType {
     #[default]
@@ -1074,5 +1079,66 @@ mod tests {
             assert_eq!(stack.quantity, 99);
         }
         println!("DONE117");
+    }
+
+    /// Talisman Pouch quantity drives enabled slots as min(1 + qty, 4).
+    /// The setter is exact (not additive): existing entries update in
+    /// place, a missing entry is created only for qty > 0, and qty 0
+    /// keeps the entry (fixed-size table, game reads it as one slot).
+    #[test]
+    fn talisman_pouch_quantity_sets_exact_counts() {
+        use super::{InventoryGaitemType, InventoryViewModel, TALISMAN_POUCH_ITEM_ID};
+        use crate::save::save::save::Save;
+        use crate::util::regulation::Regulation;
+        let Ok(path_str) = std::env::var("ER_TEST_SAVE_PS") else {
+            eprintln!("skipping: set ER_TEST_SAVE_PS=<path> to run");
+            return;
+        };
+        let path = std::path::PathBuf::from(&path_str);
+        if !path.exists() {
+            eprintln!("skipping: ER_TEST_SAVE_PS points to missing file");
+            return;
+        };
+        let save = Save::from_path(&path).expect("parse");
+        Regulation::init_params(&save);
+        let handle = TALISMAN_POUCH_ITEM_ID | InventoryGaitemType::ITEM as u32;
+
+        // Played slot holds the pouch (proves the handle constant).
+        let vm0 = InventoryViewModel::from_save(save.save_type.get_slot(0));
+        assert!(
+            vm0.storage[0].key_items.iter().any(|i| i.ga_item_handle == handle),
+            "played slot must hold a Talisman Pouch entry"
+        );
+
+        // Fresh slot has none: create with exact quantity, then re-set.
+        let mut vm2 = InventoryViewModel::from_save(save.save_type.get_slot(2));
+        assert!(
+            !vm2.storage[0].key_items.iter().any(|i| i.ga_item_handle == handle)
+        );
+        vm2.set_talisman_pouch_quantity(2);
+        assert!(vm2.changed);
+        let entry = vm2.storage[0]
+            .key_items
+            .iter()
+            .find(|i| i.ga_item_handle == handle)
+            .expect("pouch entry must exist after set");
+        assert_eq!(entry.quantity, 2);
+        vm2.set_talisman_pouch_quantity(1);
+        let entry = vm2.storage[0]
+            .key_items
+            .iter()
+            .find(|i| i.ga_item_handle == handle)
+            .expect("pouch entry must persist");
+        assert_eq!(entry.quantity, 1);
+
+        // Zero keeps the entry (no structural removal from fixed table).
+        let mut vm0m = InventoryViewModel::from_save(save.save_type.get_slot(0));
+        vm0m.set_talisman_pouch_quantity(0);
+        let entry = vm0m.storage[0]
+            .key_items
+            .iter()
+            .find(|i| i.ga_item_handle == handle)
+            .expect("pouch entry must persist at zero");
+        assert_eq!(entry.quantity, 0);
     }
 }

@@ -104,6 +104,41 @@ pub mod stats {
                         self::stat_field(&mut body, 0..=20, "Scadutree Blessing:", &mut stats_vm.scadutree);
                         self::stat_field(&mut body, 0..=10, "Shadow Realm Blessing:", &mut stats_vm.spirit_ash);
 
+                        // Flask charges: crimson (HP) + cerulean (FP) share a
+                        // 14-charge total. Clamp the edited side so the sum
+                        // never exceeds what the game allows.
+                        self::space(&mut body, 8.);
+                        body.row(24., |mut row| {
+                            row.col(|ui| {
+                                ui.label("Crimson Tears:");
+                            });
+                            row.col(|ui| {
+                                let field = egui::widgets::DragValue::new(&mut stats_vm.flask_hp)
+                                    .range(0..=14);
+                                ui.add(field);
+                                stats_vm.flask_hp = stats_vm.flask_hp.min(14 - stats_vm.flask_fp.min(14));
+                            });
+                        });
+                        body.row(24., |mut row| {
+                            row.col(|ui| {
+                                ui.label("Cerulean Tears:");
+                            });
+                            row.col(|ui| {
+                                let field = egui::widgets::DragValue::new(&mut stats_vm.flask_fp)
+                                    .range(0..=14);
+                                ui.add(field);
+                                stats_vm.flask_fp = stats_vm.flask_fp.min(14 - stats_vm.flask_hp.min(14));
+                            });
+                        });
+                        body.row(24., |mut row| {
+                            row.col(|ui| {
+                                ui.label("Flask total:");
+                            });
+                            row.col(|ui| {
+                                ui.label(format!("{:6}", stats_vm.flask_hp + stats_vm.flask_fp));
+                            });
+                        });
+
                         // Space
                         self::space(&mut body, 8.);
 
