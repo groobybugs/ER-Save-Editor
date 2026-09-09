@@ -824,6 +824,31 @@ pub mod armor_name {
             (5370100,"Steel Armor"),
             (5370200,"Steel Gauntlets"),
             (5370300,"Steel Greaves"),
+            // WARNING: sentinel-sortId rows (cut/unused content, same class as
+            // the rejected somber-weapon dupes). Tracked here with empty names
+            // so they resolve explicitly instead of silently; do NOT add to
+            // armor_sets and do NOT invent display names for them.
+            (5032100,""),
+            (5040000,""),
+            (5040100,""),
+            (5040200,""),
+            (5040300,""),
+            (5050000,""),
+            (5050100,""),
+            (5050200,""),
+            (5050300,""),
+            (5102100,""),
+            (5102200,""),
+            (5102300,""),
+            (5122000,""),
+            (5170000,""),
+            (5170100,""),
+            (5170200,""),
+            (5170300,""),
+            (5172000,""),
+            (5172100,""),
+            (5172200,""),
+            (5172300,""),
         ]))
     });
 }

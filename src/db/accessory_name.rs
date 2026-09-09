@@ -159,6 +159,9 @@ pub mod accessory_name {
             (8220,"Rellana's Cameo"),
             (8230,"Blade of Mercy"),
             (8240,"Talisman of All Crucibles"),
+            // WARNING: row 204000 has sentinel sortId + zero icon (dummy, not
+            // a real talisman). Tracked explicitly; do not add to talismans.rs.
+            (204000,""),
             (999999999,""),
         ]))
     });

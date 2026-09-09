@@ -2099,6 +2099,24 @@ pub mod item_name {
             (2020033,"Nailstone"),
             (2020034,"Sharp Gravel Stone"),
             (2020035,"Furnace Visage"),
+            // WARNING: sentinel-sortId dummy rows (no in-game item). Tracked
+            // with empty names so they resolve explicitly; do not invent names.
+            (2004330,""),
+            (2050301,""),
+            (2051004,""),
+            (2051005,""),
+            (2052030,""),
+            (2053140,""),
+            (2053480,""),
+            (2053490,""),
+            (2053700,""),
+            (2053701,""),
+            // WARNING: real rows (sequential sortIds/icons after Hefty Cracked
+            // Pot) with no obtainable name in any script, wiki or datamine.
+            // Rename in place if the names surface; do not add to items.rs.
+            (2009600,""),
+            (2009610,""),
+            (2009620,""),
             (2200000,"Curseblade Meera"),
             (2200001,"Curseblade Meera +1"),
             (2200002,"Curseblade Meera +2"),
