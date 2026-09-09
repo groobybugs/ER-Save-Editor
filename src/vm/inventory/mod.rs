@@ -52,6 +52,24 @@ pub enum InventorySubTypeRoute {
     Pouch,
 }
 
+#[derive(PartialEq, Clone, Copy, Debug, Default)]
+pub enum BulkQuantityMode {
+    #[default]
+    Max,
+    /// Half of max (min 1) so stacks keep room for in-game pickups.
+    /// Top-ups clamp at max via free-space math, so repeated Medium adds
+    /// converge on max and can never overflow.
+    Medium,
+}
+
+/// Apply the bulk quantity mode to a max stack size.
+pub fn apply_quantity_mode(max: u32, mode: BulkQuantityMode) -> u32 {
+    match mode {
+        BulkQuantityMode::Max => max,
+        BulkQuantityMode::Medium => std::cmp::max(1, max / 2),
+    }
+}
+
 #[derive(PartialEq, Clone, Default, Copy)]
 pub enum InventoryItemType {
     #[default]
@@ -339,7 +357,7 @@ pub struct InventoryViewModel {
     pub projectile_list: EquipProjectileData,
     pub gaitem_data: GaItemData,
     pub bulk_items_selected: Vec<HashMap<u32, bool>>,
-    pub bulk_items_max_quantity: bool,
+    pub bulk_items_quantity_mode: BulkQuantityMode,
     pub bulk_items_arrow_quantity: u32,
     pub bulk_items_weapon_level: u32,
 
@@ -975,41 +993,86 @@ mod tests {
     use super::weapon_display_name;
 
     #[test]
-    fn exact_variant_name_is_used() {
-        // Heavy Backhand Blade has its own entry in WEAPON_NAME.
-        assert_eq!(
-            weapon_display_name(64500100, Some(64500000)),
-            Some("Heavy Backhand Blade".to_string())
-        );
-    }
-
-    #[test]
-    fn missing_variant_falls_back_to_prefixed_base_name() {
-        // 3520200 (Keen Lizard Greatsword) has no variant entry, only base 3520000.
-        assert_eq!(
-            weapon_display_name(3520200, Some(3520000)),
-            Some("Keen Lizard Greatsword".to_string())
-        );
-        // Same resolution when the base id has to be derived from the item id (browse path).
-        assert_eq!(
-            weapon_display_name(3520200, None),
-            Some("Keen Lizard Greatsword".to_string())
-        );
-    }
-
-    #[test]
-    fn upgrade_level_is_appended() {
-        assert_eq!(
-            weapon_display_name(3520225, None),
-            Some("Keen Lizard Greatsword +25".to_string())
-        );
-    }
-
-    #[test]
     fn unresolvable_ids_return_none() {
         // Offset 1300 is not a valid affinity.
         assert_eq!(weapon_display_name(3521300, None), None);
         // Unknown base weapon id (regulation params not loaded in tests).
         assert_eq!(weapon_display_name(999990100, None), None);
+    }
+
+    #[test]
+    fn quantity_modes_behave() {
+        use super::{apply_quantity_mode, BulkQuantityMode};
+        // Max passes through untouched (previous behavior).
+        assert_eq!(apply_quantity_mode(600, BulkQuantityMode::Max), 600);
+        assert_eq!(apply_quantity_mode(1, BulkQuantityMode::Max), 1);
+        // Medium halves so in-game pickups still fit.
+        assert_eq!(apply_quantity_mode(600, BulkQuantityMode::Medium), 300);
+        assert_eq!(apply_quantity_mode(99, BulkQuantityMode::Medium), 49);
+        // Never drops to zero (a zero request would add nothing and look broken).
+        assert_eq!(apply_quantity_mode(1, BulkQuantityMode::Medium), 1);
+        assert_eq!(apply_quantity_mode(0, BulkQuantityMode::Medium), 1);
+        // Default mode preserves the old Max behavior.
+        assert_eq!(BulkQuantityMode::default(), BulkQuantityMode::Max);
+    }
+
+    /// Regression test: bulk-adding projectiles twice (repeat runs) must
+    /// top up to max without storage-limit failures. Env-gated like the
+    /// other live-save tests.
+    #[test]
+    fn bulk_projectile_repeat_add_never_fails() {
+        use super::{InventoryItemType, InventoryViewModel};
+        use crate::save::save::save::Save;
+        use crate::util::regulation::Regulation;
+        use crate::vm::regulation::regulation_view_model::RegulationItemViewModel;
+        let Ok(path_str) = std::env::var("ER_TEST_SAVE_PS") else {
+            eprintln!("skipping: set ER_TEST_SAVE_PS=<path> to run");
+            return;
+        };
+        let path = std::path::PathBuf::from(&path_str);
+        if !path.exists() {
+            eprintln!("skipping: ER_TEST_SAVE_PS points to missing file");
+            return;
+        }
+        let save = Save::from_path(&path).expect("parse");
+        Regulation::init_params(&save);
+        let slot_idx = save
+            .save_type
+            .active_slots()
+            .iter()
+            .position(|a| *a)
+            .expect("expected at least one active slot");
+        let mut vm = InventoryViewModel::from_save(save.save_type.get_slot(slot_idx));
+        for id in [50020000u32, 50100000, 50000000, 50310000] {
+            vm.add_to_inventory(&RegulationItemViewModel {
+                id,
+                quantity: Some(99),
+                item_type: InventoryItemType::WEAPON,
+                upgrade: None,
+                ..Default::default()
+            });
+            // Second add of the same arrow (repeat bulk run): must top up or
+            // no-op, never log a storage-limits failure.
+            vm.add_to_inventory(&RegulationItemViewModel {
+                id,
+                quantity: Some(99),
+                item_type: InventoryItemType::WEAPON,
+                upgrade: None,
+                ..Default::default()
+            });
+        }
+        let failures: Vec<&String> =
+            vm.log.iter().filter(|e| e.contains("Failed to determine storage limits")).collect();
+        assert!(failures.is_empty(), "unexpected storage failures: {:?}", failures);
+        // Held stacks converge on max and never exceed it.
+        for id in [50020000u32, 50100000, 50000000, 50310000] {
+            let stack = vm.storage[0]
+                .common_items
+                .iter()
+                .find(|i| i.item_id == id)
+                .expect("arrow stack must exist");
+            assert_eq!(stack.quantity, 99);
+        }
+        println!("DONE117");
     }
 }

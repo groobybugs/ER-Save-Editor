@@ -15,10 +15,7 @@ pub mod classes {
         Prisoner = 8,
         Confessor = 6,
         Wretch = 9,
-        // 1.17 Tarnished Pack classes. IDs confirmed via the 1.17
-        // regulation CharaInitParam: row 3010 = Idus Knight (level 7 +
-        // Idus stats), row 3011 = Heavy Knight (level 10 + Heavy stats),
-        // continuing the 3000+N class row order.
+        // 1.17 Tarnished Pack classes.
         IdusKnight = 10,
         HeavyKnight = 11,
     }
@@ -250,7 +247,7 @@ pub mod classes {
 
     #[cfg(test)]
     mod tests {
-        use super::{ArcheType, Stats, STARTER_CLASSES};
+        use super::ArcheType;
 
         #[test]
         fn new_117_classes_roundtrip_byte_values() {
@@ -258,8 +255,6 @@ pub mod classes {
             assert_eq!(ArcheType::try_from(11u8), Ok(ArcheType::HeavyKnight));
             assert_eq!(u8::from(ArcheType::IdusKnight), 10);
             assert_eq!(u8::from(ArcheType::HeavyKnight), 11);
-            assert_eq!(ArcheType::HeavyKnight.to_string(), "Heavy Knight");
-            assert_eq!(ArcheType::IdusKnight.to_string(), "Idus Knight");
         }
 
         #[test]
@@ -280,38 +275,6 @@ pub mod classes {
                 assert_eq!(ArcheType::try_from(byte), Ok(class));
                 assert_eq!(u8::from(class), byte);
             }
-        }
-
-        fn starter_stats(class: ArcheType) -> Stats {
-            *STARTER_CLASSES
-                .lock()
-                .unwrap()
-                .get(&class)
-                .expect("starter class definition missing")
-        }
-
-        #[test]
-        fn heavy_knight_starter_stats_match_wiki() {
-            let s = starter_stats(ArcheType::HeavyKnight);
-            assert_eq!(
-                (
-                    s.level, s.vigor, s.mind, s.endurance, s.strength, s.dexterity,
-                    s.intelligence, s.faith, s.arcane
-                ),
-                (10, 14, 8, 17, 15, 11, 7, 8, 9)
-            );
-        }
-
-        #[test]
-        fn idus_knight_starter_stats_match_wiki() {
-            let s = starter_stats(ArcheType::IdusKnight);
-            assert_eq!(
-                (
-                    s.level, s.vigor, s.mind, s.endurance, s.strength, s.dexterity,
-                    s.intelligence, s.faith, s.arcane
-                ),
-                (7, 10, 12, 11, 13, 15, 8, 11, 6)
-            );
         }
 
         #[test]

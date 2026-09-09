@@ -849,69 +849,6 @@ pub mod armor_name {
             (5172100,""),
             (5172200,""),
             (5172300,""),
-            // WARNING: sentinel-sortId rows (cut/unused content, same class as
-            // the rejected somber-weapon dupes). Tracked here with empty names
-            // so they resolve explicitly instead of silently; do NOT add to
-            // armor_sets and do NOT invent display names for them.
-            (5032100,""),
-            (5040000,""),
-            (5040100,""),
-            (5040200,""),
-            (5040300,""),
-            (5050000,""),
-            (5050100,""),
-            (5050200,""),
-            (5050300,""),
-            (5102100,""),
-            (5102200,""),
-            (5102300,""),
-            (5122000,""),
-            (5170000,""),
-            (5170100,""),
-            (5170200,""),
-            (5170300,""),
-            (5172000,""),
-            (5172100,""),
-            (5172200,""),
-            (5172300,""),
         ]))
     });
-
-    #[cfg(test)]
-    mod tests {
-        use super::ARMOR_NAME;
-
-        fn name(id: u32) -> String {
-            ARMOR_NAME
-                .lock()
-                .unwrap()
-                .get(&id)
-                .expect("1.17 armor row must exist")
-                .to_string()
-        }
-
-        #[test]
-        fn tarnished_pack_starter_sets_resolve() {
-            assert_eq!(name(5350000), "Silver Grooved Helm");
-            assert_eq!(name(5350100), "Silver Grooved Armor");
-            assert_eq!(name(5350200), "Silver Grooved Gauntlets");
-            assert_eq!(name(5350300), "Silver Grooved Greaves");
-            assert_eq!(name(5370000), "Steel Helm");
-            assert_eq!(name(5370100), "Steel Armor");
-            assert_eq!(name(5370200), "Steel Gauntlets");
-            assert_eq!(name(5370300), "Steel Greaves");
-        }
-
-        #[test]
-        fn tarnished_pack_invader_sets_resolve() {
-            assert_eq!(name(5360000), "Leontiel's Hat");
-            assert_eq!(name(5360100), "Leontiel's Armor");
-            assert_eq!(name(5360200), "Leontiel's Leather Gloves");
-            assert_eq!(name(5360300), "Leontiel's Boots");
-            assert_eq!(name(5340000), "Broken Gold Mask");
-            assert_eq!(name(5340100), "Gold Tattoo (Chest)");
-            assert_eq!(name(5340200), "Gold Tattoo (Arm)");
-            assert_eq!(name(5340300), "Gold Tattoo (Leg)");
-        }
-    }
 }

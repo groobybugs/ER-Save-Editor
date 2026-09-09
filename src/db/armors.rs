@@ -1067,9 +1067,7 @@ pub fn armor_sets() -> &'static BTreeMap<String, Vec<u32>> {
             0x10512D40, // Greatjar
             0x10515450, // Imp Head (Lion)
          ]);
-         // 1.17 Tarnished Pack. Gaitem IDs taken from live starting
-         // inventories (Steel/Silver Grooved) and the 1.17 regulation
-         // protector table (Leontiel/Broken Mask/Gold Tattoo).
+         // Tarnished Pack armor sets.
          armor_sets.insert("Steel".to_string(),vec![
             0x1051F090, // Steel Helm
             0x1051F0F4, // Steel Armor

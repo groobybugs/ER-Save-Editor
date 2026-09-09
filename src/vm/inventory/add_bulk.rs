@@ -3,6 +3,7 @@ use std::collections::HashMap;
 use crate::{db::{self, aows::aows, armors::armor_sets, gestures::GESTURES, items::items, talismans::talismans, weapons::weapons}, util::regulation::Regulation, vm::regulation::regulation_view_model::{GoodsType, RegulationItemViewModel, WepType}};
 
 use super::{InventoryItemType, InventoryTypeRoute, InventoryViewModel};
+use super::apply_quantity_mode;
 
 impl InventoryViewModel {
     pub fn replace_bulk_items_selected_map(&mut self, item_type: InventoryTypeRoute) {
@@ -59,6 +60,30 @@ impl InventoryViewModel {
         // saved then it will write this section to the file
         self.changed = true;
 
+        // The selection maps are rebuilt per route; a length mismatch here
+        // would silently apply one route's selections to another route's
+        // groups (wrong items added). Fail loudly in debug builds.
+        match self.current_bulk_type_route {
+            InventoryTypeRoute::KeyItems | InventoryTypeRoute::CommonItems => {
+                debug_assert_eq!(self.bulk_items_selected.len(), db::items::items().len());
+            }
+            InventoryTypeRoute::Weapons => {
+                debug_assert_eq!(self.bulk_items_selected.len(), weapons().len());
+            }
+            InventoryTypeRoute::Armors => {
+                debug_assert_eq!(self.bulk_items_selected.len(), armor_sets().len());
+            }
+            InventoryTypeRoute::AshOfWar => {
+                debug_assert_eq!(self.bulk_items_selected.len(), aows().len());
+            }
+            InventoryTypeRoute::Talismans => {
+                debug_assert_eq!(self.bulk_items_selected.len(), talismans().len());
+            }
+            InventoryTypeRoute::Gestures => {
+                debug_assert_eq!(self.bulk_items_selected.len(), 1);
+            }
+        }
+
         let items = match self.current_bulk_type_route {
             InventoryTypeRoute::KeyItems |
             InventoryTypeRoute::CommonItems => {
@@ -70,8 +95,11 @@ impl InventoryViewModel {
 
                             let goods_type = GoodsType::from(item_param.data.goodsType);
                             let quantity = Some({
-                                if self.bulk_items_max_quantity && !is_single_quantity_group(group_name) {
-                                    (item_param.data.maxRepositoryNum) as i16
+                                if !is_single_quantity_group(group_name) {
+                                    apply_quantity_mode(
+                                        item_param.data.maxRepositoryNum as u32,
+                                        self.bulk_items_quantity_mode,
+                                    ) as i16
                                 }
                                 else {
                                     1i16
@@ -103,7 +131,10 @@ impl InventoryViewModel {
                             let wep_type = WepType::from(weapon_param.data.wepType);
                             let is_projectile = wep_type == WepType::Arrow || wep_type == WepType::Greatarrow || wep_type == WepType::Bolt || wep_type == WepType::BallistaBolt;
                             let quantity = if is_projectile  {
-                                Some(self.bulk_items_arrow_quantity as i16)
+                                Some(apply_quantity_mode(
+                                    self.bulk_items_arrow_quantity,
+                                    self.bulk_items_quantity_mode,
+                                ) as i16)
                             }
                             else {None};
 

@@ -189,13 +189,7 @@ pub mod aow_name {
             // WARNING: SwordArtsParam in 1.17 regulation has NO skill 310 row,
             // so this key never matches live regulation data (the Ash itself
             // is real — see gem row 198 above). Kept so the name still
-            // resolves if the skill row appears under a different ID; re-check
-            // against regulation before deleting.
-            // WARNING: SwordArtsParam in 1.17 regulation has NO skill 310 row,
-            // so this key never matches live regulation data (the Ash itself
-            // is real — see gem row 198 above). Kept so the name still
-            // resolves if the skill row appears under a different ID; re-check
-            // against regulation before deleting.
+            // resolves if the skill row appears under a different ID.
             (31000,"Ash of War: Thops's Barrier"),
             (40000,"Ash of War: Through and Through"),
             (40100,"Ash of War: Barrage"),

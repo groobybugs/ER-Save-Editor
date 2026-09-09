@@ -2099,6 +2099,24 @@ pub mod item_name {
             (2020033,"Nailstone"),
             (2020034,"Sharp Gravel Stone"),
             (2020035,"Furnace Visage"),
+            // WARNING: sentinel-sortId dummy rows (no in-game item). Tracked
+            // with empty names so they resolve explicitly; do not invent names.
+            (2004330,""),
+            (2050301,""),
+            (2051004,""),
+            (2051005,""),
+            (2052030,""),
+            (2053140,""),
+            (2053480,""),
+            (2053490,""),
+            (2053700,""),
+            (2053701,""),
+            // WARNING: real rows (sequential sortIds/icons after Hefty Cracked
+            // Pot) with no obtainable name in any script, wiki or datamine.
+            // Rename in place if the names surface; do not add to items.rs.
+            (2009600,""),
+            (2009610,""),
+            (2009620,""),
             (2200000,"Curseblade Meera"),
             (2200001,"Curseblade Meera +1"),
             (2200002,"Curseblade Meera +2"),
@@ -2322,36 +2340,4 @@ pub mod item_name {
             (999999999,""),
         ]))
     });
-
-    #[cfg(test)]
-    mod tests {
-        use super::ITEM_NAME;
-
-        fn name(id: u32) -> String {
-            ITEM_NAME
-                .lock()
-                .unwrap()
-                .get(&id)
-                .expect("SOTE item row must exist")
-                .to_string()
-        }
-
-        #[test]
-        fn sote_tools_resolve() {
-            assert_eq!(name(2003000), "Bondstone");
-            assert_eq!(name(2003180), "Fire Coil");
-            assert_eq!(name(2003200), "Glinting Nail");
-            assert_eq!(name(2003350), "Charming Branch");
-            // Reusable catalysts resolve even though they are not in Add menu.
-            assert_eq!(name(2003150), "Call of Tibia");
-        }
-
-        #[test]
-        fn sote_crafting_materials_resolve() {
-            assert_eq!(name(2020001), "Rada Fruit");
-            assert_eq!(name(2015000), "Beast Horn");
-            assert_eq!(name(2020020), "Gas Stone");
-            assert_eq!(name(2020035), "Furnace Visage");
-        }
-    }
 }

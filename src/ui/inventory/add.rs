@@ -7,7 +7,7 @@ use crate::{db::{
     util::regulation::Regulation, 
     vm::{
         inventory::{
-            InventoryTypeRoute, InventoryViewModel
+            BulkQuantityMode, InventoryTypeRoute, InventoryViewModel
         }, 
         regulation::regulation_view_model::{
             GoodsType, RegulationViewModel, WepType
@@ -527,9 +527,20 @@ fn bulk_item_customization(ui: &mut Ui, inventory_vm: &mut InventoryViewModel) {
         ui.add_space(6.);
         match inventory_vm.current_bulk_type_route {
             InventoryTypeRoute::CommonItems | InventoryTypeRoute::KeyItems => {
-                ui.add(egui::Checkbox::new(&mut inventory_vm.bulk_items_max_quantity, "Max Quantity"));
+                ui.horizontal(|ui| {
+                    ui.label("Quantity:");
+                    ui.radio_value(&mut inventory_vm.bulk_items_quantity_mode, BulkQuantityMode::Max, "Max");
+                    ui.radio_value(&mut inventory_vm.bulk_items_quantity_mode, BulkQuantityMode::Medium, "Medium")
+                        .on_hover_text("Half stacks so in-game pickups still fit");
+                });
             }
             InventoryTypeRoute::Weapons => {
+                ui.horizontal(|ui| {
+                    ui.label("Quantity:");
+                    ui.radio_value(&mut inventory_vm.bulk_items_quantity_mode, BulkQuantityMode::Max, "Max");
+                    ui.radio_value(&mut inventory_vm.bulk_items_quantity_mode, BulkQuantityMode::Medium, "Medium")
+                        .on_hover_text("Half stacks so in-game pickups still fit");
+                });
                 egui::Grid::new("bulk_items_customization").spacing(Vec2::new(6., 6.)).show(ui,|ui| {
                     let field = egui::DragValue::new(&mut inventory_vm.bulk_items_arrow_quantity).range(1..=99);
                     let label = ui.label("Projectile Quantity");
