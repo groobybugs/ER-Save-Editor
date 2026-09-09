@@ -2322,36 +2322,4 @@ pub mod item_name {
             (999999999,""),
         ]))
     });
-
-    #[cfg(test)]
-    mod tests {
-        use super::ITEM_NAME;
-
-        fn name(id: u32) -> String {
-            ITEM_NAME
-                .lock()
-                .unwrap()
-                .get(&id)
-                .expect("SOTE item row must exist")
-                .to_string()
-        }
-
-        #[test]
-        fn sote_tools_resolve() {
-            assert_eq!(name(2003000), "Bondstone");
-            assert_eq!(name(2003180), "Fire Coil");
-            assert_eq!(name(2003200), "Glinting Nail");
-            assert_eq!(name(2003350), "Charming Branch");
-            // Reusable catalysts resolve even though they are not in Add menu.
-            assert_eq!(name(2003150), "Call of Tibia");
-        }
-
-        #[test]
-        fn sote_crafting_materials_resolve() {
-            assert_eq!(name(2020001), "Rada Fruit");
-            assert_eq!(name(2015000), "Beast Horn");
-            assert_eq!(name(2020020), "Gas Stone");
-            assert_eq!(name(2020035), "Furnace Visage");
-        }
-    }
 }

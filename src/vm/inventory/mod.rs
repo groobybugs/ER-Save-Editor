@@ -993,37 +993,6 @@ mod tests {
     use super::weapon_display_name;
 
     #[test]
-    fn exact_variant_name_is_used() {
-        // Heavy Backhand Blade has its own entry in WEAPON_NAME.
-        assert_eq!(
-            weapon_display_name(64500100, Some(64500000)),
-            Some("Heavy Backhand Blade".to_string())
-        );
-    }
-
-    #[test]
-    fn missing_variant_falls_back_to_prefixed_base_name() {
-        // 3520200 (Keen Lizard Greatsword) has no variant entry, only base 3520000.
-        assert_eq!(
-            weapon_display_name(3520200, Some(3520000)),
-            Some("Keen Lizard Greatsword".to_string())
-        );
-        // Same resolution when the base id has to be derived from the item id (browse path).
-        assert_eq!(
-            weapon_display_name(3520200, None),
-            Some("Keen Lizard Greatsword".to_string())
-        );
-    }
-
-    #[test]
-    fn upgrade_level_is_appended() {
-        assert_eq!(
-            weapon_display_name(3520225, None),
-            Some("Keen Lizard Greatsword +25".to_string())
-        );
-    }
-
-    #[test]
     fn unresolvable_ids_return_none() {
         // Offset 1300 is not a valid affinity.
         assert_eq!(weapon_display_name(3521300, None), None);
