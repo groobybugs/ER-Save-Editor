@@ -145,6 +145,10 @@ pub mod stats {
                         });
                         // Sacred Tear potency (+0..+12). Swaps the
                         // level-stepped flask goods rows, keeping charges.
+                        // NOTE: after changing flask charges or upgrade, the
+                        // game reads them as 0 until the flasks are
+                        // re-equipped in-game (rest at a grace) — save, load
+                        // the character, rest once, and they take effect.
                         body.row(24., |mut row| {
                             row.col(|ui| {
                                 ui.label("Flask upgrade:");
@@ -159,6 +163,18 @@ pub mod stats {
                                     stats_vm.flask_upgrade = level;
                                     flask_upgrade_changed = true;
                                 }
+                            });
+                        });
+
+                        // Space
+                        self::space(&mut body, 8.);
+
+                        body.row(24., |mut row| {
+                            row.col(|ui| {
+                                ui.label(egui::RichText::new("Note:").strong());
+                            });
+                            row.col(|ui| {
+                                ui.label("After changing flasks, equip/unequip (rest at a grace) in-game or they read as 0.");
                             });
                         });
 
