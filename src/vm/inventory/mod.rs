@@ -113,6 +113,38 @@ impl ToString for InventoryItemType {
 /// (maxed slot holds quantity 3, fresh slots hold none).
 pub const TALISMAN_POUCH_ITEM_ID: u32 = 10040;
 
+/// Flask goods rows by upgrade level (Sacred Tears, +0..+12). Proven by
+/// the TGA "Set flask level" script (ids step +2 per level) and live
+/// saves: fresh slots hold 1001/1051, +1 holds 1003/1053, +12 holds
+/// 1025/1075. Quantity on these rows = current charges (mirrors the
+/// PGD charge bytes). Only the 0xB0-handle (ITEM type) rows count:
+/// same low ids exist in the accessory namespace and never step.
+pub const FLASK_CRIMSON_BASE_ID: u32 = 1000;
+pub const FLASK_CERULEAN_BASE_ID: u32 = 1050;
+pub const FLASK_MAX_UPGRADE: u32 = 12;
+
+/// True for goods rows that belong to the level-stepped flask families
+/// (crimson 1000..1026 even/odd, cerulean 1050..1076 even/odd).
+pub fn is_flask_row(row: u32) -> bool {
+    (FLASK_CRIMSON_BASE_ID..=FLASK_CRIMSON_BASE_ID + 2 * FLASK_MAX_UPGRADE + 1).contains(&row)
+        || (FLASK_CERULEAN_BASE_ID..=FLASK_CERULEAN_BASE_ID + 2 * FLASK_MAX_UPGRADE + 1)
+            .contains(&row)
+}
+
+/// Upgrade level encoded by a flask goods row (row = base + 2 * level,
+/// parity preserved for the runtime empty/full variants).
+pub fn flask_upgrade_of_row(row: u32) -> Option<u32> {
+    if (FLASK_CRIMSON_BASE_ID..=FLASK_CRIMSON_BASE_ID + 2 * FLASK_MAX_UPGRADE + 1).contains(&row) {
+        Some((row - FLASK_CRIMSON_BASE_ID) / 2)
+    } else if (FLASK_CERULEAN_BASE_ID..=FLASK_CERULEAN_BASE_ID + 2 * FLASK_MAX_UPGRADE + 1)
+        .contains(&row)
+    {
+        Some((row - FLASK_CERULEAN_BASE_ID) / 2)
+    } else {
+        None
+    }
+}
+
 #[derive(Default, Clone, PartialEq)]
 pub enum InventoryGaitemType {
     #[default]
@@ -1140,5 +1172,72 @@ mod tests {
             .find(|i| i.ga_item_handle == handle)
             .expect("pouch entry must persist at zero");
         assert_eq!(entry.quantity, 0);
+    }
+
+    /// Flask upgrade swaps the level-stepped goods rows in place, keeping
+    /// quantities: fresh slot holds 1001x3/1051x1 (+0), played slot holds
+    /// 1025x12/1075x2 (+12). Upgrading the fresh slot to +3 must yield
+    /// 1007/1057 with quantities intact, and survive a full save/reload.
+    #[test]
+    fn flask_upgrade_swaps_rows_keeping_charges() {
+        use super::{InventoryGaitemType, InventoryViewModel};
+        use crate::save::save::save::Save;
+        use crate::util::regulation::Regulation;
+        use crate::vm::stats::stats_view_model::StatsViewModel;
+        use crate::vm::vm::vm::ViewModel;
+        use crate::write::write::Write;
+        let Ok(path_str) = std::env::var("ER_TEST_SAVE_PS") else {
+            eprintln!("skipping: set ER_TEST_SAVE_PS=<path> to run");
+            return;
+        };
+        let path = std::path::PathBuf::from(&path_str);
+        if !path.exists() {
+            eprintln!("skipping: ER_TEST_SAVE_PS points to missing file");
+            return;
+        };
+        let save = Save::from_path(&path).expect("parse");
+        Regulation::init_params(&save);
+
+        // Derivation anchors: +0 fresh, +12 played.
+        assert_eq!(StatsViewModel::from_save(save.save_type.get_slot(2)).flask_upgrade, 0);
+        assert_eq!(StatsViewModel::from_save(save.save_type.get_slot(0)).flask_upgrade, 12);
+
+        // In-place swap on the VM: rows move, quantities stay.
+        let mut vm = InventoryViewModel::from_save(save.save_type.get_slot(2));
+        vm.set_flask_upgrade(3);
+        assert!(vm.changed);
+        let rows: Vec<(u32, u32)> = vm.storage[0]
+            .common_items
+            .iter()
+            .filter(|i| {
+                i.r#type == InventoryGaitemType::ITEM
+                    && (super::is_flask_row(i.item_id))
+            })
+            .map(|i| (i.item_id, i.quantity))
+            .collect();
+        assert_eq!(rows, vec![(1007, 3), (1057, 1)]);
+
+        // Full save/reload round-trip through the real save path.
+        let mut full = ViewModel::from_save(&save);
+        full.slots[2].inventory_vm.set_flask_upgrade(3);
+        let mut save2 = Save::from_path(&path).expect("reload for write");
+        full.update_save(&mut save2.save_type);
+        let bytes = save2.write().expect("serialize");
+        let tmp = std::env::temp_dir().join("er_save_editor_flask_upg_test.dat");
+        std::fs::write(&tmp, &bytes).expect("write temp save");
+        let back = Save::from_path(&tmp).expect("reload temp save");
+        let _ = std::fs::remove_file(&tmp);
+        let held = &back.save_type.get_slot(2).equip_inventory_data.common_items;
+        let got: Vec<(u32, u32)> = held
+            .iter()
+            .filter(|i| (i.ga_item_handle & 0xf0000000) == InventoryGaitemType::ITEM as u32)
+            .map(|i| (i.ga_item_handle ^ InventoryGaitemType::ITEM as u32, i.quantity))
+            .filter(|(row, _)| super::is_flask_row(*row))
+            .collect();
+        assert_eq!(got, vec![(1007, 3), (1057, 1)]);
+        assert_eq!(
+            StatsViewModel::from_save(back.save_type.get_slot(2)).flask_upgrade,
+            3
+        );
     }
 }

@@ -10,7 +10,7 @@ use crate::{
         WepType
     } 
 };
-use super::{InventoryGaitemType, InventoryItemType, InventoryItemViewModel, InventoryViewModel, TALISMAN_POUCH_ITEM_ID};
+use super::{InventoryGaitemType, InventoryItemType, InventoryItemViewModel, InventoryViewModel, FLASK_CERULEAN_BASE_ID, FLASK_CRIMSON_BASE_ID, FLASK_MAX_UPGRADE, TALISMAN_POUCH_ITEM_ID, is_flask_row};
 
 impl InventoryViewModel {
     pub fn add_to_inventory(&mut self, item: &RegulationItemViewModel) {
@@ -457,6 +457,44 @@ impl InventoryViewModel {
         );
         self.upsert_gaitem_data_list(TALISMAN_POUCH_ITEM_ID);
         self.changed = true;
+    }
+
+    /// Set the Sacred Tear upgrade level (+0..+12, clamped) by swapping
+    /// the level-stepped flask goods rows in place, preserving quantities
+    /// (charges) and slot positions — the same swap the game performs at a
+    /// grace (and the TGA "Set flask level" script performs live).
+    /// Only ITEM-type (0xB0 handle) rows move; same low ids in the
+    /// accessory namespace are different items and stay untouched. The
+    /// game tracks no GaItemData entry for flask rows, so none is added.
+    /// No-op when no flask rows are held (never invents entries).
+    pub fn set_flask_upgrade(&mut self, level: u32) {
+        let level = level.min(FLASK_MAX_UPGRADE);
+        let mut touched = false;
+        for storage in self.storage.iter_mut().take(2) {
+            for item in storage.common_items.iter_mut() {
+                if item.r#type != InventoryGaitemType::ITEM {
+                    continue;
+                }
+                let row = item.item_id;
+                if !is_flask_row(row) {
+                    continue;
+                }
+                let base = if row < FLASK_CERULEAN_BASE_ID {
+                    FLASK_CRIMSON_BASE_ID
+                } else {
+                    FLASK_CERULEAN_BASE_ID
+                };
+                let new_row = base + 2 * level + (row & 1);
+                if new_row != row {
+                    item.item_id = new_row;
+                    item.ga_item_handle = new_row | InventoryGaitemType::ITEM as u32;
+                    touched = true;
+                }
+            }
+        }
+        if touched {
+            self.changed = true;
+        }
     }
 
     fn add_key_item(&mut self, id: u32, quantity: u32) {

@@ -1,5 +1,5 @@
 pub mod stats_view_model {
-    use crate::{db::classes::classes::ArcheType, save::common::save_slot::SaveSlot};
+    use crate::{db::classes::classes::ArcheType, save::common::save_slot::SaveSlot, vm::inventory::{InventoryGaitemType, FLASK_CERULEAN_BASE_ID, flask_upgrade_of_row}};
 
     #[derive(Clone)]
     pub struct StatsViewModel {
@@ -19,6 +19,7 @@ pub mod stats_view_model {
         pub spirit_ash: u32,
         pub flask_hp: u32,
         pub flask_fp: u32,
+        pub flask_upgrade: u32,
     }
 
     impl Default for StatsViewModel {
@@ -40,6 +41,7 @@ pub mod stats_view_model {
                 spirit_ash: Default::default(),
                 flask_hp: Default::default(),
                 flask_fp: Default::default(),
+                flask_upgrade: Default::default(),
             }
         }
     }
@@ -71,6 +73,22 @@ pub mod stats_view_model {
             let flask_hp = slot.player_game_data.flask_hp.into();
             let flask_fp = slot.player_game_data.flask_fp.into();
 
+            // Flask upgrade level, read off the level-stepped flask goods
+            // rows in held inventory (crimson preferred, else cerulean).
+            let mut flask_upgrade = 0;
+            for item in slot.equip_inventory_data.common_items.iter() {
+                if (item.ga_item_handle & 0xf0000000) != InventoryGaitemType::ITEM as u32 {
+                    continue;
+                }
+                let row = item.ga_item_handle ^ InventoryGaitemType::ITEM as u32;
+                if let Some(level) = flask_upgrade_of_row(row) {
+                    flask_upgrade = level;
+                    if row < FLASK_CERULEAN_BASE_ID {
+                        break;
+                    }
+                }
+            }
+
             Self {
                 arche_type,
                 vigor,
@@ -88,6 +106,7 @@ pub mod stats_view_model {
                 spirit_ash,
                 flask_hp,
                 flask_fp,
+                flask_upgrade,
             }
         }
     }

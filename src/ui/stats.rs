@@ -78,6 +78,11 @@ pub mod stats {
                     .column(Column::initial(100.0))
                     .column(Column::initial(100.0));
 
+                    // Set when the flask upgrade row edits the level: the
+                    // inventory row swap runs after the table so the stats
+                    // borrow has ended.
+                    let mut flask_upgrade_changed = false;
+
                     table.body(|mut body| {
 
                         // Level
@@ -138,6 +143,24 @@ pub mod stats {
                                 ui.label(format!("{:6}", stats_vm.flask_hp + stats_vm.flask_fp));
                             });
                         });
+                        // Sacred Tear potency (+0..+12). Swaps the
+                        // level-stepped flask goods rows, keeping charges.
+                        body.row(24., |mut row| {
+                            row.col(|ui| {
+                                ui.label("Flask upgrade:");
+                            });
+                            row.col(|ui| {
+                                let mut level = stats_vm.flask_upgrade.clamp(0, 12);
+                                let field = egui::widgets::DragValue::new(&mut level)
+                                    .range(0..=12);
+                                ui.add(field);
+                                let level = level.clamp(0, 12);
+                                if level != stats_vm.flask_upgrade {
+                                    stats_vm.flask_upgrade = level;
+                                    flask_upgrade_changed = true;
+                                }
+                            });
+                        });
 
                         // Space
                         self::space(&mut body, 8.);
@@ -157,6 +180,13 @@ pub mod stats {
                             });
                         });
                     });
+                    // Apply a flask-upgrade edit to the inventory rows now
+                    // that the stats borrow has ended.
+                    if flask_upgrade_changed {
+                        let slot = &mut vm.slots[vm.index];
+                        let level = slot.stats_vm.flask_upgrade;
+                        slot.inventory_vm.set_flask_upgrade(level);
+                    }
                 });
             })
         });
