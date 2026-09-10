@@ -26,7 +26,8 @@ Tool for editing Elden Ring save files. Compatible with PC and Playstation Save 
 
 ## Evidence
 Edited saves at work on a real PlayStation 4 (game version 1.17.x, Spanish UI): maxed character stats, modded inventory and talismans all load and behave in-game.
-[Download the gameplay evidence video (MP4, ~11 MB)](https://github.com/groobybugs/ER-Save-Editor/releases/download/v0.0.29/ps4-gameplay-evidence.mp4)
+
+[Watch gameplay evidence (YouTube)](https://youtu.be/EKX2b-i21r4)
 
 ## Permissions
 Feel free to use this save editor for learning or development purposes. However, I do not authorize its use for creating tools or modifications that enable actions online outside the bounds of what the game allows.
